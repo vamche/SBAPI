@@ -13,19 +13,19 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true
+    required: false
   },
   userRole: {
     type: mongoose.Schema.ObjectId,
-    required: true
+    required: false
   },
   firstName: {
     type: String,
-    required: true
+    required: false
   },
   lastName: {
     type: String,
-    required: true
+    required: false
   },
   mobileNumber: {
     type: String,
@@ -40,7 +40,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       'The value of path {PATH} ({VALUE}) is not a valid email address'],
-    required: true
+    required: false
   },
   createdAt: {
     type: Date,
