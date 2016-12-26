@@ -11,10 +11,36 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  password: {
+    type: String,
+    required: true
+  },
+  userRole: {
+    type: mongoose.Schema.ObjectId,
+    required: true
+  },
+  firstName: {
+    type: String,
+    required: true
+  },
+  lastName: {
+    type: String,
+    required: true
+  },
   mobileNumber: {
     type: String,
     required: true,
     match: [/^[1-9][0-9]{9}$/, 'The value of path {PATH} ({VALUE}) is not a valid mobile number.']
+  },
+  timeZone: {
+    type: Number,
+    default: 530
+  },
+  emailAddress: {
+    type: String,
+    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+      'The value of path {PATH} ({VALUE}) is not a valid email address'],
+    required: true
   },
   createdAt: {
     type: Date,
