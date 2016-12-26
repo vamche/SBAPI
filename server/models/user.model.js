@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema({
     required: false
   },
   userRole: {
-    type: mongoose.Schema.ObjectId,
+    type: String,
     required: false
   },
   firstName: {
