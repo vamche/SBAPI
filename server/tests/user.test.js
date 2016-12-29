@@ -40,7 +40,7 @@ describe('## User APIs', () => {
   });
 
   describe('# GET /api/users/:userId', () => {
-    /*it('should get user details', (done) => {
+    it('should get user details', (done) => {
       request(app)
         .get(`/api/users/${user._id}`)
         .expect(httpStatus.OK)
@@ -50,7 +50,7 @@ describe('## User APIs', () => {
           done();
         })
         .catch(done);
-    });*/
+    });
 
     it('should report error with message - Not found, when user does not exists', (done) => {
       request(app)
