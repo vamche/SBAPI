@@ -105,6 +105,10 @@ const OrderSchema = new mongoose.Schema({
     type: String, // mongoose.Schema.ObjectId,
     required: true
   },
+  timeline: {
+    type: [{ status: String, timestamp: Date, pilot: String }],
+    required: false
+  },
   acknowledged_notes: {
     type: String,
     required: false

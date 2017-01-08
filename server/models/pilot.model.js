@@ -36,6 +36,10 @@ const PilotSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  battery: {
+    type: Number,
+    required: false
+  },
   latitude: {
     type: Number,
     required: false

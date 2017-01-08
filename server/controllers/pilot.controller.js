@@ -50,6 +50,7 @@ function update(req, res, next) {
   pilot.longitude = req.body.longitude;
   pilot.isActive = req.body.isActive;
   pilot.isAvailable = req.body.isAvailable;
+  pilot.battery = req.pilot.battery;
 
   pilot.save()
     .then(savedPilot => res.json(savedPilot))
