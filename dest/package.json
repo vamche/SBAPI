@@ -1,8 +1,8 @@
 {
-  "name": "express-mongoose-es6-rest-api",
+  "name": "season-boy-api",
   "version": "1.0.0",
-  "description": "A Boilerplate application for building REST APIs using express, mongoose in ES6 with code coverage",
-  "author": "...",
+  "description": "Season Boy API",
+  "author": "Vamsi Dharmavarapu",
   "main": "index.js",
   "private": false,
   "engines": {
@@ -12,6 +12,7 @@
   },
   "scripts": {
     "start": "node dest/index.js",
+    "debug": "node debug dest/index.js",
     "build": "gulp",
     "lint": "esw *.js server config --color",
     "lint:watch": "yarn lint -- --watch",

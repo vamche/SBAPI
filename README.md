@@ -1,4 +1,4 @@
-# Express & mongoose REST API Boilerplate in ES6 with Code Coverage [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/sindresorhus/awesome)
+# SB API [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/sindresorhus/awesome)
 
 [![Build Status](https://img.shields.io/travis/KunalKapadia/express-mongoose-es6-rest-api/master.svg?style=flat-square)](https://travis-ci.org/KunalKapadia/express-mongoose-es6-rest-api)
 [![Coverage Status](https://img.shields.io/coveralls/KunalKapadia/express-mongoose-es6-rest-api/master.svg?style=flat-square)](https://coveralls.io/github/KunalKapadia/express-mongoose-es6-rest-api?branch=master)
@@ -13,9 +13,7 @@
 
 ## Overview
 
-This is a boilerplate application for building REST APIs in Node.js using ES6 and Express with Code Coverage and JWT Authentication. Helps you stay productive by following best practices. Follows [Airbnb's Javascript style guide](https://github.com/airbnb/javascript).
-
-Heavily inspired from [Egghead.io - How to Write an Open Source JavaScript Library](https://egghead.io/courses/how-to-write-an-open-source-javascript-library).
+SB API 
 
 ### Features
 
@@ -39,11 +37,7 @@ Heavily inspired from [Egghead.io - How to Write an Open Source JavaScript Libra
 
 ## Getting Started
 
-Clone the repo:
-```sh
-git clone git@github.com:KunalKapadia/express-mongoose-es6-rest-api.git
-cd express-mongoose-es6-rest-api
-```
+
 
 Install yarn:
 ```js
@@ -142,11 +136,4 @@ If you would prefer not to use any of our tooling, delete the following files fr
 
 * [Gulp recipes](https://github.com/gulpjs/gulp/tree/master/docs/recipes) - the official Gulp recipes directory includes a comprehensive list of guides for different workflows you can add to your project.
 
-## Contributing
-
-Contributions, questions and comments are all welcome and encouraged. For code contributions submit a pull request with unit test.
-
 ## Meta
-
-Kunal Kapadia – [@kunalkapadia12](https://twitter.com/KunalKapadia12) – kunalkapadia12@gmail.com
-

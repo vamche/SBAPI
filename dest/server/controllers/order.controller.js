@@ -44,15 +44,13 @@ function create(req, res, next) {
     from_phone: req.body.from_phone,
     from_email: req.body.from_email,
     from_address: req.body.from_address,
-    from_latitiude: req.body.from_latitiude,
-    from_longitude: req.body.from_longitude,
+    from_location: req.body.from_location,
     from_date_time: req.body.from_date_time,
     to_name: req.body.to_name,
     to_phone: req.body.to_phone,
     to_email: req.body.to_email,
     to_address: req.body.to_address,
-    to_latitiude: req.body.to_latitiude,
-    to_longitude: req.body.to_longitude,
+    to_location: req.body.to_location,
     to_date_time: req.body.to_date_time,
     paymentType: req.body.paymentType,
     status: req.body.status,
@@ -75,6 +73,26 @@ function create(req, res, next) {
 function update(req, res, next) {
   var order = req.order;
   order.pilot = order.pilot;
+  order.status = req.body.status;
+  order.save().then(function (savedOrder) {
+    return res.json(savedOrder);
+  }).catch(function (e) {
+    return next(e);
+  });
+}
+
+function updateStatus(req, res, next) {
+  var order = req.order;
+  order.status = req.body.status;
+  order.save().then(function (savedOrder) {
+    return res.json(savedOrder);
+  }).catch(function (e) {
+    return next(e);
+  });
+}
+
+function updateLocation(req, res, next) {
+  var order = req.order;
   order.status = req.body.status;
   order.save().then(function (savedOrder) {
     return res.json(savedOrder);
@@ -116,6 +134,6 @@ function remove(req, res, next) {
   });
 }
 
-exports.default = { load: load, get: get, create: create, update: update, list: list, remove: remove };
+exports.default = { load: load, get: get, create: create, update: update, list: list, remove: remove, updateStatus: updateStatus, updateLocation: updateLocation };
 module.exports = exports['default'];
 //# sourceMappingURL=order.controller.js.map

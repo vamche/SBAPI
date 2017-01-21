@@ -39,7 +39,7 @@ var OrderSchema = new _mongoose2.default.Schema({
     required: false
   },
   team: {
-    type: _mongoose2.default.Schema.ObjectId,
+    type: String,
     required: false
   },
   pilot: {
@@ -64,13 +64,12 @@ var OrderSchema = new _mongoose2.default.Schema({
     type: String,
     required: false
   },
-  from_latitiude: {
-    type: Number,
-    required: false
-  },
-  from_longitude: {
-    type: Number,
-    required: false
+  from_location: {
+    type: {
+      type: String,
+      default: 'Point'
+    },
+    coordinates: [Number]
   },
   from_date_time: {
     type: Date,
@@ -94,24 +93,19 @@ var OrderSchema = new _mongoose2.default.Schema({
     type: String,
     required: false
   },
-  to_latitiude: {
-    type: Number,
-    required: false
-  },
-  to_longitude: {
-    type: Number,
-    required: false
-  },
-  to_date_time: {
-    type: Date,
-    required: false
+  to_location: {
+    type: {
+      type: String,
+      default: 'Point'
+    },
+    coordinates: [Number]
   },
   timeZone: {
     type: Number,
     default: 530
   },
   images: {
-    type: [_mongoose2.default.Schema.ObjectId],
+    type: [String],
     required: false
   },
   rating: {
@@ -121,6 +115,10 @@ var OrderSchema = new _mongoose2.default.Schema({
   status: {
     type: String, // mongoose.Schema.ObjectId,
     required: true
+  },
+  timeline: {
+    type: [Object], // [{ status: String, timestamp: Date, pilot: String }],
+    required: false
   },
   acknowledged_notes: {
     type: String,
@@ -139,8 +137,11 @@ var OrderSchema = new _mongoose2.default.Schema({
     default: Date.now
   },
   pilot_movement: {
-    type: [Object],
-    required: false
+    type: {
+      type: String,
+      default: 'LineString'
+    },
+    coordinates: [[Number]]
   },
   pilot_from_date_time: {
     type: Date,
@@ -170,11 +171,22 @@ var OrderSchema = new _mongoose2.default.Schema({
     type: String, // mongoose.Schema.ObjectId,
     required: false
   },
+  createdBy: {
+    type: String, // User ID
+    required: false
+  },
+  final_cost: {
+    type: Number, // INR
+    required: false
+  },
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
+
+OrderSchema.index({ from_location: '2dsphere' });
+OrderSchema.index({ to_location: '2dsphere' });
 
 /**
  * Add your

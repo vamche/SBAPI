@@ -20,7 +20,7 @@ const OrderSchema = new mongoose.Schema({
     required: false
   },
   team: {
-    type: mongoose.Schema.ObjectId,
+    type: String,
     required: false
   },
   pilot: {
@@ -46,13 +46,12 @@ const OrderSchema = new mongoose.Schema({
     type: String,
     required: false
   },
-  from_latitiude: {
-    type: Number,
-    required: false
-  },
-  from_longitude: {
-    type: Number,
-    required: false
+  from_location: {
+    type: {
+      type: String,
+      default: 'Point'
+    },
+    coordinates: [Number]
   },
   from_date_time: {
     type: Date,
@@ -77,24 +76,19 @@ const OrderSchema = new mongoose.Schema({
     type: String,
     required: false
   },
-  to_latitiude: {
-    type: Number,
-    required: false
-  },
-  to_longitude: {
-    type: Number,
-    required: false
-  },
-  to_date_time: {
-    type: Date,
-    required: false
+  to_location: {
+    type: {
+      type: String,
+      default: 'Point'
+    },
+    coordinates: [Number]
   },
   timeZone: {
     type: Number,
     default: 530
   },
   images: {
-    type: [mongoose.Schema.ObjectId],
+    type: [String],
     required: false
   },
   rating: {
@@ -126,8 +120,11 @@ const OrderSchema = new mongoose.Schema({
     default: Date.now
   },
   pilot_movement: {
-    type: [Object],
-    required: false
+    type: {
+      type: String,
+      default: 'LineString'
+    },
+    coordinates: [[Number]]
   },
   pilot_from_date_time: {
     type: Date,
@@ -157,12 +154,22 @@ const OrderSchema = new mongoose.Schema({
     type: String, // mongoose.Schema.ObjectId,
     required: false
   },
+  createdBy: {
+    type: String, // User ID
+    required: false
+  },
+  final_cost: {
+    type: Number, // INR
+    required: false
+  },
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
 
+OrderSchema.index({ from_location: '2dsphere' });
+OrderSchema.index({ to_location: '2dsphere' });
 
 /**
  * Add your

@@ -1,4 +1,6 @@
+import BPromise from 'bluebird';
 import Pilot from '../models/pilot.model';
+import User from '../models/user.model';
 
 /**
  * Load pilot and append to req.
@@ -27,7 +29,7 @@ function get(req, res) {
  * @returns {Pilot}
  */
 function create(req, res, next) {
-  const pilotId = req.body.userID;
+  const pilotId = req.body.userId;
   const pilot = new Pilot({
     userId: pilotId,
     teams: req.body.teams
@@ -37,6 +39,16 @@ function create(req, res, next) {
     .then(savedPilot => res.json(savedPilot))
     .catch(e => next(e));
 }
+
+function updatePilotLocation(req, res, next) {
+  const pilot = req.pilot;
+  pilot.location = req.body.location;
+  pilot.save()
+    .then(savedPilot => res.json(savedPilot))
+    .catch(e => next(e));
+}
+
+
 
 /**
  * Update existing pilot
@@ -81,4 +93,36 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-export default { load, get, create, update, list, remove };
+/**
+ * Get pilot list.
+ * @property {number} req.query.skip - Number of Pilot to be skipped.
+ * @property {number} req.query.limit - Limit number of Pilot to be returned.
+ * @returns {Pilot[]}
+ */
+function listOfPilotsWithUserDetails(req, res, next) {
+  const { limit = 100, skip = 0 } = req.query;
+  let pilotsWithUserIds = [];
+  Pilot.list({ limit, skip })
+       .then((pilots) => {
+         // pilotsWithUserIds = pilots;
+         let updatedPilots = [];
+         pilotsWithUserIds = pilots.map(
+                                      (pilot) => {
+                                        let x;
+                                        const y = User.get(pilot.userId)
+                                            .then((user) => {
+                                              x = pilot;
+                                              x.userId = JSON.stringify(user);
+                                              updatedPilots.push(x);
+                                              return x;
+                                            });
+                                        return y;
+                                      });
+         BPromise.all(pilotsWithUserIds)
+                .then(() => res.json(updatedPilots))
+                .catch(e => next(e));
+       })
+       .catch(e => next(e));
+}
+
+export default { load, get, create, update, list, remove, listOfPilotsWithUserDetails, updatePilotLocation };

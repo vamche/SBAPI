@@ -23,6 +23,14 @@ const TeamSchema = new mongoose.Schema({
     type: [String],
     required: false
   },
+  geo_fence: {
+    type: {
+      type: String,
+      default: 'Polygon'
+    },
+    coordinates: [[Number]],
+    required: false
+  },
   createdAt: {
     type: Date,
     default: Date.now

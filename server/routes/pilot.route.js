@@ -5,6 +5,12 @@ import pilotCtrl from '../controllers/pilot.controller';
 
 const router = express.Router(); // eslint-disable-line new-cap
 
+
+router.route('/list')
+  /** GET /api/pliots/list - Get list of pilots with respective user details*/
+  .get(pilotCtrl.listOfPilotsWithUserDetails);
+
+
 router.route('/')
   /** GET /api/pilots - Get list of pilots */
   .get(pilotCtrl.list)
@@ -21,6 +27,10 @@ router.route('/:pilotId')
 
   /** DELETE /api/pilots/:pilotId - Delete pilot */
   .delete(pilotCtrl.remove);
+
+router.route('/updateLocation/:pilotId')
+
+  .put(pilotCtrl.updatePilotLocation);
 
 /** Load pilot when API with pilotId route parameter is hit */
 router.param('pilotId', pilotCtrl.load);

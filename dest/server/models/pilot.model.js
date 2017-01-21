@@ -27,7 +27,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 var PilotSchema = new _mongoose2.default.Schema({
   userId: {
-    type: _mongoose2.default.Schema.ObjectId,
+    type: String,
     required: false
   },
   teams: {
@@ -55,13 +55,16 @@ var PilotSchema = new _mongoose2.default.Schema({
     type: String,
     required: false
   },
-  latitude: {
+  battery: {
     type: Number,
     required: false
   },
-  longitude: {
-    type: Number,
-    required: false
+  location: {
+    type: {
+      type: String,
+      default: 'Point'
+    },
+    coordinates: [Number]
   },
   // TO DO : IDK!
   last_updated_location_time: {
@@ -81,6 +84,8 @@ var PilotSchema = new _mongoose2.default.Schema({
     default: Date.now
   }
 });
+
+PilotSchema.index({ location: '2dsphere' });
 
 /**
  * Add your

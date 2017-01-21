@@ -24,6 +24,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var router = _express2.default.Router(); // eslint-disable-line new-cap
 
+
+router.route('/list')
+/** GET /api/pliots/list - Get list of pilots with respective user details*/
+.get(_pilot2.default.listOfPilotsWithUserDetails);
+
 router.route('/')
 /** GET /api/pilots - Get list of pilots */
 .get(_pilot2.default.list)
@@ -40,6 +45,8 @@ router.route('/:pilotId')
 
 /** DELETE /api/pilots/:pilotId - Delete pilot */
 .delete(_pilot2.default.remove);
+
+router.route('/updateLocation/:pilotId').put(_pilot2.default.updatePilotLocation);
 
 /** Load pilot when API with pilotId route parameter is hit */
 router.param('pilotId', _pilot2.default.load);

@@ -22,6 +22,12 @@ router.route('/:orderId')
   /** DELETE /api/orders/:orderId - Delete order */
   .delete(orderCtrl.remove);
 
+router.route('/updateStatus/:orderId')
+  .put(orderCtrl.updateStatus);
+
+router.route('/updateLocation/:orderId')
+  .put(orderCtrl.updateLocation);
+
 /** Load order when API with orderId route parameter is hit */
 router.param('orderId', orderCtrl.load);
 

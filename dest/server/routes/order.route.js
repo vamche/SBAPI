@@ -41,6 +41,10 @@ router.route('/:orderId')
 /** DELETE /api/orders/:orderId - Delete order */
 .delete(_order2.default.remove);
 
+router.route('/updateStatus/:orderId').put(_order2.default.updateStatus);
+
+router.route('/updateLocation/:orderId').put(_order2.default.updateLocation);
+
 /** Load order when API with orderId route parameter is hit */
 router.param('orderId', _order2.default.load);
 

@@ -8,7 +8,7 @@ import APIError from '../helpers/APIError';
  */
 const PilotSchema = new mongoose.Schema({
   userId: {
-    type: mongoose.Schema.ObjectId,
+    type: String,
     required: false
   },
   teams: {
@@ -40,13 +40,12 @@ const PilotSchema = new mongoose.Schema({
     type: Number,
     required: false
   },
-  latitude: {
-    type: Number,
-    required: false
-  },
-  longitude: {
-    type: Number,
-    required: false
+  location: {
+    type: {
+      type: String,
+      default: 'Point'
+    },
+    coordinates: [Number]
   },
   // TO DO : IDK!
   last_updated_location_time: {
@@ -66,6 +65,8 @@ const PilotSchema = new mongoose.Schema({
     default: Date.now
   }
 });
+
+PilotSchema.index({ location: '2dsphere' });
 
 
 /**

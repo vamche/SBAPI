@@ -34,15 +34,13 @@ function create(req, res, next) {
     from_phone: req.body.from_phone,
     from_email: req.body.from_email,
     from_address: req.body.from_address,
-    from_latitiude: req.body.from_latitiude,
-    from_longitude: req.body.from_longitude,
+    from_location: req.body.from_location,
     from_date_time: req.body.from_date_time,
     to_name: req.body.to_name,
     to_phone: req.body.to_phone,
     to_email: req.body.to_email,
     to_address: req.body.to_address,
-    to_latitiude: req.body.to_latitiude,
-    to_longitude: req.body.to_longitude,
+    to_location: req.body.to_location,
     to_date_time: req.body.to_date_time,
     paymentType: req.body.paymentType,
     status: req.body.status,
@@ -69,6 +67,24 @@ function update(req, res, next) {
     .catch(e => next(e));
 }
 
+
+function updateStatus(req, res, next) {
+  const order = req.order;
+  order.status = req.body.status;
+  order.save()
+    .then(savedOrder => res.json(savedOrder))
+    .catch(e => next(e));
+}
+
+function updateLocation(req, res, next) {
+  const order = req.order;
+  order.status = req.body.status;
+  order.save()
+    .then(savedOrder => res.json(savedOrder))
+    .catch(e => next(e));
+}
+
+
 /**
  * Get order list.
  * @property {number} req.query.skip - Number of orders to be skipped.
@@ -93,4 +109,4 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-export default { load, get, create, update, list, remove };
+export default { load, get, create, update, list, remove, updateStatus, updateLocation };
