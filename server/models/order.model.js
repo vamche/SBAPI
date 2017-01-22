@@ -119,13 +119,18 @@ const OrderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  pilot_movement: {
+  pilot_movement : {
+	type: [Number],
+    required: false
+  },
+  /*pilot_movement: {
     type: {
       type: String,
       default: 'LineString'
     },
-    coordinates: [[Number]]
-  },
+    coordinates: [[Number]],
+	
+  },*/
   pilot_from_date_time: {
     type: Date,
     default: Date.now

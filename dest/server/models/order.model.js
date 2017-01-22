@@ -137,12 +137,17 @@ var OrderSchema = new _mongoose2.default.Schema({
     default: Date.now
   },
   pilot_movement: {
+    type: [Number],
+    required: false
+  },
+  /*pilot_movement: {
     type: {
       type: String,
       default: 'LineString'
     },
-    coordinates: [[Number]]
-  },
+    coordinates: [[Number]],
+  
+  },*/
   pilot_from_date_time: {
     type: Date,
     default: Date.now
