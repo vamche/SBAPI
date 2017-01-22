@@ -8,6 +8,8 @@ var _order = require('../models/order.model');
 
 var _order2 = _interopRequireDefault(_order);
 
+var _send = require('../notifications/send');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -59,6 +61,9 @@ function create(req, res, next) {
 
   order.save().then(function (savedOrder) {
     return res.json(savedOrder);
+  }).then(function () {
+    _send.message.contents.en = 'New Order Placed \n' + order.title + '. \nPick at ' + order.from_address + '.\n                              ';
+    (0, _send.sendNotification)(_send.message);
   }).catch(function (e) {
     return next(e);
   });
@@ -86,6 +91,9 @@ function updateStatus(req, res, next) {
   order.status = req.body.status;
   order.save().then(function (savedOrder) {
     return res.json(savedOrder);
+  }).then(function () {
+    _send.message.contents.en = 'Order has been updated. It has been \n' + order.status + '.                              ';
+    (0, _send.sendNotification)(_send.message);
   }).catch(function (e) {
     return next(e);
   });

@@ -1,5 +1,7 @@
 import Order from '../models/order.model';
 
+import { sendNotification, message } from '../notifications/send';
+
 /**
  * Load order and append to req.
  */
@@ -49,6 +51,11 @@ function create(req, res, next) {
 
   order.save()
     .then(savedOrder => res.json(savedOrder))
+    .then(() => {
+      message.contents.en = `New Order Placed \n${order.title}. \nPick at ${order.from_address}.
+                              `;
+      sendNotification(message);
+    })
     .catch(e => next(e));
 }
 
@@ -73,6 +80,10 @@ function updateStatus(req, res, next) {
   order.status = req.body.status;
   order.save()
     .then(savedOrder => res.json(savedOrder))
+    .then(() => {
+      message.contents.en = `Order has been updated. It has been \n${order.status}.                              `;
+      sendNotification(message);
+    })
     .catch(e => next(e));
 }
 
