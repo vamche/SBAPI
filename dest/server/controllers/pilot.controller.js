@@ -48,7 +48,8 @@ function create(req, res, next) {
   var pilotId = req.body.userId;
   var pilot = new _pilot2.default({
     userId: pilotId,
-    teams: req.body.teams
+    teams: req.body.teams,
+    location: req.body.location
   });
 
   pilot.save().then(function (savedPilot) {
@@ -58,9 +59,19 @@ function create(req, res, next) {
   });
 }
 
-function updatePilotLocation(req, res, next) {
+function updateLocation(req, res, next) {
   var pilot = req.pilot;
   pilot.location = req.body.location;
+  pilot.save().then(function (savedPilot) {
+    return res.json(savedPilot);
+  }).catch(function (e) {
+    return next(e);
+  });
+}
+
+function updateTeams(req, res, next) {
+  var pilot = req.pilot;
+  pilot.teams = req.body.teams;
   pilot.save().then(function (savedPilot) {
     return res.json(savedPilot);
   }).catch(function (e) {
@@ -159,6 +170,7 @@ function listOfPilotsWithUserDetails(req, res, next) {
   });
 }
 
-exports.default = { load: load, get: get, create: create, update: update, list: list, remove: remove, listOfPilotsWithUserDetails: listOfPilotsWithUserDetails, updatePilotLocation: updatePilotLocation };
+exports.default = {
+  load: load, get: get, create: create, update: update, list: list, remove: remove, listOfPilotsWithUserDetails: listOfPilotsWithUserDetails, updateLocation: updateLocation, updateTeams: updateTeams };
 module.exports = exports['default'];
 //# sourceMappingURL=pilot.controller.js.map

@@ -117,7 +117,7 @@ var OrderSchema = new _mongoose2.default.Schema({
     required: true
   },
   timeline: {
-    type: [Object], // [{ status: String, timestamp: Date, pilot: String }],
+    type: [[]], // [{ status: String, timestamp: Date, pilot: String }],
     required: false
   },
   acknowledged_notes: {
@@ -137,17 +137,13 @@ var OrderSchema = new _mongoose2.default.Schema({
     default: Date.now
   },
   pilot_movement: {
-    type: [Number],
-    required: false
-  },
-  /*pilot_movement: {
     type: {
       type: String,
       default: 'LineString'
     },
-    coordinates: [[Number]],
-  
-  },*/
+    coordinates: [[Number]]
+
+  },
   pilot_from_date_time: {
     type: Date,
     default: Date.now

@@ -46,7 +46,9 @@ router.route('/:pilotId')
 /** DELETE /api/pilots/:pilotId - Delete pilot */
 .delete(_pilot2.default.remove);
 
-router.route('/updateLocation/:pilotId').put(_pilot2.default.updatePilotLocation);
+router.route('/updateLocation/:pilotId').put(_pilot2.default.updateLocation);
+
+router.route('/updateTeams/:pilotId').put(_pilot2.default.updateTeams);
 
 /** Load pilot when API with pilotId route parameter is hit */
 router.param('pilotId', _pilot2.default.load);

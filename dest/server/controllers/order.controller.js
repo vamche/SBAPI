@@ -88,7 +88,10 @@ function update(req, res, next) {
 
 function updateStatus(req, res, next) {
   var order = req.order;
+  var timeline = order.timeline;
   order.status = req.body.status;
+  timeline.push([req.body.status, Date.now(), order.pilot]);
+  order.timeline = timeline;
   order.save().then(function (savedOrder) {
     return res.json(savedOrder);
   }).then(function () {
@@ -99,9 +102,9 @@ function updateStatus(req, res, next) {
   });
 }
 
-function updateLocation(req, res, next) {
+function updatePilotMovement(req, res, next) {
   var order = req.order;
-  order.status = req.body.status;
+  order.pilot_movement = req.body.pilot_movement;
   order.save().then(function (savedOrder) {
     return res.json(savedOrder);
   }).catch(function (e) {
@@ -142,6 +145,6 @@ function remove(req, res, next) {
   });
 }
 
-exports.default = { load: load, get: get, create: create, update: update, list: list, remove: remove, updateStatus: updateStatus, updateLocation: updateLocation };
+exports.default = { load: load, get: get, create: create, update: update, list: list, remove: remove, updateStatus: updateStatus, updatePilotMovement: updatePilotMovement };
 module.exports = exports['default'];
 //# sourceMappingURL=order.controller.js.map

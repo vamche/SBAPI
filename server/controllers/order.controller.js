@@ -77,7 +77,10 @@ function update(req, res, next) {
 
 function updateStatus(req, res, next) {
   const order = req.order;
+  let timeline = order.timeline;
   order.status = req.body.status;
+  timeline.push([req.body.status, Date.now(), order.pilot]);
+  order.timeline = timeline;
   order.save()
     .then(savedOrder => res.json(savedOrder))
     .then(() => {
@@ -87,9 +90,9 @@ function updateStatus(req, res, next) {
     .catch(e => next(e));
 }
 
-function updateLocation(req, res, next) {
+function updatePilotMovement(req, res, next) {
   const order = req.order;
-  order.status = req.body.status;
+  order.pilot_movement = req.body.pilot_movement;
   order.save()
     .then(savedOrder => res.json(savedOrder))
     .catch(e => next(e));
@@ -120,4 +123,4 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-export default { load, get, create, update, list, remove, updateStatus, updateLocation };
+export default { load, get, create, update, list, remove, updateStatus, updatePilotMovement };

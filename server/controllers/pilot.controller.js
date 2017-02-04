@@ -32,7 +32,8 @@ function create(req, res, next) {
   const pilotId = req.body.userId;
   const pilot = new Pilot({
     userId: pilotId,
-    teams: req.body.teams
+    teams: req.body.teams,
+    location: req.body.location
   });
 
   pilot.save()
@@ -40,7 +41,7 @@ function create(req, res, next) {
     .catch(e => next(e));
 }
 
-function updatePilotLocation(req, res, next) {
+function updateLocation(req, res, next) {
   const pilot = req.pilot;
   pilot.location = req.body.location;
   pilot.save()
@@ -48,7 +49,13 @@ function updatePilotLocation(req, res, next) {
     .catch(e => next(e));
 }
 
-
+function updateTeams(req, res, next) {
+  const pilot = req.pilot;
+  pilot.teams = req.body.teams;
+  pilot.save()
+    .then(savedPilot => res.json(savedPilot))
+    .catch(e => next(e));
+}
 
 /**
  * Update existing pilot
@@ -125,4 +132,5 @@ function listOfPilotsWithUserDetails(req, res, next) {
        .catch(e => next(e));
 }
 
-export default { load, get, create, update, list, remove, listOfPilotsWithUserDetails, updatePilotLocation };
+export default {
+  load, get, create, update, list, remove, listOfPilotsWithUserDetails, updateLocation, updateTeams };

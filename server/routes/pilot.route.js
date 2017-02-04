@@ -30,7 +30,11 @@ router.route('/:pilotId')
 
 router.route('/updateLocation/:pilotId')
 
-  .put(pilotCtrl.updatePilotLocation);
+  .put(pilotCtrl.updateLocation);
+
+router.route('/updateTeams/:pilotId')
+
+    .put(pilotCtrl.updateTeams);
 
 /** Load pilot when API with pilotId route parameter is hit */
 router.param('pilotId', pilotCtrl.load);

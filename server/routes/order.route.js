@@ -25,8 +25,8 @@ router.route('/:orderId')
 router.route('/updateStatus/:orderId')
   .put(orderCtrl.updateStatus);
 
-router.route('/updateLocation/:orderId')
-  .put(orderCtrl.updateLocation);
+router.route('/updatePilotMovement/:orderId')
+  .put(orderCtrl.updatePilotMovement);
 
 /** Load order when API with orderId route parameter is hit */
 router.param('orderId', orderCtrl.load);

@@ -43,7 +43,7 @@ router.route('/:orderId')
 
 router.route('/updateStatus/:orderId').put(_order2.default.updateStatus);
 
-router.route('/updateLocation/:orderId').put(_order2.default.updateLocation);
+router.route('/updatePilotMovement/:orderId').put(_order2.default.updatePilotMovement);
 
 /** Load order when API with orderId route parameter is hit */
 router.param('orderId', _order2.default.load);

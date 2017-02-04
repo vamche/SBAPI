@@ -100,7 +100,7 @@ const OrderSchema = new mongoose.Schema({
     required: true
   },
   timeline: {
-    type: [Object], // [{ status: String, timestamp: Date, pilot: String }],
+    type: [[]], // [{ status: String, timestamp: Date, pilot: String }],
     required: false
   },
   acknowledged_notes: {
@@ -119,18 +119,14 @@ const OrderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  pilot_movement : {
-	type: [Number],
-    required: false
-  },
-  /*pilot_movement: {
+  pilot_movement: {
     type: {
       type: String,
       default: 'LineString'
     },
     coordinates: [[Number]],
-	
-  },*/
+
+  },
   pilot_from_date_time: {
     type: Date,
     default: Date.now
@@ -229,5 +225,3 @@ OrderSchema.statics = {
  * @typedef Order
  */
 export default mongoose.model('Order', OrderSchema);
-
-
