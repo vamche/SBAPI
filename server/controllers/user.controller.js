@@ -29,7 +29,10 @@ function get(req, res) {
 function create(req, res, next) {
   const user = new User({
     username: req.body.username,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
     mobileNumber: req.body.mobileNumber
+
   });
 
   user.save()
