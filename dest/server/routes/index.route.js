@@ -52,6 +52,9 @@ router.use('/orders', _order2.default);
 // mount auth routes at /auth
 router.use('/auth', _auth2.default);
 
+// mount auth routes at /auth
+router.use('/util', _auth2.default);
+
 exports.default = router;
 module.exports = exports['default'];
 //# sourceMappingURL=index.route.js.map

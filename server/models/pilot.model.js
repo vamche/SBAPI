@@ -25,7 +25,8 @@ const PilotSchema = new mongoose.Schema({
   },
   isActive: {
     type: Boolean,
-    required: false
+    required: false,
+    default: false
   },
   isAvailable: {
     type: Boolean,
@@ -116,6 +117,7 @@ PilotSchema.statics = {
       .limit(limit)
       .exec();
   }
+
 };
 
 /**

@@ -1,6 +1,7 @@
 import Order from '../models/order.model';
 
 import { sendNotification, message } from '../notifications/send';
+import { assign, unAssign } from './util.controller';
 
 /**
  * Load order and append to req.
@@ -50,6 +51,7 @@ function create(req, res, next) {
   });
 
   order.save()
+    .then(savedOrder => assign(savedOrder._id))
     .then(savedOrder => res.json(savedOrder))
     .then(() => {
       message.contents.en = `New Order Placed \n${order.title}. \nPick at ${order.from_address}.
@@ -112,6 +114,15 @@ function list(req, res, next) {
     .catch(e => next(e));
 }
 
+
+function listByPilotAndDate(req, res, next) {
+    const { limit = 50, skip = 0 } = req.query;
+    const { pilot, date } = req.body;
+    Order.listByPilotAndDate({pilot, date, limit, skip})
+        .then(orders => res.json(orders))
+        .catch(e => next(e));
+}
+
 /**
  * Delete order.
  * @returns {Order}
@@ -123,4 +134,4 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-export default { load, get, create, update, list, remove, updateStatus, updatePilotMovement };
+export default { load, get, create, update, list, remove, updateStatus, updatePilotMovement, listByPilotAndDate };

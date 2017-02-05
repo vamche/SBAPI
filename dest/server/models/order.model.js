@@ -20,6 +20,10 @@ var _APIError = require('../helpers/APIError');
 
 var _APIError2 = _interopRequireDefault(_APIError);
 
+var _moment = require('moment');
+
+var _moment2 = _interopRequireDefault(_moment);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -235,6 +239,17 @@ OrderSchema.statics = {
         limit = _ref$limit === undefined ? 50 : _ref$limit;
 
     return this.find().sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+  },
+  listByPilotAndDate: function listByPilotAndDate() {
+    var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        pilot = _ref2.pilot,
+        date = _ref2.date,
+        _ref2$skip = _ref2.skip,
+        skip = _ref2$skip === undefined ? 0 : _ref2$skip,
+        _ref2$limit = _ref2.limit,
+        limit = _ref2$limit === undefined ? 50 : _ref2$limit;
+
+    return this.find().where('pilot', pilot).where('createdAt').gte((0, _moment2.default)(date, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(date, "YYYYMMDD").endOf('day')).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   }
 };
 

@@ -23,7 +23,7 @@ function get(req, res) {
 }
 
 function getUnAssignedPilots(){
-   Pilot.find()
+   return Pilot.find()
         .where('isActive', false);
 }
 

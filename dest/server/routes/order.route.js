@@ -41,6 +41,8 @@ router.route('/:orderId')
 /** DELETE /api/orders/:orderId - Delete order */
 .delete(_order2.default.remove);
 
+router.route('/list').post(_order2.default.listByPilotAndDate);
+
 router.route('/updateStatus/:orderId').put(_order2.default.updateStatus);
 
 router.route('/updatePilotMovement/:orderId').put(_order2.default.updatePilotMovement);

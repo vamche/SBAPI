@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import httpStatus from 'http-status';
 import APIError from '../helpers/APIError';
 
+import moment from 'moment';
+
 /**
  * Job Schema
  */
@@ -218,6 +220,17 @@ OrderSchema.statics = {
       .skip(skip)
       .limit(limit)
       .exec();
+  },
+
+  listByPilotAndDate({ pilot, date, skip = 0, limit = 50 } = {}) {
+
+        return this.find()
+            .where('pilot',pilot)
+            .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day')).lte(moment(date, "YYYYMMDD").endOf('day'))
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .exec();
   }
 };
 

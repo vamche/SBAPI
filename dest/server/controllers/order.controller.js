@@ -10,6 +10,8 @@ var _order2 = _interopRequireDefault(_order);
 
 var _send = require('../notifications/send');
 
+var _util = require('./util.controller');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -60,6 +62,8 @@ function create(req, res, next) {
   });
 
   order.save().then(function (savedOrder) {
+    return (0, _util.assign)(savedOrder._id);
+  }).then(function (savedOrder) {
     return res.json(savedOrder);
   }).then(function () {
     _send.message.contents.en = 'New Order Placed \n' + order.title + '. \nPick at ' + order.from_address + '.\n                              ';
@@ -132,6 +136,23 @@ function list(req, res, next) {
   });
 }
 
+function listByPilotAndDate(req, res, next) {
+  var _req$query2 = req.query,
+      _req$query2$limit = _req$query2.limit,
+      limit = _req$query2$limit === undefined ? 50 : _req$query2$limit,
+      _req$query2$skip = _req$query2.skip,
+      skip = _req$query2$skip === undefined ? 0 : _req$query2$skip;
+  var _req$body = req.body,
+      pilot = _req$body.pilot,
+      date = _req$body.date;
+
+  _order2.default.listByPilotAndDate({ pilot: pilot, date: date, limit: limit, skip: skip }).then(function (orders) {
+    return res.json(orders);
+  }).catch(function (e) {
+    return next(e);
+  });
+}
+
 /**
  * Delete order.
  * @returns {Order}
@@ -145,6 +166,6 @@ function remove(req, res, next) {
   });
 }
 
-exports.default = { load: load, get: get, create: create, update: update, list: list, remove: remove, updateStatus: updateStatus, updatePilotMovement: updatePilotMovement };
+exports.default = { load: load, get: get, create: create, update: update, list: list, remove: remove, updateStatus: updateStatus, updatePilotMovement: updatePilotMovement, listByPilotAndDate: listByPilotAndDate };
 module.exports = exports['default'];
 //# sourceMappingURL=order.controller.js.map

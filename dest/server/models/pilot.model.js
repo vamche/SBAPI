@@ -44,7 +44,8 @@ var PilotSchema = new _mongoose2.default.Schema({
   },
   isActive: {
     type: Boolean,
-    required: false
+    required: false,
+    default: false
   },
   isAvailable: {
     type: Boolean,

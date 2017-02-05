@@ -27,4 +27,7 @@ router.use('/orders', orderRoutes);
 // mount auth routes at /auth
 router.use('/auth', authRoutes);
 
+// mount auth routes at /auth
+router.use('/util', authRoutes);
+
 export default router;

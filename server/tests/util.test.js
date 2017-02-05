@@ -4,6 +4,8 @@ import httpStatus from 'http-status';
 import chai, { expect } from 'chai';
 import app from '../../index';
 
+import utilCtrl  from '../controllers/util.controller'
+
 chai.config.includeStack = true;
 
 /**
@@ -124,6 +126,34 @@ describe('## User APIs', () => {
         });
     });
 
+    describe('# Assign Pilot', () => {
+        it('should assign a new pilot', (done) => {
+            utilCtrl.assign(order._id,null)
+                .then(assignedOrder => {
+                    order = assignedOrder;
+                    expect(order.pilot).to.be.ok;
+                    done();
+                })
+                .catch(done);
+
+        });
+    });
+
+    describe('# UnAssign Pilot', () => {
+
+        it('should un assign pilot', (done) => {
+            utilCtrl.unAssign(order._id,null)
+                .then(unAssignedOrder =>
+                    {
+                        expect(unAssignedOrder._id.toString()).to.equal(order._id.toString());
+                        expect(unAssignedOrder.pilot).to.equal(null);
+                        done();
+                    }
+                )
+                .catch(done);
+        });
+    });
+
 
     describe('# DELETE /api/users/', () => {
         it('should delete user', (done) => {
@@ -158,7 +188,7 @@ describe('## User APIs', () => {
                 .delete(`/api/orders/${order._id}`)
                 .expect(httpStatus.OK)
                 .then((res) => {
-                    expect(res.body._id).to.equal(order._id);
+                    expect(res.body._id).to.equal(order._id.toString());
                     done();
                 })
                 .catch(done);

@@ -39,7 +39,10 @@ function get(req, res) {
 function create(req, res, next) {
   var user = new _user2.default({
     username: req.body.username,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
     mobileNumber: req.body.mobileNumber
+
   });
 
   user.save().then(function (savedUser) {
