@@ -22,6 +22,11 @@ function get(req, res) {
   return res.json(req.pilot);
 }
 
+function getUnAssignedPilots(){
+   Pilot.find()
+        .where('isActive', false);
+}
+
 /**
  * Create new pilot
  * @property {string} req.body.username - The username of pilot.
@@ -44,6 +49,9 @@ function create(req, res, next) {
 function updateLocation(req, res, next) {
   const pilot = req.pilot;
   pilot.location = req.body.location;
+  pilot.battery = req.body.battery;
+  pilot.isAvailable = req.body.isAvailable;
+  pilot.status = req.body.status;
   pilot.save()
     .then(savedPilot => res.json(savedPilot))
     .catch(e => next(e));
@@ -133,4 +141,4 @@ function listOfPilotsWithUserDetails(req, res, next) {
 }
 
 export default {
-  load, get, create, update, list, remove, listOfPilotsWithUserDetails, updateLocation, updateTeams };
+  load, get, create, update, list, remove, listOfPilotsWithUserDetails, updateLocation, updateTeams, getUnAssignedPilots };
