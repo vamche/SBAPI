@@ -44,17 +44,19 @@ function get(req, res) {
 
 function assign(orderId, pilotId) {
     return _pilot4.default.getUnAssignedPilots().then(function (pilots) {
-        var validPilots = pilots.filter(function (pilot) {
-            return pilot._id != pilotId;
-        });
-        var pilot = validPilots[0];
-        pilot.isActive = true;
-        return pilot.save(pilot).then(function (pilot) {
-            return _order2.default.get(orderId).then(function (order) {
-                order.pilot = pilot._id.toString();
-                return order.save(order);
+        if (pilots.length > 0) {
+            var validPilots = pilots.filter(function (pilot) {
+                return pilot._id != pilotId;
             });
-        });
+            var pilot = validPilots[0];
+            pilot.isActive = true;
+            return pilot.save(pilot).then(function (pilot) {
+                return _order2.default.get(orderId).then(function (order) {
+                    order.pilot = pilot._id.toString();
+                    return order.save(order);
+                });
+            });
+        }
     });
 }
 

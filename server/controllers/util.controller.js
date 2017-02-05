@@ -26,17 +26,19 @@ function get(req, res) {
 function assign(orderId, pilotId){
     return pilotCtrl.getUnAssignedPilots()
         .then(pilots => {
-            let validPilots = pilots.filter(pilot => pilot._id != pilotId);
-            let pilot = validPilots[0];
-            pilot.isActive = true;
-            return pilot.save(pilot)
-                .then(pilot => {
-                   return Order.get(orderId)
-                       .then(order => {
-                           order.pilot = pilot._id.toString();
-                           return order.save(order);
-                       });
-                });
+            if(pilots.length > 0){
+                let validPilots = pilots.filter(pilot => pilot._id != pilotId);
+                let pilot = validPilots[0];
+                pilot.isActive = true;
+                return pilot.save(pilot)
+                    .then(pilot => {
+                        return Order.get(orderId)
+                            .then(order => {
+                                order.pilot = pilot._id.toString();
+                                return order.save(order);
+                            });
+                    });
+            }
         });
 }
 

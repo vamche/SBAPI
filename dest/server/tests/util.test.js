@@ -127,8 +127,11 @@ describe('## User APIs', function () {
     describe('# Assign Pilot', function () {
         it('should assign a new pilot', function (done) {
             _util2.default.assign(order._id, null).then(function (assignedOrder) {
-                order = assignedOrder;
-                (0, _chai.expect)(order.pilot).to.be.ok;
+                if (assignedOrder) {
+                    order = assignedOrder;
+                    (0, _chai.expect)(order.pilot).to.be.ok;
+                }
+
                 done();
             }).catch(done);
         });
