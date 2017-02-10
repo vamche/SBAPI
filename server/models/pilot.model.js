@@ -104,6 +104,19 @@ PilotSchema.statics = {
       });
   },
 
+  getByUserId(userId) {
+    return this.findOne()
+        .where('userId', userId)
+        .exec()
+        .then((order) => {
+                if (order) {
+                    return order;
+                }
+                const err = new APIError('No such user exists!', httpStatus.NOT_FOUND);
+                return Promise.reject(err);
+        });
+  },
+
   /**
    * List pilots in descending order of 'createdAt' timestamp.
    * @param {number} skip - Number of pilots to be skipped.

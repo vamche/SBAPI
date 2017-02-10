@@ -118,6 +118,15 @@ PilotSchema.statics = {
       return _bluebird2.default.reject(err);
     });
   },
+  getByUserId: function getByUserId(userId) {
+    return this.findOne().where('userId', userId).exec().then(function (order) {
+      if (order) {
+        return order;
+      }
+      var err = new _APIError2.default('No such user exists!', _httpStatus2.default.NOT_FOUND);
+      return _bluebird2.default.reject(err);
+    });
+  },
 
 
   /**

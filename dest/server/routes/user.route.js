@@ -36,7 +36,7 @@ router.route('/:userId')
 .get(_user2.default.get)
 
 /** PUT /api/users/:userId - Update user */
-.put((0, _expressValidation2.default)(_paramValidation2.default.updateUser), _user2.default.update)
+.put(_user2.default.update)
 
 /** DELETE /api/users/:userId - Delete user */
 .delete(_user2.default.remove);

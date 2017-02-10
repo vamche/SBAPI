@@ -20,6 +20,14 @@ var _order = require('../controllers/order.controller');
 
 var _order2 = _interopRequireDefault(_order);
 
+var _expressJwt = require('express-jwt');
+
+var _expressJwt2 = _interopRequireDefault(_expressJwt);
+
+var _env = require('../../config/env');
+
+var _env2 = _interopRequireDefault(_env);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var router = _express2.default.Router(); // eslint-disable-line new-cap
@@ -41,7 +49,7 @@ router.route('/:orderId')
 /** DELETE /api/orders/:orderId - Delete order */
 .delete(_order2.default.remove);
 
-router.route('/list').post(_order2.default.listByPilotAndDate);
+router.route('/list').post((0, _expressJwt2.default)({ secret: _env2.default.jwtSecret }), _order2.default.listByPilotAndDate);
 
 router.route('/updateStatus/:orderId').put(_order2.default.updateStatus);
 

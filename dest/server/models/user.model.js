@@ -28,7 +28,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var UserSchema = new _mongoose2.default.Schema({
   username: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   password: {
     type: String,
@@ -89,6 +90,15 @@ UserSchema.statics = {
    */
   get: function get(id) {
     return this.findById(id).exec().then(function (user) {
+      if (user) {
+        return user;
+      }
+      var err = new _APIError2.default('No such user exists!', _httpStatus2.default.NOT_FOUND);
+      return _bluebird2.default.reject(err);
+    });
+  },
+  getByUsername: function getByUsername(username) {
+    return this.findOne().where('username', username).exec().then(function (user) {
       if (user) {
         return user;
       }

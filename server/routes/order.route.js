@@ -2,6 +2,8 @@ import express from 'express';
 import validate from 'express-validation';
 import paramValidation from '../../config/param-validation';
 import orderCtrl from '../controllers/order.controller';
+import expressJwt from 'express-jwt';
+import config from '../../config/env';
 
 const router = express.Router(); // eslint-disable-line new-cap
 
@@ -23,7 +25,7 @@ router.route('/:orderId')
   .delete(orderCtrl.remove);
 
 router.route('/list')
-    .post(orderCtrl.listByPilotAndDate)
+    .post(expressJwt({ secret: config.jwtSecret }), orderCtrl.listByPilotAndDate)
 
 router.route('/updateStatus/:orderId')
   .put(orderCtrl.updateStatus);

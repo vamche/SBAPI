@@ -1,7 +1,7 @@
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _jsonwebtoken = require('jsonwebtoken');
@@ -16,15 +16,17 @@ var _APIError = require('../helpers/APIError');
 
 var _APIError2 = _interopRequireDefault(_APIError);
 
+var _user = require('../models/user.model');
+
+var _user2 = _interopRequireDefault(_user);
+
+var _pilot = require('../models/pilot.model');
+
+var _pilot2 = _interopRequireDefault(_pilot);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var config = require('../../config/env');
-
-// sample user, used for authentication
-var user = {
-  username: 'react',
-  password: 'express'
-};
 
 /**
  * Returns jwt token if valid username and password is provided
@@ -34,20 +36,30 @@ var user = {
  * @returns {*}
  */
 function login(req, res, next) {
-  // Ideally you'll fetch this from the db
-  // Idea here was to show how jwt works with simplicity
-  if (req.body.username === user.username && req.body.password === user.password) {
-    var token = _jsonwebtoken2.default.sign({
-      username: user.username
-    }, config.jwtSecret);
-    return res.json({
-      token: token,
-      username: user.username
+    // Ideally you'll fetch this from the db
+    // Idea here was to show how jwt works with simplicity
+    _user2.default.getByUsername(req.body.username).then(function (user) {
+        if (user.password === req.body.password) {
+            if (req.body.userRole === 'PILOT') {
+                _pilot2.default.getByUserId(user._id.toString()).then(function (pilot) {
+                    var token = _jsonwebtoken2.default.sign({
+                        username: user.username
+                    }, config.jwtSecret);
+                    return res.json({
+                        token: token,
+                        username: user.username,
+                        pilotId: pilot._id
+                    });
+                }).catch(function (e) {
+                    var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED);
+                    return next(err);
+                });
+            }
+        }
+    }).catch(function (e) {
+        var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED);
+        return next(err);
     });
-  }
-
-  var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED);
-  return next(err);
 }
 
 /**
@@ -57,11 +69,11 @@ function login(req, res, next) {
  * @returns {*}
  */
 function getRandomNumber(req, res) {
-  // req.user is assigned by jwt middleware if valid token is provided
-  return res.json({
-    user: req.user,
-    num: Math.random() * 100
-  });
+    // req.user is assigned by jwt middleware if valid token is provided
+    return res.json({
+        user: req.user,
+        num: Math.random() * 100
+    });
 }
 
 exports.default = { login: login, getRandomNumber: getRandomNumber };
