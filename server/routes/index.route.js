@@ -4,6 +4,7 @@ import teamRoutes from './team.route';
 import pilotRoutes from './pilot.route';
 import orderRoutes from './order.route';
 import authRoutes from './auth.route';
+import customerRoutes from './customer.route'
 
 const router = express.Router(); // eslint-disable-line new-cap
 
@@ -15,19 +16,22 @@ router.get('/health-check', (req, res) =>
 // mount user routes at /users
 router.use('/users', userRoutes);
 
-// mount auth routes at /teams
+// mount team routes at /teams
 router.use('/teams', teamRoutes);
 
-// mount auth routes at /teams
+// mount pilot routes at /pilots
 router.use('/pilots', pilotRoutes);
 
-// mount auth routes at /teams
+// mount order routes at /orders
 router.use('/orders', orderRoutes);
 
 // mount auth routes at /auth
 router.use('/auth', authRoutes);
 
-// mount auth routes at /auth
+// mount util routes at /util
 router.use('/util', authRoutes);
+
+// mount customer routes at /auth
+router.use('/customers', customerRoutes);
 
 export default router;

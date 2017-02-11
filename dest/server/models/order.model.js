@@ -184,6 +184,10 @@ var OrderSchema = new _mongoose2.default.Schema({
     type: Number, // INR
     required: false
   },
+  payment_pending: {
+    type: Boolean,
+    required: false
+  },
   createdAt: {
     type: Date,
     default: Date.now

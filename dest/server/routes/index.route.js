@@ -28,6 +28,10 @@ var _auth = require('./auth.route');
 
 var _auth2 = _interopRequireDefault(_auth);
 
+var _customer = require('./customer.route');
+
+var _customer2 = _interopRequireDefault(_customer);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var router = _express2.default.Router(); // eslint-disable-line new-cap
@@ -40,20 +44,23 @@ router.get('/health-check', function (req, res) {
 // mount user routes at /users
 router.use('/users', _user2.default);
 
-// mount auth routes at /teams
+// mount team routes at /teams
 router.use('/teams', _team2.default);
 
-// mount auth routes at /teams
+// mount pilot routes at /pilots
 router.use('/pilots', _pilot2.default);
 
-// mount auth routes at /teams
+// mount order routes at /orders
 router.use('/orders', _order2.default);
 
 // mount auth routes at /auth
 router.use('/auth', _auth2.default);
 
-// mount auth routes at /auth
+// mount util routes at /util
 router.use('/util', _auth2.default);
+
+// mount customer routes at /auth
+router.use('/customers', _customer2.default);
 
 exports.default = router;
 module.exports = exports['default'];

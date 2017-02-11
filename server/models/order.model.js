@@ -165,6 +165,10 @@ const OrderSchema = new mongoose.Schema({
     type: Number, // INR
     required: false
   },
+  payment_pending: {
+    type: Boolean,
+    required: false
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -223,7 +227,6 @@ OrderSchema.statics = {
   },
 
   listByPilotAndDate({ pilot, date, skip = 0, limit = 50 } = {}) {
-
         return this.find()
             .where('pilot',pilot)
             .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day')).lte(moment(date, "YYYYMMDD").endOf('day'))

@@ -62,6 +62,21 @@ exports.default = {
     }
   },
 
+  // POST /api/pilots
+  createCustomer: {
+    body: {
+      userId: _joi2.default.string().required()
+    }
+  },
+
+  // UPDATE /api/pilots/:pilotId
+  updateCustomer: {
+    body: {},
+    params: {
+      customerId: _joi2.default.string().hex().required()
+    }
+  },
+
   // POST /api/orders
   createOrder: {
     body: {
