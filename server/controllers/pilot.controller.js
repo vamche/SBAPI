@@ -46,6 +46,34 @@ function create(req, res, next) {
     .catch(e => next(e));
 }
 
+
+function createPilot(req, res, next){
+
+    const user = new User({
+        firstName : req.body.firstName,
+        lastName : req.body.lastName,
+        username : req.body.username,
+        password : req.body.password,
+        mobileNumber : req.body.mobileNumber,
+        emailAddress : req.body.emailAddress
+    });
+
+    user.save()
+        .then(savedUser => {
+            const customer = new Pilot({
+                userId : savedUser._id.toString(),
+                teams : req.body.teams,
+                location : req.body.location
+            });
+            customer.save()
+                .then(savedCustomer => {
+                    res.json(savedCustomer);
+                })
+                .catch(e => next(e));
+        })
+        .catch(e => next(e));
+}
+
 function updateLocation(req, res, next) {
   const pilot = req.pilot;
   pilot.location = req.body.location;
@@ -141,4 +169,4 @@ function listOfPilotsWithUserDetails(req, res, next) {
 }
 
 export default {
-  load, get, create, update, list, remove, listOfPilotsWithUserDetails, updateLocation, updateTeams, getUnAssignedPilots };
+  load, get, create, update, list, remove, listOfPilotsWithUserDetails, updateLocation, updateTeams, getUnAssignedPilots, createPilot };

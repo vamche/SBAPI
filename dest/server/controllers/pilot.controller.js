@@ -63,6 +63,33 @@ function create(req, res, next) {
   });
 }
 
+function createPilot(req, res, next) {
+
+  var user = new _user2.default({
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    username: req.body.username,
+    password: req.body.password,
+    mobileNumber: req.body.mobileNumber,
+    emailAddress: req.body.emailAddress
+  });
+
+  user.save().then(function (savedUser) {
+    var customer = new _pilot2.default({
+      userId: savedUser._id.toString(),
+      teams: req.body.teams,
+      location: req.body.location
+    });
+    customer.save().then(function (savedCustomer) {
+      res.json(savedCustomer);
+    }).catch(function (e) {
+      return next(e);
+    });
+  }).catch(function (e) {
+    return next(e);
+  });
+}
+
 function updateLocation(req, res, next) {
   var pilot = req.pilot;
   pilot.location = req.body.location;
@@ -178,6 +205,6 @@ function listOfPilotsWithUserDetails(req, res, next) {
 }
 
 exports.default = {
-  load: load, get: get, create: create, update: update, list: list, remove: remove, listOfPilotsWithUserDetails: listOfPilotsWithUserDetails, updateLocation: updateLocation, updateTeams: updateTeams, getUnAssignedPilots: getUnAssignedPilots };
+  load: load, get: get, create: create, update: update, list: list, remove: remove, listOfPilotsWithUserDetails: listOfPilotsWithUserDetails, updateLocation: updateLocation, updateTeams: updateTeams, getUnAssignedPilots: getUnAssignedPilots, createPilot: createPilot };
 module.exports = exports['default'];
 //# sourceMappingURL=pilot.controller.js.map

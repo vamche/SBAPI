@@ -28,6 +28,11 @@ router.route('/:pilotId')
   /** DELETE /api/pilots/:pilotId - Delete pilot */
   .delete(pilotCtrl.remove);
 
+router.route('/create')
+
+    /** POST /api/pilots/create - Create new customer */
+    .post(pilotCtrl.createPilot);
+
 router.route('/updateLocation/:pilotId')
 
   .put(pilotCtrl.updateLocation);

@@ -27,6 +27,9 @@ router.route('/:orderId')
 router.route('/list')
     .post(expressJwt({ secret: config.jwtSecret }), orderCtrl.listByPilotAndDate)
 
+router.route('/listByDate')
+    .post(expressJwt({ secret: config.jwtSecret }), orderCtrl.listByDate)
+
 router.route('/updateStatus/:orderId')
   .put(orderCtrl.updateStatus);
 

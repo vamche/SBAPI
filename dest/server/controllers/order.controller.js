@@ -152,6 +152,35 @@ function listByPilotAndDate(req, res, next) {
   });
 }
 
+function listByDate(req, res, next) {
+  var _req$query3 = req.query,
+      _req$query3$limit = _req$query3.limit,
+      limit = _req$query3$limit === undefined ? 50 : _req$query3$limit,
+      _req$query3$skip = _req$query3.skip,
+      skip = _req$query3$skip === undefined ? 0 : _req$query3$skip;
+  var date = req.body.date;
+
+  _order2.default.listByDate({ date: date, limit: limit, skip: skip }).then(function (orders) {
+    return res.json(orders);
+  }).catch(function (e) {
+    return next(e);
+  });
+}
+
+function listByStatusPilotDateRange(req, res, next) {
+  var _req$body2 = req.body,
+      status = _req$body2.status,
+      pilot = _req$body2.pilot,
+      fromDate = _req$body2.fromDate,
+      toDate = _req$body2.toDate;
+
+  _order2.default.getOrdersByStatusPilotDateRange(pilot, fromDate, toDate, status).then(function (orders) {
+    return res.json(orders);
+  }).catch(function (e) {
+    return next(e);
+  });
+}
+
 /**
  * Delete order.
  * @returns {Order}
@@ -165,6 +194,7 @@ function remove(req, res, next) {
   });
 }
 
-exports.default = { load: load, get: get, create: create, update: update, list: list, remove: remove, updateStatus: updateStatus, updatePilotMovement: updatePilotMovement, listByPilotAndDate: listByPilotAndDate };
+exports.default = { load: load, get: get, create: create, update: update, list: list, remove: remove,
+  updateStatus: updateStatus, updatePilotMovement: updatePilotMovement, listByPilotAndDate: listByPilotAndDate, listByDate: listByDate, listByStatusPilotDateRange: listByStatusPilotDateRange };
 module.exports = exports['default'];
 //# sourceMappingURL=order.controller.js.map

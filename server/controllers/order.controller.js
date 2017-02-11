@@ -116,11 +116,26 @@ function list(req, res, next) {
 
 
 function listByPilotAndDate(req, res, next) {
-    const { limit = 50, skip = 0 } = req.query;
-    const { pilot, date } = req.body;
-    Order.listByPilotAndDate({pilot, date, limit, skip})
+  const { limit = 50, skip = 0 } = req.query;
+  const { pilot, date } = req.body;
+  Order.listByPilotAndDate({pilot, date, limit, skip})
         .then(orders => res.json(orders))
         .catch(e => next(e));
+}
+
+function listByDate(req, res, next) {
+    const { limit = 50, skip = 0 } = req.query;
+    const { date } = req.body;
+    Order.listByDate({date, limit, skip})
+        .then(orders => res.json(orders))
+        .catch(e => next(e));
+}
+
+function listByStatusPilotDateRange(req, res, next){
+  const { status, pilot, fromDate, toDate} = req.body;
+  Order.getOrdersByStatusPilotDateRange(pilot, fromDate, toDate, status)
+      .then(orders => res.json(orders))
+      .catch(e => next(e));
 }
 
 /**
@@ -134,4 +149,5 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-export default { load, get, create, update, list, remove, updateStatus, updatePilotMovement, listByPilotAndDate };
+export default { load, get, create, update, list, remove,
+    updateStatus, updatePilotMovement, listByPilotAndDate, listByDate, listByStatusPilotDateRange };

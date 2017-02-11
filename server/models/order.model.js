@@ -228,12 +228,29 @@ OrderSchema.statics = {
 
   listByPilotAndDate({ pilot, date, skip = 0, limit = 50 } = {}) {
         return this.find()
-            .where('pilot',pilot)
+            .where('pilot', pilot)
             .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day')).lte(moment(date, "YYYYMMDD").endOf('day'))
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
             .exec();
+  },
+
+  listByDate({ date, skip = 0, limit = 50 } = {}) {
+        return this.find()
+            .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day')).lte(moment(date, "YYYYMMDD").endOf('day'))
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .exec();
+    },
+
+  getOrdersByPilotDateRange({ pilot, fromDate, toDate, status } = {}){
+      return this.find()
+          .where('pilot', pilot)
+          .where('status', status)
+          .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
+          .exec();
   }
 };
 
