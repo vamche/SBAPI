@@ -38,6 +38,8 @@ function assign(orderId, pilotId){
                                 return order.save(order);
                             });
                     });
+            }else {
+              return Order.get(orderId);
             }
         });
 }
