@@ -64,10 +64,9 @@ function create(req, res, next) {
   order.save().then(function (savedOrder) {
     return (0, _util.assign)(savedOrder._id);
   }).then(function (savedOrder) {
-    return res.json(savedOrder);
-  }).then(function () {
     _send.message.contents.en = 'New Order Placed \n' + order.title + '. \nPick at ' + order.from_address + '.\n                              ';
     (0, _send.sendNotification)(_send.message);
+    res.json(savedOrder);
   }).catch(function (e) {
     return next(e);
   });

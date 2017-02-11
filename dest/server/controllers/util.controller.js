@@ -56,6 +56,8 @@ function assign(orderId, pilotId) {
                     return order.save(order);
                 });
             });
+        } else {
+            return _order2.default.get(orderId);
         }
     });
 }
