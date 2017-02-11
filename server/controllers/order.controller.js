@@ -52,11 +52,11 @@ function create(req, res, next) {
 
   order.save()
     .then(savedOrder => assign(savedOrder._id))
-    .then(savedOrder => res.json(savedOrder))
-    .then(() => {
+    .then((savedOrder) => {
       message.contents.en = `New Order Placed \n${order.title}. \nPick at ${order.from_address}.
                               `;
       sendNotification(message);
+      res.json(savedOrder)
     })
     .catch(e => next(e));
 }
