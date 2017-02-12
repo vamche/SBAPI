@@ -182,6 +182,7 @@ var OrderSchema = new _mongoose2.default.Schema({
   },
   final_cost: {
     type: Number, // INR
+    default: 0,
     required: false
   },
   payment_pending: {

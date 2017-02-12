@@ -42,8 +42,8 @@ function get(req, res) {
     return res.json(req.order);
 }
 
-function assign(orderId, pilotId) {
-    return _pilot4.default.getUnAssignedPilots().then(function (pilots) {
+function assign(orderId, team, pilotId) {
+    return _pilot4.default.getUnAssignedPilotsByTeam(team).then(function (pilots) {
         if (pilots.length > 0) {
             var validPilots = pilots.filter(function (pilot) {
                 return pilot._id != pilotId;

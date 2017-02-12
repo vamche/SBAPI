@@ -1,4 +1,7 @@
 import Team from '../models/team.model';
+import Order from '../models/order.model';
+import BPromise from 'bluebird';
+import moment from 'moment';
 
 /**
  * Load team and append to req.
@@ -77,4 +80,57 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-export default { load, get, create, update, list, remove };
+
+function getSales(req, res, next){
+  const { fromDate = moment().format('YYYYMMDD'), toDate = moment().format('YYYYMMDD') } = req.body;
+  let sales = []; // Array of {_id: String, title: String, sales: String}
+  let promises;
+  Team.find()
+          .then(teams => {
+              promises = teams.map(team => {
+                  let total = 0;
+                  const p = Order.find()
+                      .where('team', team._id.toString())
+                      .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
+                      .then(orders => {
+                          orders.forEach(order => {
+                              total = total + order.final_cost;
+                          });
+                          sales.push({
+                              '_id' : team._id,
+                              'name' : team.name,
+                              'sales' : total
+                          });
+                      })
+                      .catch(e => next(e));
+                  return p;
+              });
+              BPromise.all(promises)
+                  .then(() => res.json(sales))
+                  .catch(e => next(e));
+          })
+          .catch(e => next(e));
+}
+
+function getSalesByTeam(req, res, next){
+    const { fromDate = moment().format('YYYYMMDD'), toDate = moment().format('YYYYMMDD') } = req.body;
+    let sales; // {_id: String, title: String, sales: String}
+    Order.find()
+        .where('team', req.team._id.toString())
+        .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
+        .then(orders => {
+            let total = 0;
+            orders.forEach(order => {
+                total = total + order.final_cost;
+            });
+            sales = {
+                '_id' : req.team._id,
+                'name' : req.team.name,
+                'sales' : total
+            };
+            res.json(sales);
+        })
+        .catch(e => next(e));
+}
+
+export default { load, get, create, update, list, remove, getSales, getSalesByTeam };

@@ -8,7 +8,7 @@ import APIError from '../helpers/APIError';
  */
 const TimesheetSchema = new mongoose.Schema({
     isAvailable: {
-      type: String,
+      type: Boolean,
       required: true
     },
     pilot: {

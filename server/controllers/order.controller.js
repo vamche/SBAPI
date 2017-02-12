@@ -47,11 +47,12 @@ function create(req, res, next) {
     to_date_time: req.body.to_date_time,
     paymentType: req.body.paymentType,
     status: req.body.status,
-    tags: req.body.tags
+    tags: req.body.tags,
+    team: req.body.team
   });
 
   order.save()
-    .then(savedOrder => assign(savedOrder._id))
+    .then(savedOrder => assign(savedOrder._id, savedOrder.team))
     .then((savedOrder) => {
       message.contents.en = `New Order Placed \n${order.title}. \nPick at ${order.from_address}.
                               `;

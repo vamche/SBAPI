@@ -30,6 +30,11 @@ var CustomerSchema = new _mongoose2.default.Schema({
     type: String,
     required: false
   },
+  name: {
+    type: String,
+    required: true,
+    unique: true
+  },
   teams: {
     type: [String], // [mongoose.Schema.ObjectId],
     required: false

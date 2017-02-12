@@ -55,6 +55,20 @@ router.route('/updateLocation/:customerId').put(_customer2.default.updateLocatio
 
 router.route('/updateTeams/:customerId').put(_customer2.default.updateTeams);
 
+router.route('/sales')
+/** GET /api/customers/sales - Get sales by date range
+ * Params
+ * { fromDate, toDate }
+ * **/
+.post(_customer2.default.getSales);
+
+router.route('/sales/:customerId')
+/** GET /api/customers/sales - Get sales by date range
+ * Params
+ * { fromDate, toDate }
+ * **/
+.post(_customer2.default.getSalesByCustomer);
+
 /** Load customer when API with customerId route parameter is hit */
 router.param('customerId', _customer2.default.load);
 

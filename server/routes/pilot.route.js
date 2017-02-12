@@ -41,6 +41,35 @@ router.route('/updateTeams/:pilotId')
 
     .put(pilotCtrl.updateTeams);
 
+router.route('/sales')
+/** GET /api/customers/sales - Get sales by date range
+ * Params
+ * { fromDate, toDate }
+ * **/
+    .post(pilotCtrl.getSales)
+
+router.route('/sales/:pilotId')
+/** GET /api/customers/sales - Get sales by date range
+ * Params
+ * { fromDate, toDate }
+ * **/
+    .post(pilotCtrl.getSalesByPilot)
+
+router.route('/timesheets')
+/** GET /api/customers/sales - Get sales by date range
+ * Params
+ * { fromDate, toDate }
+ * **/
+    .post(pilotCtrl.getTimesheets)
+
+router.route('/timesheets/:pilotId')
+/** GET /api/customers/sales - Get sales by date range
+ * Params
+ * { fromDate, toDate }
+ * **/
+    .post(pilotCtrl.getTimesheetsByPilot)
+
+
 /** Load pilot when API with pilotId route parameter is hit */
 router.param('pilotId', pilotCtrl.load);
 

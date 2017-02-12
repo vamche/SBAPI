@@ -163,6 +163,7 @@ const OrderSchema = new mongoose.Schema({
   },
   final_cost: {
     type: Number, // INR
+    default: 0,
     required: false
   },
   payment_pending: {

@@ -55,6 +55,34 @@ router.route('/updateLocation/:pilotId').put(_pilot2.default.updateLocation);
 
 router.route('/updateTeams/:pilotId').put(_pilot2.default.updateTeams);
 
+router.route('/sales')
+/** GET /api/customers/sales - Get sales by date range
+ * Params
+ * { fromDate, toDate }
+ * **/
+.post(_pilot2.default.getSales);
+
+router.route('/sales/:pilotId')
+/** GET /api/customers/sales - Get sales by date range
+ * Params
+ * { fromDate, toDate }
+ * **/
+.post(_pilot2.default.getSalesByPilot);
+
+router.route('/timesheets')
+/** GET /api/customers/sales - Get sales by date range
+ * Params
+ * { fromDate, toDate }
+ * **/
+.post(_pilot2.default.getTimesheets);
+
+router.route('/timesheets/:pilotId')
+/** GET /api/customers/sales - Get sales by date range
+ * Params
+ * { fromDate, toDate }
+ * **/
+.post(_pilot2.default.getTimesheetsByPilot);
+
 /** Load pilot when API with pilotId route parameter is hit */
 router.param('pilotId', _pilot2.default.load);
 

@@ -1,6 +1,9 @@
 import BPromise from 'bluebird';
 import Pilot from '../models/pilot.model';
 import User from '../models/user.model';
+import Order from '../models/order.model';
+import Timesheet from '../models/timesheet.model';
+import moment from 'moment';
 
 /**
  * Load pilot and append to req.
@@ -22,9 +25,10 @@ function get(req, res) {
   return res.json(req.pilot);
 }
 
-function getUnAssignedPilots(){
+function getUnAssignedPilotsByTeam(team){
    return Pilot.find()
-        .where('isActive', false);
+        .where('isActive', false)
+        .where('team', team);
 }
 
 /**
@@ -144,29 +148,156 @@ function remove(req, res, next) {
  */
 function listOfPilotsWithUserDetails(req, res, next) {
   const { limit = 100, skip = 0 } = req.query;
-  let pilotsWithUserIds = [];
+  let promises = [];
   Pilot.list({ limit, skip })
        .then((pilots) => {
          // pilotsWithUserIds = pilots;
          let updatedPilots = [];
-         pilotsWithUserIds = pilots.map(
-                                      (pilot) => {
-                                        let x;
-                                        const y = User.get(pilot.userId)
+         promises = pilots.map((pilot) => {
+                                        let pilotToBeUpdated;
+                                        const p = User.get(pilot.userId)
                                             .then((user) => {
-                                              x = pilot;
-                                              x.userId = JSON.stringify(user);
-                                              updatedPilots.push(x);
-                                              return x;
+                                              pilotToBeUpdated = pilot;
+                                              pilotToBeUpdated.userId = JSON.stringify(user);
+                                              updatedPilots.push(pilotToBeUpdated);
+                                              return pilotToBeUpdated;
                                             });
-                                        return y;
+                                        return p;
                                       });
-         BPromise.all(pilotsWithUserIds)
+         BPromise.all(promises)
                 .then(() => res.json(updatedPilots))
                 .catch(e => next(e));
        })
        .catch(e => next(e));
 }
 
+
+function getSales(req, res, next){
+    const { fromDate = moment().format('YYYYMMDD'), toDate = moment().format('YYYYMMDD') } = req.body;
+    let sales = []; // Array of {_id: String, title: String, sales: String}
+    let promises;
+    Pilot.find()
+        .then(pilots => {
+            promises = pilots.map(pilot => {
+                let total = 0;
+                const p = Order.find()
+                    .where('pilot', pilot._id.toString())
+                    .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
+                    .then(orders => {
+                        orders.forEach(order => {
+                            total = total + order.final_cost;
+                        });
+                        sales.push({
+                            '_id' : pilot._id,
+                            'name' : pilot.name,
+                            'sales' : total
+                        });
+                    })
+                    .catch(e => next(e));
+                return p;
+            });
+            BPromise.all(promises)
+                .then(() => res.json(sales))
+                .catch(e => next(e));
+        })
+        .catch(e => next(e));
+}
+
+function getSalesByPilot(req, res, next){
+    const { fromDate = moment().format('YYYYMMDD'), toDate = moment().format('YYYYMMDD') } = req.body;
+    let sales; // {_id: String, title: String, sales: String}
+    Order.find()
+        .where('pilot', req.pilot._id.toString())
+        .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
+        .then(orders => {
+            let total = 0;
+            orders.forEach(order => {
+                total = total + order.final_cost;
+            });
+            sales = {
+                '_id' : req.pilot._id,
+                'name' : req.pilot.name,
+                'sales' : total,
+                'orders' : orders
+            };
+            res.json(sales);
+        })
+        .catch(e => next(e));
+}
+
+
+function getTimesheets(req, res, next){
+    const { fromDate = moment().format('YYYYMMDD'), toDate = moment().format('YYYYMMDD') } = req.body;
+    let times = []; // Array of {_id: String, title: String, sales: String}
+    let promises;
+    Pilot.find()
+        .then(pilots => {
+            promises = pilots.map(pilot => {
+                let total = 0;
+                const p = Timesheet.find()
+                    .where('pilot', pilot._id.toString())
+                    .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
+                    .sort({ createdAt: 1 })
+                    .then(timesheets => {
+                        let diff = 0;
+                        let len = 0;
+                        timesheets.forEach(timesheet => {
+                            len++;
+                            if(len === 1) {
+                                if(timesheet.isAvailable){
+                                    diff -= moment(timesheet.createdAt).unix();
+                                }
+                            }else if(len === timesheets.length){
+                                if(!timesheet.isAvailable){
+                                    diff += moment(timesheet.createdAt).unix();
+                                }
+                            }else {
+                                if(timesheet.isAvailable){
+                                    diff -= moment(timesheet.createdAt).unix();
+                                }else{
+                                    diff += moment(timesheet.createdAt).unix();
+                                }
+                            }
+                        });
+                        times.push({
+                            '_id' : pilot._id,
+                            'name' : pilot.name,
+                            'time' : diff,
+                            'timesheets' : timesheets
+                        });
+                    })
+                    .catch(e => next(e));
+                return p;
+            });
+            BPromise.all(promises)
+                .then(() => res.json(times))
+                .catch(e => next(e));
+        })
+        .catch(e => next(e));
+}
+
+function getTimesheetsByPilot(req, res, next){
+    const { fromDate = moment().format('YYYYMMDD'), toDate = moment().format('YYYYMMDD') } = req.body;
+    let sales; // {_id: String, title: String, sales: String}
+    Order.find()
+        .where('pilot', req.pilot._id.toString())
+        .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
+        .then(orders => {
+            let total = 0;
+            orders.forEach(order => {
+                total = total + order.final_cost;
+            });
+            sales = {
+                '_id' : req.pilot._id,
+                'name' : req.pilot.name,
+                'sales' : total,
+                'orders' : orders
+            };
+            res.json(sales);
+        })
+        .catch(e => next(e));
+}
+
 export default {
-  load, get, create, update, list, remove, listOfPilotsWithUserDetails, updateLocation, updateTeams, getUnAssignedPilots, createPilot };
+  load, get, create, update, list, remove, listOfPilotsWithUserDetails, updateLocation, updateTeams,
+    getUnAssignedPilotsByTeam, createPilot, getSales, getSalesByPilot, getTimesheets, getTimesheetsByPilot };

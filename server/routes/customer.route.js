@@ -41,6 +41,21 @@ router.route('/updateTeams/:customerId')
 
     .put(customerCtrl.updateTeams);
 
+
+router.route('/sales')
+/** GET /api/customers/sales - Get sales by date range
+ * Params
+ * { fromDate, toDate }
+ * **/
+    .post(customerCtrl.getSales)
+
+router.route('/sales/:customerId')
+/** GET /api/customers/sales - Get sales by date range
+ * Params
+ * { fromDate, toDate }
+ * **/
+    .post(customerCtrl.getSalesByCustomer)
+
 /** Load customer when API with customerId route parameter is hit */
 router.param('customerId', customerCtrl.load);
 

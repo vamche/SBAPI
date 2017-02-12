@@ -1,6 +1,8 @@
-import BPromise from 'bluebird';
 import Customer from '../models/customer.model';
 import User from '../models/user.model';
+import Order from '../models/order.model';
+import BPromise from 'bluebird';
+import moment from 'moment';
 
 /**
  * Load customer and append to req.
@@ -154,5 +156,60 @@ function listOfCustomersWithUserDetails(req, res, next) {
     .catch(e => next(e));
 }
 
+
+function getSales(req, res, next){
+    const { fromDate = moment().format('YYYYMMDD'), toDate = moment().format('YYYYMMDD') } = req.body;
+    let sales = []; // Array of {_id: String, title: String, sales: String}
+    let promises;
+    Customer.find()
+        .then(customers => {
+            promises = customers.map(customer => {
+                let total = 0;
+                const p = Order.find()
+                    .where('createdBy', customer._id.toString())
+                    .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
+                    .then(orders => {
+                        orders.forEach(order => {
+                            total = total + order.final_cost;
+                        });
+                        sales.push({
+                            '_id' : customer._id,
+                            'name' : customer.name,
+                            'sales' : total
+                        });
+                    })
+                    .catch(e => next(e));
+                return p;
+            });
+            BPromise.all(promises)
+                .then(() => res.json(sales))
+                .catch(e => next(e));
+        })
+        .catch(e => next(e));
+}
+
+function getSalesByCustomer(req, res, next){
+    const { fromDate = moment().format('YYYYMMDD'), toDate = moment().format('YYYYMMDD') } = req.body;
+    let sales; // {_id: String, title: String, sales: String}
+    Order.find()
+        .where('createdBy', req.customer._id.toString())
+        .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
+        .then(orders => {
+            let total = 0;
+            orders.forEach(order => {
+                total = total + order.final_cost;
+            });
+            sales = {
+                '_id' : req.customer._id,
+                'name' : req.customer.name,
+                'sales' : total,
+                'orders' : orders
+            };
+            res.json(sales);
+        })
+        .catch(e => next(e));
+}
+
 export default {
-  load, get, create, update, list, remove, listOfCustomersWithUserDetails, updateLocation, updateTeams, createCustomer };
+  load, get, create, update, list, remove, listOfCustomersWithUserDetails,
+    updateLocation, updateTeams, createCustomer, getSales, getSalesByCustomer };

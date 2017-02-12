@@ -32,7 +32,8 @@ var TeamSchema = new _mongoose2.default.Schema({
   },
   name: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   description: {
     type: String,

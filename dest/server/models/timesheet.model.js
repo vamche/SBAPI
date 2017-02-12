@@ -27,7 +27,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 var TimesheetSchema = new _mongoose2.default.Schema({
     isAvailable: {
-        type: String,
+        type: Boolean,
         required: true
     },
     pilot: {

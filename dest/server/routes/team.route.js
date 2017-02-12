@@ -41,6 +41,20 @@ router.route('/:teamId')
 /** DELETE /api/teams/:teamId - Delete team */
 .delete(_team2.default.remove);
 
+router.route('/sales')
+/** GET /api/teams/sales - Get sales by team and date range
+ * Params
+ * { fromDate, toDate }
+ * **/
+.post(_team2.default.getSales);
+
+router.route('/sales/:teamId')
+/** GET /api/teams/sales - Get sales by team and date range
+ * Params
+ * { fromDate, toDate }
+ * **/
+.post(_team2.default.getSalesByTeam);
+
 /** Load team when API with teamId route parameter is hit */
 router.param('teamId', _team2.default.load);
 
