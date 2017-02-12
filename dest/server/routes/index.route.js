@@ -36,6 +36,10 @@ var _timesheet = require('./timesheet.route');
 
 var _timesheet2 = _interopRequireDefault(_timesheet);
 
+var _target = require('./target.route');
+
+var _target2 = _interopRequireDefault(_target);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var router = _express2.default.Router(); // eslint-disable-line new-cap
@@ -68,6 +72,9 @@ router.use('/customers', _customer2.default);
 
 // mount customer routes at /auth
 router.use('/timesheets', _timesheet2.default);
+
+// mount customer routes at /auth
+router.use('/targets', _target2.default);
 
 exports.default = router;
 module.exports = exports['default'];

@@ -29,8 +29,8 @@ function get(req, res) {
 function create(req, res, next) {
   const target = new Target({
     date : req.body.date,
-    description : req.body.date,
-    target : req.body.date,
+    description : req.body.description,
+    target : req.body.target,
     createdBy : req.body.createdBy
   });
 
@@ -48,6 +48,8 @@ function create(req, res, next) {
 function update(req, res, next) {
   const target = req.target;
   target.target = req.body.target ? req.body.target : target.target;
+  target.actual = req.body.actual ? req.body.actual : target.actual;
+  target.description = req.body.description ? req.body.description : target.description;
   target.save()
     .then(savedTarget => res.json(savedTarget))
     .catch(e => next(e));

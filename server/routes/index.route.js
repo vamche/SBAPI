@@ -5,7 +5,9 @@ import pilotRoutes from './pilot.route';
 import orderRoutes from './order.route';
 import authRoutes from './auth.route';
 import customerRoutes from './customer.route';
-import timesheetRoutes from './timesheet.route'
+import timesheetRoutes from './timesheet.route';
+import targetRoutes from './target.route';
+
 
 
 const router = express.Router(); // eslint-disable-line new-cap
@@ -38,5 +40,8 @@ router.use('/customers', customerRoutes);
 
 // mount customer routes at /auth
 router.use('/timesheets', timesheetRoutes);
+
+// mount customer routes at /auth
+router.use('/targets', targetRoutes);
 
 export default router;

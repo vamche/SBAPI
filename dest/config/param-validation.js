@@ -110,7 +110,21 @@ exports.default = {
       orderId: _joi2.default.string().hex().required()
     }
   },
+  // POST /api/orders
+  createTarget: {
+    body: {
+      target: _joi2.default.string().required(),
+      date: _joi2.default.string().required()
+    }
+  },
 
+  // UPDATE /api/orders/:orderId
+  updateTarget: {
+    body: {},
+    params: {
+      targetId: _joi2.default.string().hex().required()
+    }
+  },
   // POST /api/auth/login
   login: {
     body: {
