@@ -297,10 +297,20 @@ function getTimesheets(req, res, next) {
                     if (len === 1) {
                         if (timesheet.isAvailable) {
                             diff -= (0, _moment2.default)(timesheet.createdAt).unix();
+                        } else {
+                            diff -= (0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day').unix();
+                            diff += (0, _moment2.default)(timesheet.createdAt).unix();
                         }
                     } else if (len === timesheets.length) {
                         if (!timesheet.isAvailable) {
                             diff += (0, _moment2.default)(timesheet.createdAt).unix();
+                        } else {
+                            diff -= (0, _moment2.default)(timesheet.createdAt).unix();
+                            if (toDate === (0, _moment2.default)().format('YYYYMMDD')) {
+                                diff += (0, _moment2.default)().unix();
+                            } else {
+                                diff += (0, _moment2.default)(toDate, "YYYYMMDD").endOf('day').unix();
+                            }
                         }
                     } else {
                         if (timesheet.isAvailable) {
@@ -313,7 +323,7 @@ function getTimesheets(req, res, next) {
                 times.push({
                     '_id': pilot._id,
                     'name': pilot.name,
-                    'time': diff,
+                    'time': diff / (60 * 60),
                     'timesheets': timesheets
                 });
             }).catch(function (e) {
@@ -339,18 +349,45 @@ function getTimesheetsByPilot(req, res, next) {
         toDate = _req$body4$toDate === undefined ? (0, _moment2.default)().format('YYYYMMDD') : _req$body4$toDate;
 
     var sales = void 0; // {_id: String, title: String, sales: String}
-    _order2.default.find().where('pilot', req.pilot._id.toString()).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day')).then(function (orders) {
-        var total = 0;
-        orders.forEach(function (order) {
-            total = total + order.final_cost;
+    var times = void 0;
+    _timesheet2.default.find().where('pilot', req.pilot._id.toString()).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day')).sort({ createdAt: 1 }).then(function (timesheets) {
+        var diff = 0;
+        var len = 0;
+        timesheets.forEach(function (timesheet) {
+            len++;
+            if (len === 1) {
+                if (timesheet.isAvailable) {
+                    diff -= (0, _moment2.default)(timesheet.createdAt).unix();
+                } else {
+                    diff -= (0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day').unix();
+                    diff += (0, _moment2.default)(timesheet.createdAt).unix();
+                }
+            } else if (len === timesheets.length) {
+                if (!timesheet.isAvailable) {
+                    diff += (0, _moment2.default)(timesheet.createdAt).unix();
+                } else {
+                    diff -= (0, _moment2.default)(timesheet.createdAt).unix();
+                    if (toDate === (0, _moment2.default)().format('YYYYMMDD')) {
+                        diff += (0, _moment2.default)().unix();
+                    } else {
+                        diff += (0, _moment2.default)(toDate, "YYYYMMDD").endOf('day').unix();
+                    }
+                }
+            } else {
+                if (timesheet.isAvailable) {
+                    diff -= (0, _moment2.default)(timesheet.createdAt).unix();
+                } else {
+                    diff += (0, _moment2.default)(timesheet.createdAt).unix();
+                }
+            }
         });
-        sales = {
+        times = {
             '_id': req.pilot._id,
             'name': req.pilot.name,
-            'sales': total,
-            'orders': orders
+            'time': diff / (60 * 60),
+            'timesheets': timesheets
         };
-        res.json(sales);
+        res.json(times);
     }).catch(function (e) {
         return next(e);
     });

@@ -100,7 +100,21 @@ export default {
       orderId: Joi.string().hex().required()
     }
   },
+  // POST /api/orders
+  createTarget: {
+    body: {
+      target: Joi.string().required(),
+      date: Joi.string().required()
+    }
+  },
 
+  // UPDATE /api/orders/:orderId
+  updateTarget: {
+    body: {},
+    params: {
+      targetId: Joi.string().hex().required()
+    }
+  },
   // POST /api/auth/login
   login: {
     body: {

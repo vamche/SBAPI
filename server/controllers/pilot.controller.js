@@ -246,10 +246,20 @@ function getTimesheets(req, res, next){
                             if(len === 1) {
                                 if(timesheet.isAvailable){
                                     diff -= moment(timesheet.createdAt).unix();
+                                }else{
+                                    diff -= moment(fromDate, "YYYYMMDD").startOf('day').unix();
+                                    diff += moment(timesheet.createdAt).unix();
                                 }
                             }else if(len === timesheets.length){
                                 if(!timesheet.isAvailable){
                                     diff += moment(timesheet.createdAt).unix();
+                                }else{
+                                    diff -= moment(timesheet.createdAt).unix();
+                                    if(toDate === moment().format('YYYYMMDD')){
+                                        diff += moment().unix();
+                                    }else{
+                                        diff += moment(toDate, "YYYYMMDD").endOf('day').unix();
+                                    }
                                 }
                             }else {
                                 if(timesheet.isAvailable){
@@ -262,7 +272,7 @@ function getTimesheets(req, res, next){
                         times.push({
                             '_id' : pilot._id,
                             'name' : pilot.name,
-                            'time' : diff,
+                            'time' : diff/(60*60),
                             'timesheets' : timesheets
                         });
                     })
@@ -279,21 +289,49 @@ function getTimesheets(req, res, next){
 function getTimesheetsByPilot(req, res, next){
     const { fromDate = moment().format('YYYYMMDD'), toDate = moment().format('YYYYMMDD') } = req.body;
     let sales; // {_id: String, title: String, sales: String}
-    Order.find()
+    let times;
+    Timesheet.find()
         .where('pilot', req.pilot._id.toString())
         .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
-        .then(orders => {
-            let total = 0;
-            orders.forEach(order => {
-                total = total + order.final_cost;
+        .sort({ createdAt: 1 })
+        .then(timesheets => {
+            let diff = 0;
+            let len = 0;
+            timesheets.forEach(timesheet => {
+                len++;
+                if(len === 1) {
+                    if(timesheet.isAvailable){
+                        diff -= moment(timesheet.createdAt).unix();
+                    }else{
+                        diff -= moment(fromDate, "YYYYMMDD").startOf('day').unix();
+                        diff += moment(timesheet.createdAt).unix();
+                    }
+                }else if(len === timesheets.length){
+                    if(!timesheet.isAvailable){
+                        diff += moment(timesheet.createdAt).unix();
+                    }else{
+                        diff -= moment(timesheet.createdAt).unix();
+                        if(toDate === moment().format('YYYYMMDD')){
+                            diff += moment().unix();
+                        }else{
+                            diff += moment(toDate, "YYYYMMDD").endOf('day').unix();
+                        }
+                    }
+                }else {
+                    if(timesheet.isAvailable){
+                        diff -= moment(timesheet.createdAt).unix();
+                    }else{
+                        diff += moment(timesheet.createdAt).unix();
+                    }
+                }
             });
-            sales = {
+            times = {
                 '_id' : req.pilot._id,
                 'name' : req.pilot.name,
-                'sales' : total,
-                'orders' : orders
+                'time' : diff/(60*60),
+                'timesheets' : timesheets
             };
-            res.json(sales);
+            res.json(times);
         })
         .catch(e => next(e));
 }
