@@ -30,6 +30,25 @@ exports.default = {
     }
   },
 
+  // POST /api/timesheets
+  createTimesheet: {
+    body: {
+      pilot: _joi2.default.string().required(),
+      isAvailable: _joi2.default.boolean().required()
+    }
+  },
+
+  // UPDATE /api/timesheets/:timesheetId
+  updateTimesheet: {
+    body: {
+      pilot: _joi2.default.string().required(),
+      isAvailable: _joi2.default.boolean().required()
+    },
+    params: {
+      timesheetId: _joi2.default.string().hex().required()
+    }
+  },
+
   // POST /api/teams
   createTeam: {
     body: {

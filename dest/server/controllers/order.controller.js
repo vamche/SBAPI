@@ -174,7 +174,7 @@ function listByStatusPilotDateRange(req, res, next) {
       fromDate = _req$body2.fromDate,
       toDate = _req$body2.toDate;
 
-  _order2.default.getOrdersByStatusPilotDateRange(pilot, fromDate, toDate, status).then(function (orders) {
+  _order2.default.listByPilotDateRangeStatus(pilot, fromDate, toDate, status).then(function (orders) {
     return res.json(orders);
   }).catch(function (e) {
     return next(e);

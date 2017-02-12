@@ -29,7 +29,7 @@ const UserRoleSchema = new mongoose.Schema({
     required: true,
   },
   createdAt: {
-    type: Date,
+    type: Number,
     default: Date.now
   }
 });

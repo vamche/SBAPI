@@ -133,7 +133,7 @@ function listByDate(req, res, next) {
 
 function listByStatusPilotDateRange(req, res, next){
   const { status, pilot, fromDate, toDate} = req.body;
-  Order.getOrdersByStatusPilotDateRange(pilot, fromDate, toDate, status)
+  Order.listByPilotDateRangeStatus(pilot, fromDate, toDate, status)
       .then(orders => res.json(orders))
       .catch(e => next(e));
 }

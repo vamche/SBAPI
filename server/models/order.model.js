@@ -245,7 +245,7 @@ OrderSchema.statics = {
             .exec();
     },
 
-  getOrdersByPilotDateRange({ pilot, fromDate, toDate, status } = {}){
+  listByPilotDateRangeStatus({ pilot, fromDate, toDate, status } = {}){
       return this.find()
           .where('pilot', pilot)
           .where('status', status)

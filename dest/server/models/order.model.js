@@ -265,7 +265,7 @@ OrderSchema.statics = {
 
     return this.find().where('createdAt').gte((0, _moment2.default)(date, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(date, "YYYYMMDD").endOf('day')).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
-  getOrdersByPilotDateRange: function getOrdersByPilotDateRange() {
+  listByPilotDateRangeStatus: function listByPilotDateRangeStatus() {
     var _ref4 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         pilot = _ref4.pilot,
         fromDate = _ref4.fromDate,

@@ -50,15 +50,15 @@ const PilotSchema = new mongoose.Schema({
   },
   // TO DO : IDK!
   last_updated_location_time: {
-    type: String,
+    type: Date,
     required: false
   },
   last_updated_date_time: {
-    type: String,
+    type: Date,
     required: false
   },
   registration_status: {
-    type: String,
+    type: Boolean,
     required: false
   },
   createdAt: {

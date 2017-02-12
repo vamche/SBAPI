@@ -44,7 +44,7 @@ var UserRoleSchema = new _mongoose2.default.Schema({
     required: true
   },
   createdAt: {
-    type: Date,
+    type: Number,
     default: Date.now
   }
 });
