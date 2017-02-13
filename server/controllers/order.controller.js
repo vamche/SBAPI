@@ -72,6 +72,7 @@ function update(req, res, next) {
   const order = req.order;
   order.pilot = order.pilot;
   order.status = req.body.status;
+  order.pilot_movement = req.body.pilot_movement;
   order.save()
     .then(savedOrder => res.json(savedOrder))
     .catch(e => next(e));
