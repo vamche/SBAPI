@@ -36,6 +36,9 @@ router.route('/updateStatus/:orderId')
 router.route('/updatePilotMovement/:orderId')
   .put(orderCtrl.updatePilotMovement);
 
+router.route('/update/bulk')
+  .put(orderCtrl.updateOrders);
+
 /** Load order when API with orderId route parameter is hit */
 router.param('orderId', orderCtrl.load);
 

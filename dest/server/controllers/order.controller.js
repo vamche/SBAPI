@@ -12,6 +12,10 @@ var _send = require('../notifications/send');
 
 var _util = require('./util.controller');
 
+var _bluebird = require('bluebird');
+
+var _bluebird2 = _interopRequireDefault(_bluebird);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -86,6 +90,27 @@ function update(req, res, next) {
   order.pilot_movement = req.body.pilot_movement;
   order.save().then(function (savedOrder) {
     return res.json(savedOrder);
+  }).catch(function (e) {
+    return next(e);
+  });
+}
+
+function updateOrders(req, res, next) {
+  var updatedOrders = [];
+  var promises = req.body.orders.map(function (order) {
+    return _order2.default.get(order._id).then(function (o) {
+      o.pilot_movement = order.pilot_movement;
+      return o.save().then(function (updatedOrder) {
+        return updatedOrders.push(updatedOrder);
+      }).catch(function (e) {
+        return next(e);
+      });
+    }).catch(function (e) {
+      return next(e);
+    });
+  });
+  _bluebird2.default.all(promises).then(function () {
+    return res.json(updatedOrders);
   }).catch(function (e) {
     return next(e);
   });
@@ -197,6 +222,6 @@ function remove(req, res, next) {
 }
 
 exports.default = { load: load, get: get, create: create, update: update, list: list, remove: remove,
-  updateStatus: updateStatus, updatePilotMovement: updatePilotMovement, listByPilotAndDate: listByPilotAndDate, listByDate: listByDate, listByStatusPilotDateRange: listByStatusPilotDateRange };
+  updateStatus: updateStatus, updatePilotMovement: updatePilotMovement, listByPilotAndDate: listByPilotAndDate, listByDate: listByDate, listByStatusPilotDateRange: listByStatusPilotDateRange, updateOrders: updateOrders };
 module.exports = exports['default'];
 //# sourceMappingURL=order.controller.js.map

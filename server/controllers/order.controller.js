@@ -2,6 +2,8 @@ import Order from '../models/order.model';
 
 import { sendNotification, message } from '../notifications/send';
 import { assign, unAssign } from './util.controller';
+import BPromise from 'bluebird';
+
 
 /**
  * Load order and append to req.
@@ -79,6 +81,28 @@ function update(req, res, next) {
 }
 
 
+function updateOrders(req, res, next){
+  let updatedOrders = [];
+  const promises = req.body.orders.map(
+      order => {
+        return Order.get(order._id)
+          .then(
+            o => {
+              o.pilot_movement = order.pilot_movement;
+              return o.save()
+                .then(updatedOrder => updatedOrders.push(updatedOrder))
+                .catch(e => next(e));
+            }
+          )
+          .catch(e => next(e));
+      }
+  );
+  BPromise.all(promises)
+    .then(() => res.json(updatedOrders))
+    .catch(e => next(e));
+}
+
+
 function updateStatus(req, res, next) {
   const order = req.order;
   let timeline = order.timeline;
@@ -152,4 +176,4 @@ function remove(req, res, next) {
 }
 
 export default { load, get, create, update, list, remove,
-    updateStatus, updatePilotMovement, listByPilotAndDate, listByDate, listByStatusPilotDateRange };
+    updateStatus, updatePilotMovement, listByPilotAndDate, listByDate, listByStatusPilotDateRange, updateOrders };
