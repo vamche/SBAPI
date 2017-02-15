@@ -221,7 +221,33 @@ function remove(req, res, next) {
   });
 }
 
+function stats(req, res, next) {
+  var date = req.body.date;
+  _order2.default.listByDate({ date: date }).then(function (orders) {
+    var stats = {
+      assigned: 0,
+      unAssigned: 0,
+      completed: 0,
+      total: 0
+    };
+    orders.forEach(function (order) {
+      if (order.status == "COMPLETED") {
+        stats.completed++;
+      } else if (order.pilot && order.pilot != '') {
+        stats.assigned++;
+      } else {
+        stats.unAssigned++;
+      }
+      stats.total++;
+    });
+    res.json(stats);
+  }).catch(function (e) {
+    return next(e);
+  });
+}
+
 exports.default = { load: load, get: get, create: create, update: update, list: list, remove: remove,
-  updateStatus: updateStatus, updatePilotMovement: updatePilotMovement, listByPilotAndDate: listByPilotAndDate, listByDate: listByDate, listByStatusPilotDateRange: listByStatusPilotDateRange, updateOrders: updateOrders };
+  updateStatus: updateStatus, updatePilotMovement: updatePilotMovement, listByPilotAndDate: listByPilotAndDate, listByDate: listByDate, listByStatusPilotDateRange: listByStatusPilotDateRange, updateOrders: updateOrders,
+  stats: stats };
 module.exports = exports['default'];
 //# sourceMappingURL=order.controller.js.map

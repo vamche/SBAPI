@@ -336,6 +336,40 @@ function getTimesheetsByPilot(req, res, next){
         .catch(e => next(e));
 }
 
+function stats(req, res, next){
+    let teams = [];
+    const team = req.body.team;
+    let getPilots;
+    if(!team || team != "*"){
+      teams = [team];
+      getPilots = Pilot.find()
+        .where('teams').in(teams);
+    }else{
+      getPilots = Pilot.find();
+    }
+      getPilots
+      .then(pilots => {
+        const stats = {
+          available : 0,
+          offline : 0,
+          total: 0
+        };
+        pilots.forEach(pilot => {
+          if (pilot.isAvailable) {
+            stats.available++;
+          }else {
+            stats.offline++;
+          }
+          stats.total++;
+        });
+        res.json(stats);
+      })
+      .catch(e => next(e))
+
+}
+
+
 export default {
   load, get, create, update, list, remove, listOfPilotsWithUserDetails, updateLocation, updateTeams,
-    getUnAssignedPilotsByTeam, createPilot, getSales, getSalesByPilot, getTimesheets, getTimesheetsByPilot };
+    getUnAssignedPilotsByTeam, createPilot, getSales, getSalesByPilot, getTimesheets, getTimesheetsByPilot,
+    stats};

@@ -59,6 +59,8 @@ router.route('/updatePilotMovement/:orderId').put(_order2.default.updatePilotMov
 
 router.route('/update/bulk').put(_order2.default.updateOrders);
 
+router.route('/stats').post(_order2.default.stats);
+
 /** Load order when API with orderId route parameter is hit */
 router.param('orderId', _order2.default.load);
 

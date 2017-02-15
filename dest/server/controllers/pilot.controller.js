@@ -393,8 +393,39 @@ function getTimesheetsByPilot(req, res, next) {
     });
 }
 
+function stats(req, res, next) {
+    var teams = [];
+    var team = req.body.team;
+    var getPilots = void 0;
+    if (!team || team != "*") {
+        teams = [team];
+        getPilots = _pilot2.default.find().where('teams').in(teams);
+    } else {
+        getPilots = _pilot2.default.find();
+    }
+    getPilots.then(function (pilots) {
+        var stats = {
+            available: 0,
+            offline: 0,
+            total: 0
+        };
+        pilots.forEach(function (pilot) {
+            if (pilot.isAvailable) {
+                stats.available++;
+            } else {
+                stats.offline++;
+            }
+            stats.total++;
+        });
+        res.json(stats);
+    }).catch(function (e) {
+        return next(e);
+    });
+}
+
 exports.default = {
     load: load, get: get, create: create, update: update, list: list, remove: remove, listOfPilotsWithUserDetails: listOfPilotsWithUserDetails, updateLocation: updateLocation, updateTeams: updateTeams,
-    getUnAssignedPilotsByTeam: getUnAssignedPilotsByTeam, createPilot: createPilot, getSales: getSales, getSalesByPilot: getSalesByPilot, getTimesheets: getTimesheets, getTimesheetsByPilot: getTimesheetsByPilot };
+    getUnAssignedPilotsByTeam: getUnAssignedPilotsByTeam, createPilot: createPilot, getSales: getSales, getSalesByPilot: getSalesByPilot, getTimesheets: getTimesheets, getTimesheetsByPilot: getTimesheetsByPilot,
+    stats: stats };
 module.exports = exports['default'];
 //# sourceMappingURL=pilot.controller.js.map

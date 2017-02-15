@@ -83,6 +83,8 @@ router.route('/timesheets/:pilotId')
  * **/
 .post(_pilot2.default.getTimesheetsByPilot);
 
+router.route('/stats').post(_pilot2.default.stats);
+
 /** Load pilot when API with pilotId route parameter is hit */
 router.param('pilotId', _pilot2.default.load);
 

@@ -175,5 +175,32 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
+
+function stats(req, res, next){
+  const date = req.body.date;
+  Order.listByDate({date})
+    .then(orders => {
+      const stats = {
+        assigned : 0,
+        unAssigned : 0,
+        completed: 0,
+        total: 0
+      };
+      orders.forEach(order => {
+        if (order.status == "COMPLETED") {
+          stats.completed++;
+        }else if(order.pilot && order.pilot != ''){
+          stats.assigned++;
+        }else {
+          stats.unAssigned++;
+        }
+        stats.total++;
+      });
+      res.json(stats);
+    })
+    .catch(e => next(e))
+}
+
 export default { load, get, create, update, list, remove,
-    updateStatus, updatePilotMovement, listByPilotAndDate, listByDate, listByStatusPilotDateRange, updateOrders };
+    updateStatus, updatePilotMovement, listByPilotAndDate, listByDate, listByStatusPilotDateRange, updateOrders,
+    stats};
