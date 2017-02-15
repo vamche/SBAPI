@@ -368,8 +368,16 @@ function stats(req, res, next){
 
 }
 
+function listByTeam(req, res, next){
+  const team = req.body.team;
+  Pilot.find()
+    .where('teams').in([team])
+    .then(pilots => res.json(pilots))
+    .catch(e => next(e));
+}
+
 
 export default {
   load, get, create, update, list, remove, listOfPilotsWithUserDetails, updateLocation, updateTeams,
     getUnAssignedPilotsByTeam, createPilot, getSales, getSalesByPilot, getTimesheets, getTimesheetsByPilot,
-    stats};
+    stats, listByTeam};

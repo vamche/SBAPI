@@ -423,9 +423,18 @@ function stats(req, res, next) {
     });
 }
 
+function listByTeam(req, res, next) {
+    var team = req.body.team;
+    _pilot2.default.find().where('teams').in([team]).then(function (pilots) {
+        return res.json(pilots);
+    }).catch(function (e) {
+        return next(e);
+    });
+}
+
 exports.default = {
     load: load, get: get, create: create, update: update, list: list, remove: remove, listOfPilotsWithUserDetails: listOfPilotsWithUserDetails, updateLocation: updateLocation, updateTeams: updateTeams,
     getUnAssignedPilotsByTeam: getUnAssignedPilotsByTeam, createPilot: createPilot, getSales: getSales, getSalesByPilot: getSalesByPilot, getTimesheets: getTimesheets, getTimesheetsByPilot: getTimesheetsByPilot,
-    stats: stats };
+    stats: stats, listByTeam: listByTeam };
 module.exports = exports['default'];
 //# sourceMappingURL=pilot.controller.js.map

@@ -72,6 +72,9 @@ router.route('/timesheets/:pilotId')
 router.route('/stats')
   .post(pilotCtrl.stats)
 
+router.route('/listByTeam')
+  .post(pilotCtrl.listByTeam)
+
 
 /** Load pilot when API with pilotId route parameter is hit */
 router.param('pilotId', pilotCtrl.load);
