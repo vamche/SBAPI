@@ -237,6 +237,16 @@ OrderSchema.statics = {
             .exec();
   },
 
+  listByTeamAndDate({ team, date, skip = 0, limit = 1000 } = {}) {
+    return this.find()
+      .where('team', team)
+      .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day')).lte(moment(date, "YYYYMMDD").endOf('day'))
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+  },
+
   listByDate({ date, skip = 0, limit = 50 } = {}) {
         return this.find()
             .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day')).lte(moment(date, "YYYYMMDD").endOf('day'))

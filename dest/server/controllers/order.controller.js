@@ -201,7 +201,17 @@ function listByStatusPilotDateRange(req, res, next) {
       fromDate = _req$body2.fromDate,
       toDate = _req$body2.toDate;
 
-  _order2.default.listByPilotDateRangeStatus(pilot, fromDate, toDate, status).then(function (orders) {
+  _order2.default.listByPilotDateRangeStatus({ pilot: pilot, fromDate: fromDate, toDate: toDate, status: status }).then(function (orders) {
+    return res.json(orders);
+  }).catch(function (e) {
+    return next(e);
+  });
+}
+
+function listByTeam(req, res, next) {
+  var team = req.body.team;
+  var date = req.body.date;
+  _order2.default.listByTeamAndDate({ team: team, date: date }).then(function (orders) {
     return res.json(orders);
   }).catch(function (e) {
     return next(e);
@@ -248,6 +258,6 @@ function stats(req, res, next) {
 
 exports.default = { load: load, get: get, create: create, update: update, list: list, remove: remove,
   updateStatus: updateStatus, updatePilotMovement: updatePilotMovement, listByPilotAndDate: listByPilotAndDate, listByDate: listByDate, listByStatusPilotDateRange: listByStatusPilotDateRange, updateOrders: updateOrders,
-  stats: stats };
+  stats: stats, listByTeam: listByTeam };
 module.exports = exports['default'];
 //# sourceMappingURL=order.controller.js.map

@@ -159,9 +159,17 @@ function listByDate(req, res, next) {
 
 function listByStatusPilotDateRange(req, res, next){
   const { status, pilot, fromDate, toDate} = req.body;
-  Order.listByPilotDateRangeStatus(pilot, fromDate, toDate, status)
+  Order.listByPilotDateRangeStatus({pilot, fromDate, toDate, status})
       .then(orders => res.json(orders))
       .catch(e => next(e));
+}
+
+function listByTeam(req, res, next){
+  const team = req.body.team;
+  const date = req.body.date;
+  Order.listByTeamAndDate({ team, date })
+    .then(orders => res.json(orders))
+    .catch(e => next(e));
 }
 
 /**
@@ -203,4 +211,4 @@ function stats(req, res, next){
 
 export default { load, get, create, update, list, remove,
     updateStatus, updatePilotMovement, listByPilotAndDate, listByDate, listByStatusPilotDateRange, updateOrders,
-    stats};
+    stats, listByTeam};

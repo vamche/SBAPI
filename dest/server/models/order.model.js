@@ -256,22 +256,33 @@ OrderSchema.statics = {
 
     return this.find().where('pilot', pilot).where('createdAt').gte((0, _moment2.default)(date, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(date, "YYYYMMDD").endOf('day')).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
-  listByDate: function listByDate() {
+  listByTeamAndDate: function listByTeamAndDate() {
     var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        team = _ref3.team,
         date = _ref3.date,
         _ref3$skip = _ref3.skip,
         skip = _ref3$skip === undefined ? 0 : _ref3$skip,
         _ref3$limit = _ref3.limit,
-        limit = _ref3$limit === undefined ? 50 : _ref3$limit;
+        limit = _ref3$limit === undefined ? 1000 : _ref3$limit;
+
+    return this.find().where('team', team).where('createdAt').gte((0, _moment2.default)(date, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(date, "YYYYMMDD").endOf('day')).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+  },
+  listByDate: function listByDate() {
+    var _ref4 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        date = _ref4.date,
+        _ref4$skip = _ref4.skip,
+        skip = _ref4$skip === undefined ? 0 : _ref4$skip,
+        _ref4$limit = _ref4.limit,
+        limit = _ref4$limit === undefined ? 50 : _ref4$limit;
 
     return this.find().where('createdAt').gte((0, _moment2.default)(date, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(date, "YYYYMMDD").endOf('day')).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
   listByPilotDateRangeStatus: function listByPilotDateRangeStatus() {
-    var _ref4 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        pilot = _ref4.pilot,
-        fromDate = _ref4.fromDate,
-        toDate = _ref4.toDate,
-        status = _ref4.status;
+    var _ref5 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        pilot = _ref5.pilot,
+        fromDate = _ref5.fromDate,
+        toDate = _ref5.toDate,
+        status = _ref5.status;
 
     return this.find().where('pilot', pilot).where('status', status).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day')).exec();
   }
