@@ -49,7 +49,7 @@ router.route('/:orderId')
 /** DELETE /api/orders/:orderId - Delete order */
 .delete(_order2.default.remove);
 
-router.route('/listByPilot').post((0, _expressJwt2.default)({ secret: _env2.default.jwtSecret }), _order2.default.listByPilotAndDate);
+router.route('/listByPilot').post(_order2.default.listByPilotAndDate);
 
 router.route('/listByDate').post((0, _expressJwt2.default)({ secret: _env2.default.jwtSecret }), _order2.default.listByDate);
 

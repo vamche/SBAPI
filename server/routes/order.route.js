@@ -25,7 +25,7 @@ router.route('/:orderId')
   .delete(orderCtrl.remove);
 
 router.route('/listByPilot')
-    .post(expressJwt({ secret: config.jwtSecret }), orderCtrl.listByPilotAndDate)
+    .post(orderCtrl.listByPilotAndDate)
 
 router.route('/listByDate')
     .post(expressJwt({ secret: config.jwtSecret }), orderCtrl.listByDate)

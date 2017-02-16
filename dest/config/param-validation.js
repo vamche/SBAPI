@@ -95,6 +95,20 @@ exports.default = {
       customerId: _joi2.default.string().hex().required()
     }
   },
+  // POST /api/pilots
+  createManager: {
+    body: {
+      userId: _joi2.default.string().required()
+    }
+  },
+
+  // UPDATE /api/pilots/:pilotId
+  updateManager: {
+    body: {},
+    params: {
+      customerId: _joi2.default.string().hex().required()
+    }
+  },
 
   // POST /api/orders
   createOrder: {

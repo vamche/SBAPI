@@ -32,7 +32,7 @@ function get(req, res) {
  */
 function create(req, res, next) {
   const customer = new Customer({
-    userId : req.body.userId,
+    user : req.body.user,
     teams : req.body.teams,
     location : req.body.location
   });
@@ -56,7 +56,7 @@ function createCustomer(req, res, next){
     user.save()
         .then(savedUser => {
             const customer = new Customer({
-                userId : savedUser._id.toString(),
+                user : savedUser._id,
                 isMerchant : req.body.isMerchant,
                 teams : req.body.teams,
                 location : req.body.location
@@ -140,10 +140,10 @@ function listOfCustomersWithUserDetails(req, res, next) {
       customersWithUserIds = customers.map(
         (customer) => {
           let x;
-          const y = User.get(customer.userId)
+          const y = User.get(customer.user)
             .then((user) => {
               x = customer;
-              x.userId = JSON.stringify(user);
+              x.user = JSON.stringify(user);
               updatedCustomers.push(x);
               return x;
             });

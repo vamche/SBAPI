@@ -4,9 +4,9 @@ import httpStatus from 'http-status';
 import APIError from '../helpers/APIError';
 
 /**
- * Customer Schema
+ * Manager Schema
  */
-const CustomerSchema = new mongoose.Schema({
+const ManagerSchema = new mongoose.Schema({
   user: {
     type: String,
     ref: 'User',
@@ -21,7 +21,7 @@ const CustomerSchema = new mongoose.Schema({
     type: [String], // [mongoose.Schema.ObjectId],
     required: false
   },
-  isMerchant: {
+  isAdmin: {
     type: Boolean,
     required: false,
     default: false
@@ -32,12 +32,20 @@ const CustomerSchema = new mongoose.Schema({
       default: 'Point'
     },
     coordinates: {
-        type: [Number],
-        default: [78.4867, 17.3850]
+      type: [Number],
+      default: [78.4867, 17.3850]
     }
   },
+  geo_fence: {
+    type: {
+      type: String,
+      default: 'Polygon'
+    },
+    coordinates: [[Number]],
+    required: false
+  },
   registration_status: {
-    type: String,
+    type: Boolean,
     required: false,
     default: true
   },
@@ -47,7 +55,7 @@ const CustomerSchema = new mongoose.Schema({
   }
 });
 
-CustomerSchema.index({ location: '2dsphere' });
+ManagerSchema.index({ location: '2dsphere' });
 
 
 /**
@@ -60,16 +68,16 @@ CustomerSchema.index({ location: '2dsphere' });
 /**
  * Methods
  */
-CustomerSchema.method({
+ManagerSchema.method({
 });
 
 /**
  * Statics
  */
-CustomerSchema.statics = {
+ManagerSchema.statics = {
   /**
-   * Get Customer
-   * @param {ObjectId} id - The objectId of Customer.
+   * Get Manager
+   * @param {ObjectId} id - The objectId of Manager.
    * @returns {Promise<User, APIError>}
    */
   get(id) {
@@ -80,7 +88,7 @@ CustomerSchema.statics = {
         if (order) {
           return order;
         }
-        const err = new APIError('No such customer exists!', httpStatus.NOT_FOUND);
+        const err = new APIError('No such manager exists!', httpStatus.NOT_FOUND);
         return Promise.reject(err);
       });
   },
@@ -94,16 +102,16 @@ CustomerSchema.statics = {
         if (order) {
           return order;
         }
-        const err = new APIError('No such customer exists!', httpStatus.NOT_FOUND);
+        const err = new APIError('No such manager exists!', httpStatus.NOT_FOUND);
         return Promise.reject(err);
       });
   },
 
   /**
-   * List Customers in descending order of 'createdAt' timestamp.
-   * @param {number} skip - Number of Customers to be skipped.
-   * @param {number} limit - Limit number of Customers to be returned.
-   * @returns {Promise<Customer[]>}
+   * List Managers in descending order of 'createdAt' timestamp.
+   * @param {number} skip - Number of Managers to be skipped.
+   * @param {number} limit - Limit number of Managers to be returned.
+   * @returns {Promise<Manager[]>}
    */
   list({ skip = 0, limit = 50 } = {}) {
     return this.find()
@@ -127,6 +135,6 @@ CustomerSchema.statics = {
 };
 
 /**
- * @typedef Customer
+ * @typedef Manager
  */
-export default mongoose.model('Customer', CustomerSchema);
+export default mongoose.model('Manager', ManagerSchema);

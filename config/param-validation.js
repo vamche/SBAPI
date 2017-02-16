@@ -85,6 +85,20 @@ export default {
             customerId: Joi.string().hex().required()
         }
     },
+  // POST /api/pilots
+  createManager: {
+    body: {
+      userId: Joi.string().required()
+    }
+  },
+
+  // UPDATE /api/pilots/:pilotId
+  updateManager: {
+    body: {},
+    params: {
+      customerId: Joi.string().hex().required()
+    }
+  },
 
   // POST /api/orders
   createOrder: {

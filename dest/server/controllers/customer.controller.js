@@ -54,7 +54,7 @@ function get(req, res) {
  */
 function create(req, res, next) {
     var customer = new _customer2.default({
-        userId: req.body.userId,
+        user: req.body.user,
         teams: req.body.teams,
         location: req.body.location
     });
@@ -79,7 +79,7 @@ function createCustomer(req, res, next) {
 
     user.save().then(function (savedUser) {
         var customer = new _customer2.default({
-            userId: savedUser._id.toString(),
+            user: savedUser._id,
             isMerchant: req.body.isMerchant,
             teams: req.body.teams,
             location: req.body.location
@@ -181,9 +181,9 @@ function listOfCustomersWithUserDetails(req, res, next) {
         var updatedCustomers = [];
         customersWithUserIds = customers.map(function (customer) {
             var x = void 0;
-            var y = _user2.default.get(customer.userId).then(function (user) {
+            var y = _user2.default.get(customer.user).then(function (user) {
                 x = customer;
-                x.userId = JSON.stringify(user);
+                x.user = JSON.stringify(user);
                 updatedCustomers.push(x);
                 return x;
             });

@@ -23,9 +23,9 @@ var _APIError2 = _interopRequireDefault(_APIError);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
- * Customer Schema
+ * Manager Schema
  */
-var CustomerSchema = new _mongoose2.default.Schema({
+var ManagerSchema = new _mongoose2.default.Schema({
   user: {
     type: String,
     ref: 'User',
@@ -40,7 +40,7 @@ var CustomerSchema = new _mongoose2.default.Schema({
     type: [String], // [mongoose.Schema.ObjectId],
     required: false
   },
-  isMerchant: {
+  isAdmin: {
     type: Boolean,
     required: false,
     default: false
@@ -55,8 +55,16 @@ var CustomerSchema = new _mongoose2.default.Schema({
       default: [78.4867, 17.3850]
     }
   },
+  geo_fence: {
+    type: {
+      type: String,
+      default: 'Polygon'
+    },
+    coordinates: [[Number]],
+    required: false
+  },
   registration_status: {
-    type: String,
+    type: Boolean,
     required: false,
     default: true
   },
@@ -66,7 +74,7 @@ var CustomerSchema = new _mongoose2.default.Schema({
   }
 });
 
-CustomerSchema.index({ location: '2dsphere' });
+ManagerSchema.index({ location: '2dsphere' });
 
 /**
  * Add your
@@ -78,15 +86,15 @@ CustomerSchema.index({ location: '2dsphere' });
 /**
  * Methods
  */
-CustomerSchema.method({});
+ManagerSchema.method({});
 
 /**
  * Statics
  */
-CustomerSchema.statics = {
+ManagerSchema.statics = {
   /**
-   * Get Customer
-   * @param {ObjectId} id - The objectId of Customer.
+   * Get Manager
+   * @param {ObjectId} id - The objectId of Manager.
    * @returns {Promise<User, APIError>}
    */
   get: function get(id) {
@@ -94,7 +102,7 @@ CustomerSchema.statics = {
       if (order) {
         return order;
       }
-      var err = new _APIError2.default('No such customer exists!', _httpStatus2.default.NOT_FOUND);
+      var err = new _APIError2.default('No such manager exists!', _httpStatus2.default.NOT_FOUND);
       return _bluebird2.default.reject(err);
     });
   },
@@ -103,17 +111,17 @@ CustomerSchema.statics = {
       if (order) {
         return order;
       }
-      var err = new _APIError2.default('No such customer exists!', _httpStatus2.default.NOT_FOUND);
+      var err = new _APIError2.default('No such manager exists!', _httpStatus2.default.NOT_FOUND);
       return _bluebird2.default.reject(err);
     });
   },
 
 
   /**
-   * List Customers in descending order of 'createdAt' timestamp.
-   * @param {number} skip - Number of Customers to be skipped.
-   * @param {number} limit - Limit number of Customers to be returned.
-   * @returns {Promise<Customer[]>}
+   * List Managers in descending order of 'createdAt' timestamp.
+   * @param {number} skip - Number of Managers to be skipped.
+   * @param {number} limit - Limit number of Managers to be returned.
+   * @returns {Promise<Manager[]>}
    */
   list: function list() {
     var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -137,8 +145,8 @@ CustomerSchema.statics = {
 };
 
 /**
- * @typedef Customer
+ * @typedef Manager
  */
-exports.default = _mongoose2.default.model('Customer', CustomerSchema);
+exports.default = _mongoose2.default.model('Manager', ManagerSchema);
 module.exports = exports['default'];
-//# sourceMappingURL=customer.model.js.map
+//# sourceMappingURL=manager.model.js.map
