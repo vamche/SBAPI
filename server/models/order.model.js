@@ -95,9 +95,10 @@ const OrderSchema = new mongoose.Schema({
     type: Number,
     default: 530
   },
-  images: {
-    type: [String],
-    required: false
+  attachments: {
+    type: [{type: String, ref: 'Attachment'}],
+    required: false,
+    default: []
   },
   rating: {
     type: Number,
@@ -227,6 +228,7 @@ OrderSchema.statics = {
    */
   list({ skip = 0, limit = 50 } = {}) {
     return this.find()
+      .populate('attachments')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -236,6 +238,7 @@ OrderSchema.statics = {
   listByPilotAndDate({ pilot, date, timeZone = 'Europe/London' ,skip = 0, limit = 50 } = {}) {
         return this.find()
             .where('pilot', pilot)
+            .populate('attachments')
             .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day').tz(timeZone))
                                .lte(moment(date, "YYYYMMDD").endOf('day').tz(timeZone))
             .sort({ createdAt: -1 })

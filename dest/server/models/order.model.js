@@ -114,9 +114,10 @@ var OrderSchema = new _mongoose2.default.Schema({
     type: Number,
     default: 530
   },
-  images: {
-    type: [String],
-    required: false
+  attachments: {
+    type: [{ type: String, ref: 'Attachment' }],
+    required: false,
+    default: []
   },
   rating: {
     type: Number,
@@ -249,7 +250,7 @@ OrderSchema.statics = {
         _ref$limit = _ref.limit,
         limit = _ref$limit === undefined ? 50 : _ref$limit;
 
-    return this.find().sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    return this.find().populate('attachments').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
   listByPilotAndDate: function listByPilotAndDate() {
     var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -262,7 +263,7 @@ OrderSchema.statics = {
         _ref2$limit = _ref2.limit,
         limit = _ref2$limit === undefined ? 50 : _ref2$limit;
 
-    return this.find().where('pilot', pilot).where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day').tz(timeZone)).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day').tz(timeZone)).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    return this.find().where('pilot', pilot).populate('attachments').where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day').tz(timeZone)).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day').tz(timeZone)).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
   listByTeamAndDate: function listByTeamAndDate() {
     var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},

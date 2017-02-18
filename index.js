@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import cloudinary from 'cloudinary';
 import util from 'util';
 import config from './config/env';
 import app from './config/express';
@@ -23,6 +24,13 @@ if (config.MONGOOSE_DEBUG) {
     debug(`${collectionName}.${method}`, util.inspect(query, false, 20), doc);
   });
 }
+
+cloudinary.config({
+  cloud_name: config.cloudinary_cloud_name,
+  api_key: config.cloudinary_api_key,
+  api_secret: config.cloudinary_api_secret
+});
+
 
 // module.parent check is required to support mocha watch
 // src: https://github.com/mochajs/mocha/issues/1912

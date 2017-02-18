@@ -144,6 +144,22 @@ export default {
       targetId: Joi.string().hex().required()
     }
   },
+  // POST /api/orders
+  createAttachment: {
+    body: {
+      source: Joi.string().required(),
+      uploaded: Joi.boolean().required()
+    }
+  },
+
+  // UPDATE /api/orders/:orderId
+  updateAttachment: {
+    body: {},
+    params: {
+      attachmentId: Joi.string().hex().required()
+    }
+  },
+
   // POST /api/auth/login
   login: {
     body: {

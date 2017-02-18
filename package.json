@@ -48,6 +48,7 @@
     "bluebird": "3.4.6",
     "body-parser": "1.15.2",
     "chai": "^3.4.1",
+    "cloudinary": "1.7.0",
     "commitizen": "^2.9.2",
     "compression": "1.6.2",
     "cookie-parser": "1.4.3",

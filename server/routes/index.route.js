@@ -9,6 +9,8 @@ import timesheetRoutes from './timesheet.route';
 import targetRoutes from './target.route';
 import managerRoutes from './manager.route';
 import franchiseRoutes from './franchise.route';
+import attachmentRoutes from './attachment.route';
+
 
 const router = express.Router(); // eslint-disable-line new-cap
 
@@ -49,5 +51,8 @@ router.use('/managers', managerRoutes);
 
 // mount franchise routes at /franchises
 router.use('/franchises', franchiseRoutes);
+
+// mount attachment routes at /attacgments
+router.use('/attachments', attachmentRoutes);
 
 export default router;

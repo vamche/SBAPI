@@ -106,14 +106,38 @@ function updateOrders(req, res, next) {
     return _order2.default.get(order._id).then(function (o) {
       o.status = order.status;
       o.timeline = order.timeline;
-      o.images = order.images;
-      o.signature = order.signature;
       o.pilot_movement = order.pilot_movement;
       o.pilot_completed_date_time = order.pilot_completed_date_time;
+      var imagesToBeUploaded = o.attachments.filter(function (attachment) {
+        return !attachment.uploaded;
+      });
       // Calculate distance and time
       // final_cost
-      return o.save().then(function (updatedOrder) {
-        return updatedOrders.push(updatedOrder);
+      var imageUploadPromises = imagesToBeUploaded.map(function (attachment) {
+        return cloudinary.uploader.upload(req.body.source, function (result) {
+          var attachment = new Attachment({
+            source: result.url,
+            uploaded: true,
+            order: attachment.order,
+            status: attachment.status,
+            type: attachment.type,
+            extension: attachment.extension
+          });
+          attachment.save().then(function (savedAttachment) {
+            return o.images.push(savedAttachment._id);
+          }).catch(function (e) {
+            return next(e);
+          });
+        }).catch(function (e) {
+          return next(e);
+        });
+      });
+      return _bluebird2.default.all(imageUploadPromises).then(function () {
+        o.save().then(function (updatedOrder) {
+          return updatedOrders.push(updatedOrder);
+        }).catch(function (e) {
+          return next(e);
+        });
       }).catch(function (e) {
         return next(e);
       });

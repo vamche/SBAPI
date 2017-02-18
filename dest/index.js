@@ -8,6 +8,10 @@ var _mongoose = require('mongoose');
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
+var _cloudinary = require('cloudinary');
+
+var _cloudinary2 = _interopRequireDefault(_cloudinary);
+
 var _util = require('util');
 
 var _util2 = _interopRequireDefault(_util);
@@ -42,6 +46,12 @@ if (_env2.default.MONGOOSE_DEBUG) {
     debug(collectionName + '.' + method, _util2.default.inspect(query, false, 20), doc);
   });
 }
+
+_cloudinary2.default.config({
+  cloud_name: _env2.default.cloudinary_cloud_name,
+  api_key: _env2.default.cloudinary_api_key,
+  api_secret: _env2.default.cloudinary_api_secret
+});
 
 // module.parent check is required to support mocha watch
 // src: https://github.com/mochajs/mocha/issues/1912

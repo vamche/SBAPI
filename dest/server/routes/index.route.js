@@ -48,6 +48,10 @@ var _franchise = require('./franchise.route');
 
 var _franchise2 = _interopRequireDefault(_franchise);
 
+var _attachment = require('./attachment.route');
+
+var _attachment2 = _interopRequireDefault(_attachment);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var router = _express2.default.Router(); // eslint-disable-line new-cap
@@ -89,6 +93,9 @@ router.use('/managers', _manager2.default);
 
 // mount franchise routes at /franchises
 router.use('/franchises', _franchise2.default);
+
+// mount attachment routes at /attacgments
+router.use('/attachments', _attachment2.default);
 
 exports.default = router;
 module.exports = exports['default'];

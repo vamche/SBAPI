@@ -52,5 +52,4 @@ function unAssign(orderId, pilotId){
 
 }
 
-
 export default { assign, unAssign };

@@ -154,6 +154,22 @@ exports.default = {
       targetId: _joi2.default.string().hex().required()
     }
   },
+  // POST /api/orders
+  createAttachment: {
+    body: {
+      source: _joi2.default.string().required(),
+      uploaded: _joi2.default.boolean().required()
+    }
+  },
+
+  // UPDATE /api/orders/:orderId
+  updateAttachment: {
+    body: {},
+    params: {
+      attachmentId: _joi2.default.string().hex().required()
+    }
+  },
+
   // POST /api/auth/login
   login: {
     body: {

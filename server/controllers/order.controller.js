@@ -97,15 +97,36 @@ function updateOrders(req, res, next){
             o => {
               o.status = order.status;
               o.timeline = order.timeline;
-              o.images = order.images;
-              o.signature = order.signature;
               o.pilot_movement = order.pilot_movement;
               o.pilot_completed_date_time = order.pilot_completed_date_time;
+              const imagesToBeUploaded = o.attachments.filter(attachment =>  !attachment.uploaded);
               // Calculate distance and time
               // final_cost
-              return o.save()
-                .then(updatedOrder => updatedOrders.push(updatedOrder))
-                .catch(e => next(e));
+              const imageUploadPromises = imagesToBeUploaded.map(attachment => {
+                return cloudinary.uploader.upload(req.body.source,
+                    (result) => {
+                      const attachment = new Attachment({
+                        source: result.url,
+                        uploaded: true,
+                        order: attachment.order,
+                        status: attachment.status,
+                        type: attachment.type,
+                        extension: attachment.extension
+                      });
+                      attachment.save()
+                        .then(savedAttachment => o.images.push(savedAttachment._id))
+                        .catch(e => next(e));
+                    })
+                    .catch(e => next(e));
+              });
+              return BPromise.all(imageUploadPromises)
+                      .then(() => {
+                         o.save()
+                          .then(updatedOrder => updatedOrders.push(updatedOrder))
+                          .catch(e => next(e));
+
+                      })
+                      .catch(e => next(e));
             }
           )
           .catch(e => next(e));
