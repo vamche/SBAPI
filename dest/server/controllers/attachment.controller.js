@@ -54,7 +54,7 @@ function get(req, res) {
  */
 function create(req, res, next) {
   if (!req.body.uploaded) {
-    _cloudinary2.default.uploader.upload(req.body.source, function (result) {
+    _cloudinary2.default.uploader.upload("data:image/png;base64," + req.body.source, function (result) {
       var attachment = new _attachment2.default({
         source: result.url,
         uploaded: true,

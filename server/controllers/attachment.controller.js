@@ -32,7 +32,7 @@ function get(req, res) {
  */
 function create(req, res, next) {
   if(!req.body.uploaded) {
-    cloudinary.uploader.upload(req.body.source,
+    cloudinary.uploader.upload("data:image/png;base64," + req.body.source,
       (result) => {
       const attachment = new Attachment({
         source: result.url,

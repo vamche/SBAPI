@@ -103,7 +103,7 @@ function updateOrders(req, res, next){
               // Calculate distance and time
               // final_cost
               const imageUploadPromises = imagesToBeUploaded.map(attachment => {
-                return cloudinary.uploader.upload(req.body.source,
+                return cloudinary.uploader.upload("data:image/png;base64," + req.body.source,
                     (result) => {
                       const attachment = new Attachment({
                         source: result.url,
