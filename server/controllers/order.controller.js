@@ -95,7 +95,14 @@ function updateOrders(req, res, next){
         return Order.get(order._id)
           .then(
             o => {
+              o.status = order.status;
+              o.timeline = order.timeline;
+              o.images = order.images;
+              o.signature = order.signature;
               o.pilot_movement = order.pilot_movement;
+              o.pilot_completed_date_time = order.pilot_completed_date_time;
+              // Calculate distance and time
+              // final_cost
               return o.save()
                 .then(updatedOrder => updatedOrders.push(updatedOrder))
                 .catch(e => next(e));
