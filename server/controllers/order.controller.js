@@ -50,11 +50,18 @@ function create(req, res, next) {
     paymentType: req.body.paymentType,
     status: req.body.status,
     tags: req.body.tags,
-    team: req.body.team
+    team: req.body.team,
+    pilot: req.body.pilot ?  req.body.pilot : ''
   });
 
   order.save()
-    .then(savedOrder => assign(savedOrder._id, savedOrder.team))
+    .then(savedOrder => {
+      if(savedOrder.pilot == ''){
+        return assign(savedOrder, savedOrder.team);
+      }else{
+        return savedOrder;
+      }
+    })
     .then((savedOrder) => {
       message.contents.en = `New Order Placed \n${order.title}. \nPick at ${order.from_address}.
                               `;
@@ -143,8 +150,8 @@ function list(req, res, next) {
 
 function listByPilotAndDate(req, res, next) {
   const { limit = 50, skip = 0 } = req.query;
-  const { pilot, date } = req.body;
-  Order.listByPilotAndDate({pilot, date, limit, skip})
+  const { pilot, date, timeZone } = req.body;
+  Order.listByPilotAndDate({pilot, date, timeZone, limit, skip})
         .then(orders => res.json(orders))
         .catch(e => next(e));
 }
@@ -209,6 +216,18 @@ function stats(req, res, next){
     .catch(e => next(e))
 }
 
-export default { load, get, create, update, list, remove,
+function reject(req, res, next){
+  const order = req.order;
+  const pilotId = req.body.pilotId;
+  order.status = 'PENDING';
+  order.pilot = '';
+  order.save(savedOrder => {
+      assign(savedOrder, pilotId);
+    })
+    .then(order => res.json(order))
+    .catch(e => next(e));
+}
+
+export default { load, get, create, update, list, remove, reject,
     updateStatus, updatePilotMovement, listByPilotAndDate, listByDate, listByStatusPilotDateRange, updateOrders,
     stats, listByTeam};

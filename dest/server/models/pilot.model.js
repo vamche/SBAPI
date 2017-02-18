@@ -28,7 +28,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var PilotSchema = new _mongoose2.default.Schema({
   userId: {
     type: String,
-    required: false
+    ref: 'Pilot',
+    required: true
   },
   teams: {
     type: [String], // [mongoose.Schema.ObjectId],
@@ -110,7 +111,7 @@ PilotSchema.statics = {
    * @returns {Promise<User, APIError>}
    */
   get: function get(id) {
-    return this.findById(id).exec().then(function (order) {
+    return this.findById(id).populate('userId').exec().then(function (order) {
       if (order) {
         return order;
       }
@@ -119,7 +120,7 @@ PilotSchema.statics = {
     });
   },
   getByUserId: function getByUserId(userId) {
-    return this.findOne().where('userId', userId).exec().then(function (order) {
+    return this.findOne().where('userId', userId).populate('userId').exec().then(function (order) {
       if (order) {
         return order;
       }
@@ -142,7 +143,7 @@ PilotSchema.statics = {
         _ref$limit = _ref.limit,
         limit = _ref$limit === undefined ? 50 : _ref$limit;
 
-    return this.find().sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    return this.find().populate('userId').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   }
 };
 

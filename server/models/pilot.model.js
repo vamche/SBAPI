@@ -9,7 +9,8 @@ import APIError from '../helpers/APIError';
 const PilotSchema = new mongoose.Schema({
   userId: {
     type: String,
-    required: false
+    ref: 'Pilot',
+    required: true
   },
   teams: {
     type: [String], // [mongoose.Schema.ObjectId],
@@ -94,6 +95,7 @@ PilotSchema.statics = {
    */
   get(id) {
     return this.findById(id)
+      .populate('userId')
       .exec()
       .then((order) => {
         if (order) {
@@ -107,6 +109,7 @@ PilotSchema.statics = {
   getByUserId(userId) {
     return this.findOne()
         .where('userId', userId)
+        .populate('userId')
         .exec()
         .then((order) => {
                 if (order) {
@@ -125,6 +128,7 @@ PilotSchema.statics = {
    */
   list({ skip = 0, limit = 50 } = {}) {
     return this.find()
+      .populate('userId')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)

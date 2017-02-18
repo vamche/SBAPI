@@ -4,39 +4,38 @@ import httpStatus from 'http-status';
 import APIError from '../helpers/APIError';
 
 /**
- * Manager Schema
+ * Franchise Schema
  */
-const ManagerSchema = new mongoose.Schema({
-  user: {
-    type: String,
-    ref: 'User',
-    required: false
-  },
+const FranchiseSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
     unique: true
   },
+  description: {
+    type: String,
+    required: false,
+  },
   teams: {
     type: [String], // [mongoose.Schema.ObjectId],
     required: false
   },
-  isAdmin: {
-    type: Boolean,
-    required: false,
-    default: false
+  location: {
+    type: {
+      type: String,
+      default: 'Point'
+    },
+    coordinates: {
+      type: [Number],
+      default: [78.4867, 17.3850]
+    }
   },
-  isFranchiseAdmin: {
-    type: Boolean,
-    required: false,
-    default: false
-  },
-  franchises: {
-    type: [String],
-    required: false
-  },
-  teams: {
-    type: [String],
+  geo_fence: {
+    type: {
+      type: String,
+      default: 'Polygon'
+    },
+    coordinates: [[Number]],
     required: false
   },
   registration_status: {
@@ -50,6 +49,9 @@ const ManagerSchema = new mongoose.Schema({
   }
 });
 
+FranchiseSchema.index({ location: '2dsphere' });
+
+
 /**
  * Add your
  * - pre-save hooks
@@ -60,16 +62,16 @@ const ManagerSchema = new mongoose.Schema({
 /**
  * Methods
  */
-ManagerSchema.method({
+FranchiseSchema.method({
 });
 
 /**
  * Statics
  */
-ManagerSchema.statics = {
+FranchiseSchema.statics = {
   /**
-   * Get Manager
-   * @param {ObjectId} id - The objectId of Manager.
+   * Get Franchise
+   * @param {ObjectId} id - The objectId of Franchise.
    * @returns {Promise<User, APIError>}
    */
   get(id) {
@@ -80,7 +82,7 @@ ManagerSchema.statics = {
         if (order) {
           return order;
         }
-        const err = new APIError('No such manager exists!', httpStatus.NOT_FOUND);
+        const err = new APIError('No such franchise exists!', httpStatus.NOT_FOUND);
         return Promise.reject(err);
       });
   },
@@ -94,16 +96,16 @@ ManagerSchema.statics = {
         if (order) {
           return order;
         }
-        const err = new APIError('No such manager exists!', httpStatus.NOT_FOUND);
+        const err = new APIError('No such franchise exists!', httpStatus.NOT_FOUND);
         return Promise.reject(err);
       });
   },
 
   /**
-   * List Managers in descending order of 'createdAt' timestamp.
-   * @param {number} skip - Number of Managers to be skipped.
-   * @param {number} limit - Limit number of Managers to be returned.
-   * @returns {Promise<Manager[]>}
+   * List Franchises in descending order of 'createdAt' timestamp.
+   * @param {number} skip - Number of Franchises to be skipped.
+   * @param {number} limit - Limit number of Franchises to be returned.
+   * @returns {Promise<Franchise[]>}
    */
   list({ skip = 0, limit = 50 } = {}) {
     return this.find()
@@ -127,6 +129,6 @@ ManagerSchema.statics = {
 };
 
 /**
- * @typedef Manager
+ * @typedef Franchise
  */
-export default mongoose.model('Manager', ManagerSchema);
+export default mongoose.model('Franchise', FranchiseSchema);

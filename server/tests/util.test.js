@@ -27,7 +27,7 @@ describe('## User APIs', () => {
 
     let pilot = {
         userId: '',
-        teams: [],
+        teams: ['magic'],
         location : {
             "type": "Point",
             "coordinates": [78,78]
@@ -36,47 +36,41 @@ describe('## User APIs', () => {
     };
 
     let order = {
-        "title": "Order 1",
-        "description": "desc 1",
-        "from_name": "po",
-        "from_phone": "6088885568",
-        "from_email": "pooii@ghh.vhh",
-        "from_address": "Powai, Mumbai, Maharashtra, India",
-        "to_name": "po",
-        "to_phone": "8963257410",
-        "to_email": "",
-        "to_address": "Opera House, Girgaon, Mumbai, Maharashtra 400004, India",
-        "paymentType": "PREPAID",
-        "status": "ASSIGNED",
-        "__v": 0,
-        "createdAt": "2017-02-03T10:31:17.392Z",
-        "tags": ["we", "are", "good", "to", "go"],
-        "time_in_seconds": 0,
-        "distance_in_meters": 0,
-        "pilot_completed_date_time": "2017-02-03T10:31:17.391Z",
-        "pilot_to_date_time": "2017-02-03T10:31:17.391Z",
-        "pilot_from_date_time": "2017-02-03T10:31:17.391Z",
-        "pilot_movement": [],
-        "acknowledged_date_time": "2017-02-03T10:31:17.390Z",
-        "timeline": [],
-        "images": [],
-        "timeZone": 530,
-        "to_location": {
-            "coordinates": [
-                72.8183134,
-                18.9537342
-            ],
-            "type": "Point"
-        },
-        "from_location": {
-            "coordinates": [
-                72.9050809,
-                19.1196773
-            ],
-            "type": "Point"
-        }
+      "title": "Order TZ",
+      "description": "desc TZ",
+      "from_name": "po",
+      "from_phone": "6088885568",
+      "from_email": "pooii@ghh.vhh",
+      "team" : "magic",
+      "from_address": "Powai, Mumbai, Maharashtra, India",
+      "to_name": "po",
+      "to_phone": "8963257410",
+      "to_email": "",
+      "to_address": "Opera House, Girgaon, Mumbai, Maharashtra 400004, India",
+      "paymentType": "PREPAID",
+      "status": "PENDING",
+      "__v": 0,
+      "tags": ["we", "are", "good", "to", "go"],
+      "time_in_seconds": 0,
+      "distance_in_meters": 0,
+      "timeline": [],
+      "images": [],
+      "timeZone": 530,
+      "to_location": {
+        "coordinates": [
+          72.8183134,
+          18.9537342
+        ],
+        "type": "Point"
+      },
+      "from_location": {
+        "coordinates": [
+          72.9050809,
+          19.1196773
+        ],
+        "type": "Point"
+      }
     };
-
 
     describe('# POST /api/users', () => {
         it('should create a new user', (done) => {
@@ -112,7 +106,6 @@ describe('## User APIs', () => {
 
     describe('# POST /api/orders', () => {
         it('should create a new order', (done) => {
-            pilot.userId = user._id.toString();
             request(app)
                 .post('/api/orders')
                 .send(order)
@@ -122,37 +115,6 @@ describe('## User APIs', () => {
                     order = res.body;
                     done();
                 })
-                .catch(done);
-        });
-    });
-
-    describe('# Assign Pilot', () => {
-        it('should assign a new pilot', (done) => {
-            utilCtrl.assign(order._id,null)
-                .then(assignedOrder => {
-                    if(assignedOrder){
-                        order = assignedOrder;
-                        expect(order.pilot).to.be.ok;
-                    }
-
-                    done();
-                })
-                .catch(done);
-
-        });
-    });
-
-    describe('# UnAssign Pilot', () => {
-
-        it('should un assign pilot', (done) => {
-            utilCtrl.unAssign(order._id,null)
-                .then(unAssignedOrder =>
-                    {
-                        expect(unAssignedOrder._id.toString()).to.equal(order._id.toString());
-                        expect(unAssignedOrder.pilot).to.equal(null);
-                        done();
-                    }
-                )
                 .catch(done);
         });
     });

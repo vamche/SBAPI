@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _ref;
+
 var _bluebird = require('bluebird');
 
 var _bluebird2 = _interopRequireDefault(_bluebird);
@@ -22,10 +24,12 @@ var _APIError2 = _interopRequireDefault(_APIError);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 /**
  * Manager Schema
  */
-var ManagerSchema = new _mongoose2.default.Schema({
+var ManagerSchema = new _mongoose2.default.Schema((_ref = {
   user: {
     type: String,
     ref: 'User',
@@ -45,36 +49,26 @@ var ManagerSchema = new _mongoose2.default.Schema({
     required: false,
     default: false
   },
-  location: {
-    type: {
-      type: String,
-      default: 'Point'
-    },
-    coordinates: {
-      type: [Number],
-      default: [78.4867, 17.3850]
-    }
-  },
-  geo_fence: {
-    type: {
-      type: String,
-      default: 'Polygon'
-    },
-    coordinates: [[Number]],
-    required: false
-  },
-  registration_status: {
+  isFranchiseAdmin: {
     type: Boolean,
     required: false,
-    default: true
+    default: false
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
+  franchises: {
+    type: [String],
+    required: false
   }
-});
-
-ManagerSchema.index({ location: '2dsphere' });
+}, _defineProperty(_ref, 'teams', {
+  type: [String],
+  required: false
+}), _defineProperty(_ref, 'registration_status', {
+  type: Boolean,
+  required: false,
+  default: true
+}), _defineProperty(_ref, 'createdAt', {
+  type: Date,
+  default: Date.now
+}), _ref));
 
 /**
  * Add your
@@ -124,21 +118,21 @@ ManagerSchema.statics = {
    * @returns {Promise<Manager[]>}
    */
   list: function list() {
-    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref$skip = _ref.skip,
-        skip = _ref$skip === undefined ? 0 : _ref$skip,
-        _ref$limit = _ref.limit,
-        limit = _ref$limit === undefined ? 50 : _ref$limit;
-
-    return this.find().populate('user').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
-  },
-  listByTeam: function listByTeam() {
     var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        team = _ref2.team,
         _ref2$skip = _ref2.skip,
         skip = _ref2$skip === undefined ? 0 : _ref2$skip,
         _ref2$limit = _ref2.limit,
         limit = _ref2$limit === undefined ? 50 : _ref2$limit;
+
+    return this.find().populate('user').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+  },
+  listByTeam: function listByTeam() {
+    var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        team = _ref3.team,
+        _ref3$skip = _ref3.skip,
+        skip = _ref3$skip === undefined ? 0 : _ref3$skip,
+        _ref3$limit = _ref3.limit,
+        limit = _ref3$limit === undefined ? 50 : _ref3$limit;
 
     return this.find().where('teams').in([team]).populate('user').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   }

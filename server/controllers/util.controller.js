@@ -23,8 +23,8 @@ function get(req, res) {
     return res.json(req.order);
 }
 
-function assign(orderId, team, pilotId){
-    return pilotCtrl.getUnAssignedPilotsByTeam(team)
+function assign(order, pilotId){
+    return pilotCtrl.getUnAssignedPilotsByTeam(order.team)
         .then(pilots => {
             if(pilots.length > 0){
                 let validPilots = pilots.filter(pilot => pilot._id != pilotId);
@@ -32,14 +32,11 @@ function assign(orderId, team, pilotId){
                 pilot.isActive = true;
                 return pilot.save(pilot)
                     .then(pilot => {
-                        return Order.get(orderId)
-                            .then(order => {
-                                order.pilot = pilot._id.toString();
-                                return order.save(order);
-                            });
+                      order.pilot = pilot._id.toString();
+                      return order.save(order);
                     });
             }else {
-              return Order.get(orderId);
+              return order;
             }
         });
 }

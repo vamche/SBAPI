@@ -47,7 +47,7 @@ describe('## User APIs', function () {
 
     var pilot = {
         userId: '',
-        teams: [],
+        teams: ['magic'],
         location: {
             "type": "Point",
             "coordinates": [78, 78]
@@ -56,28 +56,23 @@ describe('## User APIs', function () {
     };
 
     var order = {
-        "title": "Order 1",
-        "description": "desc 1",
+        "title": "Order TZ",
+        "description": "desc TZ",
         "from_name": "po",
         "from_phone": "6088885568",
         "from_email": "pooii@ghh.vhh",
+        "team": "magic",
         "from_address": "Powai, Mumbai, Maharashtra, India",
         "to_name": "po",
         "to_phone": "8963257410",
         "to_email": "",
         "to_address": "Opera House, Girgaon, Mumbai, Maharashtra 400004, India",
         "paymentType": "PREPAID",
-        "status": "ASSIGNED",
+        "status": "PENDING",
         "__v": 0,
-        "createdAt": "2017-02-03T10:31:17.392Z",
         "tags": ["we", "are", "good", "to", "go"],
         "time_in_seconds": 0,
         "distance_in_meters": 0,
-        "pilot_completed_date_time": "2017-02-03T10:31:17.391Z",
-        "pilot_to_date_time": "2017-02-03T10:31:17.391Z",
-        "pilot_from_date_time": "2017-02-03T10:31:17.391Z",
-        "pilot_movement": [],
-        "acknowledged_date_time": "2017-02-03T10:31:17.390Z",
         "timeline": [],
         "images": [],
         "timeZone": 530,
@@ -115,34 +110,9 @@ describe('## User APIs', function () {
 
     describe('# POST /api/orders', function () {
         it('should create a new order', function (done) {
-            pilot.userId = user._id.toString();
             (0, _supertestAsPromised2.default)(_index2.default).post('/api/orders').send(order).expect(_httpStatus2.default.OK).then(function (res) {
                 (0, _chai.expect)(res.body.title).to.equal(order.title);
                 order = res.body;
-                done();
-            }).catch(done);
-        });
-    });
-
-    describe('# Assign Pilot', function () {
-        it('should assign a new pilot', function (done) {
-            _util2.default.assign(order._id, null).then(function (assignedOrder) {
-                if (assignedOrder) {
-                    order = assignedOrder;
-                    (0, _chai.expect)(order.pilot).to.be.ok;
-                }
-
-                done();
-            }).catch(done);
-        });
-    });
-
-    describe('# UnAssign Pilot', function () {
-
-        it('should un assign pilot', function (done) {
-            _util2.default.unAssign(order._id, null).then(function (unAssignedOrder) {
-                (0, _chai.expect)(unAssignedOrder._id.toString()).to.equal(order._id.toString());
-                (0, _chai.expect)(unAssignedOrder.pilot).to.equal(null);
                 done();
             }).catch(done);
         });

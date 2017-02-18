@@ -42,8 +42,8 @@ function get(req, res) {
     return res.json(req.order);
 }
 
-function assign(orderId, team, pilotId) {
-    return _pilot4.default.getUnAssignedPilotsByTeam(team).then(function (pilots) {
+function assign(order, pilotId) {
+    return _pilot4.default.getUnAssignedPilotsByTeam(order.team).then(function (pilots) {
         if (pilots.length > 0) {
             var validPilots = pilots.filter(function (pilot) {
                 return pilot._id != pilotId;
@@ -51,13 +51,11 @@ function assign(orderId, team, pilotId) {
             var pilot = validPilots[0];
             pilot.isActive = true;
             return pilot.save(pilot).then(function (pilot) {
-                return _order2.default.get(orderId).then(function (order) {
-                    order.pilot = pilot._id.toString();
-                    return order.save(order);
-                });
+                order.pilot = pilot._id.toString();
+                return order.save(order);
             });
         } else {
-            return _order2.default.get(orderId);
+            return order;
         }
     });
 }

@@ -110,6 +110,21 @@ exports.default = {
     }
   },
 
+  // POST /api/pilots
+  createFranchise: {
+    body: {
+      name: _joi2.default.string().required()
+    }
+  },
+
+  // UPDATE /api/pilots/:pilotId
+  updateFranchise: {
+    body: {},
+    params: {
+      franchiseId: _joi2.default.string().hex().required()
+    }
+  },
+
   // POST /api/orders
   createOrder: {
     body: {

@@ -45,6 +45,9 @@ router.route('/update/bulk')
 router.route('/stats')
   .post(orderCtrl.stats)
 
+router.route('/reject/:orderId')
+  .post(orderCtrl.reject)
+
 /** Load order when API with orderId route parameter is hit */
 router.param('orderId', orderCtrl.load);
 

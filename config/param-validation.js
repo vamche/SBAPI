@@ -100,6 +100,21 @@ export default {
     }
   },
 
+  // POST /api/pilots
+  createFranchise: {
+    body: {
+      name: Joi.string().required()
+    }
+  },
+
+  // UPDATE /api/pilots/:pilotId
+  updateFranchise: {
+    body: {},
+    params: {
+      franchiseId: Joi.string().hex().required()
+    }
+  },
+
   // POST /api/orders
   createOrder: {
     body: {

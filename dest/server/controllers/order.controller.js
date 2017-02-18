@@ -63,11 +63,16 @@ function create(req, res, next) {
     paymentType: req.body.paymentType,
     status: req.body.status,
     tags: req.body.tags,
-    team: req.body.team
+    team: req.body.team,
+    pilot: req.body.pilot ? req.body.pilot : ''
   });
 
   order.save().then(function (savedOrder) {
-    return (0, _util.assign)(savedOrder._id, savedOrder.team);
+    if (savedOrder.pilot == '') {
+      return (0, _util.assign)(savedOrder, savedOrder.team);
+    } else {
+      return savedOrder;
+    }
   }).then(function (savedOrder) {
     _send.message.contents.en = 'New Order Placed \n' + order.title + '. \nPick at ' + order.from_address + '.\n                              ';
     (0, _send.sendNotification)(_send.message);
@@ -170,9 +175,10 @@ function listByPilotAndDate(req, res, next) {
       skip = _req$query2$skip === undefined ? 0 : _req$query2$skip;
   var _req$body = req.body,
       pilot = _req$body.pilot,
-      date = _req$body.date;
+      date = _req$body.date,
+      timeZone = _req$body.timeZone;
 
-  _order2.default.listByPilotAndDate({ pilot: pilot, date: date, limit: limit, skip: skip }).then(function (orders) {
+  _order2.default.listByPilotAndDate({ pilot: pilot, date: date, timeZone: timeZone, limit: limit, skip: skip }).then(function (orders) {
     return res.json(orders);
   }).catch(function (e) {
     return next(e);
@@ -256,7 +262,21 @@ function stats(req, res, next) {
   });
 }
 
-exports.default = { load: load, get: get, create: create, update: update, list: list, remove: remove,
+function reject(req, res, next) {
+  var order = req.order;
+  var pilotId = req.body.pilotId;
+  order.status = 'PENDING';
+  order.pilot = '';
+  order.save(function (savedOrder) {
+    (0, _util.assign)(savedOrder, pilotId);
+  }).then(function (order) {
+    return res.json(order);
+  }).catch(function (e) {
+    return next(e);
+  });
+}
+
+exports.default = { load: load, get: get, create: create, update: update, list: list, remove: remove, reject: reject,
   updateStatus: updateStatus, updatePilotMovement: updatePilotMovement, listByPilotAndDate: listByPilotAndDate, listByDate: listByDate, listByStatusPilotDateRange: listByStatusPilotDateRange, updateOrders: updateOrders,
   stats: stats, listByTeam: listByTeam };
 module.exports = exports['default'];

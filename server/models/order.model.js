@@ -227,10 +227,11 @@ OrderSchema.statics = {
       .exec();
   },
 
-  listByPilotAndDate({ pilot, date, skip = 0, limit = 50 } = {}) {
+  listByPilotAndDate({ pilot, date, timeZone = 'Europe/London' ,skip = 0, limit = 50 } = {}) {
         return this.find()
             .where('pilot', pilot)
-            .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day')).lte(moment(date, "YYYYMMDD").endOf('day'))
+            .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day').tz(timeZone))
+                               .lte(moment(date, "YYYYMMDD").endOf('day').tz(timeZone))
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
@@ -247,7 +248,7 @@ OrderSchema.statics = {
       .exec();
   },
 
-  listByDate({ date, skip = 0, limit = 50 } = {}) {
+  listByDate({ date, skip = 0, limit = 1000 } = {}) {
         return this.find()
             .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day')).lte(moment(date, "YYYYMMDD").endOf('day'))
             .sort({ createdAt: -1 })

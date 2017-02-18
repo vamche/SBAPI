@@ -249,12 +249,14 @@ OrderSchema.statics = {
     var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         pilot = _ref2.pilot,
         date = _ref2.date,
+        _ref2$timeZone = _ref2.timeZone,
+        timeZone = _ref2$timeZone === undefined ? 'Europe/London' : _ref2$timeZone,
         _ref2$skip = _ref2.skip,
         skip = _ref2$skip === undefined ? 0 : _ref2$skip,
         _ref2$limit = _ref2.limit,
         limit = _ref2$limit === undefined ? 50 : _ref2$limit;
 
-    return this.find().where('pilot', pilot).where('createdAt').gte((0, _moment2.default)(date, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(date, "YYYYMMDD").endOf('day')).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    return this.find().where('pilot', pilot).where('createdAt').gte((0, _moment2.default)(date, "YYYYMMDD").startOf('day').tz(timeZone)).lte((0, _moment2.default)(date, "YYYYMMDD").endOf('day').tz(timeZone)).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
   listByTeamAndDate: function listByTeamAndDate() {
     var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -273,7 +275,7 @@ OrderSchema.statics = {
         _ref4$skip = _ref4.skip,
         skip = _ref4$skip === undefined ? 0 : _ref4$skip,
         _ref4$limit = _ref4.limit,
-        limit = _ref4$limit === undefined ? 50 : _ref4$limit;
+        limit = _ref4$limit === undefined ? 1000 : _ref4$limit;
 
     return this.find().where('createdAt').gte((0, _moment2.default)(date, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(date, "YYYYMMDD").endOf('day')).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },

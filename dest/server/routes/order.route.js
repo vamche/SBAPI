@@ -63,6 +63,8 @@ router.route('/update/bulk').put(_order2.default.updateOrders);
 
 router.route('/stats').post(_order2.default.stats);
 
+router.route('/reject/:orderId').post(_order2.default.reject);
+
 /** Load order when API with orderId route parameter is hit */
 router.param('orderId', _order2.default.load);
 

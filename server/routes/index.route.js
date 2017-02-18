@@ -8,7 +8,7 @@ import customerRoutes from './customer.route';
 import timesheetRoutes from './timesheet.route';
 import targetRoutes from './target.route';
 import managerRoutes from './manager.route';
-
+import franchiseRoutes from './franchise.route';
 
 const router = express.Router(); // eslint-disable-line new-cap
 
@@ -38,13 +38,16 @@ router.use('/util', authRoutes);
 // mount customer routes at /customers
 router.use('/customers', customerRoutes);
 
-// mount customer routes at /auth
+// mount timesheet routes at /timesheets
 router.use('/timesheets', timesheetRoutes);
 
-// mount customer routes at /auth
+// mount target routes at /targets
 router.use('/targets', targetRoutes);
 
-// mount customer routes at /auth
+// mount manager routes at /managers
 router.use('/managers', managerRoutes);
+
+// mount franchise routes at /franchises
+router.use('/franchises', franchiseRoutes);
 
 export default router;

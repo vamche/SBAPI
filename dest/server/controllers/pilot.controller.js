@@ -51,7 +51,11 @@ function get(req, res) {
 }
 
 function getUnAssignedPilotsByTeam(team) {
-    return _pilot2.default.find().where('isActive', false).where('team', team);
+    if (team == 'ALL' || team == '*') {
+        return _pilot2.default.find().where('isActive', false);
+    } else {
+        return _pilot2.default.find().where('isActive', false).where('teams').in([team]);
+    }
 }
 
 /**
@@ -88,7 +92,7 @@ function createPilot(req, res, next) {
 
     user.save().then(function (savedUser) {
         var customer = new _pilot2.default({
-            userId: savedUser._id.toString(),
+            userId: savedUser._id,
             teams: req.body.teams,
             location: req.body.location
         });
