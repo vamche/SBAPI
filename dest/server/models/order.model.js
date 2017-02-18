@@ -77,6 +77,7 @@ var OrderSchema = new _mongoose2.default.Schema({
   },
   from_date_time: {
     type: Date,
+    default: Date.now(),
     required: false
   },
   to_name: {
@@ -103,6 +104,11 @@ var OrderSchema = new _mongoose2.default.Schema({
       default: 'Point'
     },
     coordinates: [Number]
+  },
+  to_date_time: {
+    type: Date,
+    default: Date.now(),
+    required: false
   },
   timeZone: {
     type: Number,

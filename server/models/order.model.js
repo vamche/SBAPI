@@ -57,6 +57,7 @@ const OrderSchema = new mongoose.Schema({
   },
   from_date_time: {
     type: Date,
+    default: Date.now(),
     required: false
   },
   to_name: {
@@ -84,6 +85,11 @@ const OrderSchema = new mongoose.Schema({
       default: 'Point'
     },
     coordinates: [Number]
+  },
+  to_date_time: {
+    type: Date,
+    default: Date.now(),
+    required: false
   },
   timeZone: {
     type: Number,
