@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import httpStatus from 'http-status';
 import APIError from '../helpers/APIError';
 
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 /**
  * Job Schema

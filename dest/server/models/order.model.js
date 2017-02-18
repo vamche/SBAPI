@@ -20,9 +20,9 @@ var _APIError = require('../helpers/APIError');
 
 var _APIError2 = _interopRequireDefault(_APIError);
 
-var _moment = require('moment');
+var _momentTimezone = require('moment-timezone');
 
-var _moment2 = _interopRequireDefault(_moment);
+var _momentTimezone2 = _interopRequireDefault(_momentTimezone);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -256,7 +256,7 @@ OrderSchema.statics = {
         _ref2$limit = _ref2.limit,
         limit = _ref2$limit === undefined ? 50 : _ref2$limit;
 
-    return this.find().where('pilot', pilot).where('createdAt').gte((0, _moment2.default)(date, "YYYYMMDD").startOf('day').tz(timeZone)).lte((0, _moment2.default)(date, "YYYYMMDD").endOf('day').tz(timeZone)).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    return this.find().where('pilot', pilot).where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day').tz(timeZone)).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day').tz(timeZone)).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
   listByTeamAndDate: function listByTeamAndDate() {
     var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -267,7 +267,7 @@ OrderSchema.statics = {
         _ref3$limit = _ref3.limit,
         limit = _ref3$limit === undefined ? 1000 : _ref3$limit;
 
-    return this.find().where('team', team).where('createdAt').gte((0, _moment2.default)(date, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(date, "YYYYMMDD").endOf('day')).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    return this.find().where('team', team).where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day')).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
   listByDate: function listByDate() {
     var _ref4 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -277,7 +277,7 @@ OrderSchema.statics = {
         _ref4$limit = _ref4.limit,
         limit = _ref4$limit === undefined ? 1000 : _ref4$limit;
 
-    return this.find().where('createdAt').gte((0, _moment2.default)(date, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(date, "YYYYMMDD").endOf('day')).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    return this.find().where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day')).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
   listByPilotDateRangeStatus: function listByPilotDateRangeStatus() {
     var _ref5 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -286,7 +286,7 @@ OrderSchema.statics = {
         toDate = _ref5.toDate,
         status = _ref5.status;
 
-    return this.find().where('pilot', pilot).where('status', status).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day')).exec();
+    return this.find().where('pilot', pilot).where('status', status).where('createdAt').gte((0, _momentTimezone2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _momentTimezone2.default)(toDate, "YYYYMMDD").endOf('day')).exec();
   }
 };
 
