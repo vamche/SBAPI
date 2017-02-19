@@ -244,11 +244,12 @@ function stats(req, res, next){
 
 function reject(req, res, next){
   const order = req.order;
-  const pilotId = req.body.pilotId;
+  const pilot = order.pilot;
   order.status = 'PENDING';
   order.pilot = '';
-  order.save(savedOrder => {
-      assign(savedOrder, pilotId);
+  order.save()
+    .then(savedOrder => {
+      return assign(savedOrder, pilot);
     })
     .then(order => res.json(order))
     .catch(e => next(e));

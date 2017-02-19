@@ -27,7 +27,8 @@ const OrderSchema = new mongoose.Schema({
   },
   pilot: {
     type: String, // mongoose.Schema.ObjectId,
-    required: false
+    required: false,
+    default: ''
   },
   from_name: {
     type: String,

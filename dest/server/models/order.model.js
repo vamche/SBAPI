@@ -48,7 +48,8 @@ var OrderSchema = new _mongoose2.default.Schema({
   },
   pilot: {
     type: String, // mongoose.Schema.ObjectId,
-    required: false
+    required: false,
+    default: ''
   },
   from_name: {
     type: String,

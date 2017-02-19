@@ -302,11 +302,11 @@ function stats(req, res, next) {
 
 function reject(req, res, next) {
   var order = req.order;
-  var pilotId = req.body.pilotId;
+  var pilot = order.pilot;
   order.status = 'PENDING';
   order.pilot = '';
-  order.save(function (savedOrder) {
-    (0, _util.assign)(savedOrder, pilotId);
+  order.save().then(function (savedOrder) {
+    return (0, _util.assign)(savedOrder, pilot);
   }).then(function (order) {
     return res.json(order);
   }).catch(function (e) {
