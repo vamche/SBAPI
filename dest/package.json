@@ -84,6 +84,7 @@
     "moment-timezone": "0.5.11",
     "mongoose": "4.7.4",
     "morgan": "1.7.0",
+    "node-schedule": "1.2.0",
     "run-sequence": "^1.1.5",
     "supertest": "2.0.1",
     "supertest-as-promised": "4.0.2",

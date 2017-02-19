@@ -3,6 +3,8 @@ import cloudinary from 'cloudinary';
 import util from 'util';
 import config from './config/env';
 import app from './config/express';
+import schedule from 'node-schedule';
+import { assignPending } from './server/controllers/util.controller';
 
 const debug = require('debug')('express-mongoose-es6-rest-api:index');
 
@@ -29,6 +31,10 @@ cloudinary.config({
   cloud_name: config.cloudinary_cloud_name,
   api_key: config.cloudinary_api_key,
   api_secret: config.cloudinary_api_secret
+});
+
+let assign = schedule.scheduleJob('* * * * *', () =>{
+  assignPending();
 });
 
 

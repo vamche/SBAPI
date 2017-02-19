@@ -272,7 +272,14 @@ OrderSchema.statics = {
           .where('status', status)
           .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
           .exec();
+  },
+
+  getUnAssigned() {
+    return this.find()
+      .or([{'status' : 'PENDING'}, {'pilot' : ''}])
+      .exec();
   }
+
 };
 
 /**

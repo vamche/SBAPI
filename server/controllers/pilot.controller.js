@@ -25,13 +25,13 @@ function get(req, res) {
   return res.json(req.pilot);
 }
 
-function getUnAssignedPilotsByTeam(team){
+function getUnAssignedPilotsByTeam(team, isActive){
   if(team == 'ALL' || team == '*'){
     return Pilot.find()
-      .where('isActive', false);
+      .where('isActive', isActive)
   }else {
     return Pilot.find()
-      .where('isActive', false)
+      .where('isActive', isActive)
       .where('teams').in([team]);
   }
 }

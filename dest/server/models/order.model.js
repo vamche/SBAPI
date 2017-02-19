@@ -294,6 +294,9 @@ OrderSchema.statics = {
         status = _ref5.status;
 
     return this.find().where('pilot', pilot).where('status', status).where('createdAt').gte((0, _momentTimezone2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _momentTimezone2.default)(toDate, "YYYYMMDD").endOf('day')).exec();
+  },
+  getUnAssigned: function getUnAssigned() {
+    return this.find().or([{ 'status': 'PENDING' }, { 'pilot': '' }]).exec();
   }
 };
 

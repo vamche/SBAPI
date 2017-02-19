@@ -50,11 +50,11 @@ function get(req, res) {
     return res.json(req.pilot);
 }
 
-function getUnAssignedPilotsByTeam(team) {
+function getUnAssignedPilotsByTeam(team, isActive) {
     if (team == 'ALL' || team == '*') {
-        return _pilot2.default.find().where('isActive', false);
+        return _pilot2.default.find().where('isActive', isActive);
     } else {
-        return _pilot2.default.find().where('isActive', false).where('teams').in([team]);
+        return _pilot2.default.find().where('isActive', isActive).where('teams').in([team]);
     }
 }
 

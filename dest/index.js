@@ -24,6 +24,12 @@ var _express = require('./config/express');
 
 var _express2 = _interopRequireDefault(_express);
 
+var _nodeSchedule = require('node-schedule');
+
+var _nodeSchedule2 = _interopRequireDefault(_nodeSchedule);
+
+var _util3 = require('./server/controllers/util.controller');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var debug = require('debug')('express-mongoose-es6-rest-api:index');
@@ -51,6 +57,10 @@ _cloudinary2.default.config({
   cloud_name: _env2.default.cloudinary_cloud_name,
   api_key: _env2.default.cloudinary_api_key,
   api_secret: _env2.default.cloudinary_api_secret
+});
+
+var assign = _nodeSchedule2.default.scheduleJob('* * * * *', function () {
+  (0, _util3.assignPending)();
 });
 
 // module.parent check is required to support mocha watch
