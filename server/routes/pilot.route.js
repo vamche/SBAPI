@@ -75,7 +75,7 @@ router.route('/stats')
 router.route('/listByTeam')
   .post(pilotCtrl.listByTeam)
 
-router.route('/updateAvailability')
+router.route('/updateAvailability/:pilotId')
   .post(pilotCtrl.updateAvailability)
 
 /** Load pilot when API with pilotId route parameter is hit */

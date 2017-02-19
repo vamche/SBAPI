@@ -28,7 +28,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var PilotSchema = new _mongoose2.default.Schema({
   userId: {
     type: String,
-    ref: 'Pilot',
+    ref: 'User',
     required: true
   },
   teams: {

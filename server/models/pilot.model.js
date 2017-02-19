@@ -9,7 +9,7 @@ import APIError from '../helpers/APIError';
 const PilotSchema = new mongoose.Schema({
   userId: {
     type: String,
-    ref: 'Pilot',
+    ref: 'User',
     required: true
   },
   teams: {
