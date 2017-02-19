@@ -32,9 +32,11 @@ function get(req, res) {
  */
 function create(req, res, next) {
   const franchise = new Franchise({
-    user : req.body.user,
+    name : req.body.name,
     teams : req.body.teams,
-    location : req.body.location
+    location : req.body.location,
+    geo_fence : req.body.geo_fence,
+    description: req.body.description
   });
 
   franchise.save()
