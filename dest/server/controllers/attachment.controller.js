@@ -58,8 +58,8 @@ function create(req, res, next) {
       var attachment = new _attachment2.default({
         source: result.url,
         uploaded: true,
-        order: req.body.order,
-        status: req.body.status,
+        orderId: req.body.orderId,
+        orderStatus: req.body.orderStatus,
         type: req.body.type,
         extension: req.body.extension
       });
@@ -75,8 +75,8 @@ function create(req, res, next) {
     var attachment = new _attachment2.default({
       source: req.body.source,
       uploaded: req.body.uploaded,
-      order: req.body.order,
-      status: req.body.status,
+      orderId: req.body.orderId,
+      orderStatus: req.body.orderStatus,
       type: req.body.type,
       extension: req.body.extension
     });

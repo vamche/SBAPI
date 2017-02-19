@@ -89,17 +89,20 @@ function getSales(req, res, next){
           .then(teams => {
               promises = teams.map(team => {
                   let total = 0;
+                  let numberOfOrders = 0;
                   const p = Order.find()
                       .where('team', team._id.toString())
                       .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
                       .then(orders => {
                           orders.forEach(order => {
-                              total = total + order.final_cost;
+                            total += order.final_cost;
+                            numberOfOrders++;
                           });
                           sales.push({
                               '_id' : team._id,
                               'name' : team.name,
-                              'sales' : total
+                              'sales' : total,
+                              'orders' : numberOfOrders
                           });
                       })
                       .catch(e => next(e));

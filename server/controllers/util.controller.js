@@ -2,6 +2,7 @@ import Order from '../models/order.model';
 import Pilot from '../models/pilot.model';
 import orderCtrl from '../controllers/order.controller';
 import pilotCtrl from '../controllers/pilot.controller';
+import cloudinary from 'cloudinary';
 
 /**
  * Load order and append to req.
@@ -52,4 +53,16 @@ function unAssign(orderId, pilotId){
 
 }
 
-export default { assign, unAssign };
+function uploadImgAsync(img) {
+  return new Promise(function (resolve, reject) {
+    cloudinary.v2.uploader.upload(img,
+      function(err, res){
+        if(err) {
+          reject(err);
+        }
+        resolve(res);
+      });
+  });
+}
+
+export default { assign, unAssign, uploadImgAsync };

@@ -20,6 +20,10 @@ var _pilot3 = require('../controllers/pilot.controller');
 
 var _pilot4 = _interopRequireDefault(_pilot3);
 
+var _cloudinary = require('cloudinary');
+
+var _cloudinary2 = _interopRequireDefault(_cloudinary);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -68,6 +72,17 @@ function unAssign(orderId, pilotId) {
     });
 }
 
-exports.default = { assign: assign, unAssign: unAssign };
+function uploadImgAsync(img) {
+    return new Promise(function (resolve, reject) {
+        _cloudinary2.default.v2.uploader.upload(img, function (err, res) {
+            if (err) {
+                reject(err);
+            }
+            resolve(res);
+        });
+    });
+}
+
+exports.default = { assign: assign, unAssign: unAssign, uploadImgAsync: uploadImgAsync };
 module.exports = exports['default'];
 //# sourceMappingURL=util.controller.js.map

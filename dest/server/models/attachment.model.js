@@ -34,11 +34,11 @@ var AttachmentSchema = new _mongoose2.default.Schema({
     type: Boolean,
     required: true
   },
-  order: {
+  orderId: {
     type: String,
     required: false
   },
-  status: {
+  orderStatus: {
     type: String,
     required: false
   },

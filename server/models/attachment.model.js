@@ -15,11 +15,11 @@ const AttachmentSchema = new mongoose.Schema({
     type: Boolean,
     required: true
   },
-  order: {
+  orderId: {
     type: String,
     required: false
   },
-  status: {
+  orderStatus: {
     type: String,
     required: false
   },

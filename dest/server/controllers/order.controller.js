@@ -8,6 +8,10 @@ var _order = require('../models/order.model');
 
 var _order2 = _interopRequireDefault(_order);
 
+var _attachment = require('../models/attachment.model');
+
+var _attachment2 = _interopRequireDefault(_attachment);
+
 var _send = require('../notifications/send');
 
 var _util = require('./util.controller');
@@ -15,6 +19,10 @@ var _util = require('./util.controller');
 var _bluebird = require('bluebird');
 
 var _bluebird2 = _interopRequireDefault(_bluebird);
+
+var _cloudinary = require('cloudinary');
+
+var _cloudinary2 = _interopRequireDefault(_cloudinary);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -103,28 +111,38 @@ function update(req, res, next) {
 function updateOrders(req, res, next) {
   var updatedOrders = [];
   var promises = req.body.orders.map(function (order) {
+    var tobeUpdatedOrder = void 0;
     return _order2.default.get(order._id).then(function (o) {
-      o.status = order.status;
-      o.timeline = order.timeline;
-      o.pilot_movement = order.pilot_movement;
-      o.pilot_completed_date_time = order.pilot_completed_date_time;
-      var imagesToBeUploaded = o.attachments.filter(function (attachment) {
-        return !attachment.uploaded;
+      tobeUpdatedOrder = o;
+      var attachmentsTobeUploaded = order.attachments.filter(function (a) {
+        return !a.uploaded;
       });
-      // Calculate distance and time
-      // final_cost
-      var imageUploadPromises = imagesToBeUploaded.map(function (attachment) {
-        return cloudinary.uploader.upload("data:image/png;base64," + req.body.source, function (result) {
-          var attachment = new Attachment({
+      tobeUpdatedOrder.attachments = order.attachments.filter(function (a) {
+        return a.uploaded;
+      });
+      var i = 0;
+      var aPromises = attachmentsTobeUploaded.map(function (attachment) {
+        (0, _util.uploadImgAsync)("data:image/png;base64," + attachment.source).then(function (result) {
+          var a = new _attachment2.default({
             source: result.url,
             uploaded: true,
-            order: attachment.order,
-            status: attachment.status,
+            orderId: attachment.orderId,
+            orderStatus: attachment.orderStatus,
             type: attachment.type,
             extension: attachment.extension
           });
-          attachment.save().then(function (savedAttachment) {
-            return o.images.push(savedAttachment._id);
+          return a;
+        }).then(function (a) {
+          i++;
+          return a.save().then(function (savedAttachment) {
+            tobeUpdatedOrder.attachments.push(savedAttachment._id);
+            if (i == attachmentsTobeUploaded.length) {
+              return tobeUpdatedOrder.save().then(function (updatedOrder) {
+                updatedOrders.push(updatedOrder);
+              }).catch(function (e) {
+                return next(e);
+              });
+            }
           }).catch(function (e) {
             return next(e);
           });
@@ -132,17 +150,6 @@ function updateOrders(req, res, next) {
           return next(e);
         });
       });
-      return _bluebird2.default.all(imageUploadPromises).then(function () {
-        o.save().then(function (updatedOrder) {
-          return updatedOrders.push(updatedOrder);
-        }).catch(function (e) {
-          return next(e);
-        });
-      }).catch(function (e) {
-        return next(e);
-      });
-    }).catch(function (e) {
-      return next(e);
     });
   });
   _bluebird2.default.all(promises).then(function () {
