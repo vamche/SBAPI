@@ -436,9 +436,28 @@ function listByTeam(req, res, next) {
     });
 }
 
+function updateAvailability(req, res, next) {
+    var pilot = req.pilot;
+    pilot.isAvailable = req.body.isAvailable;
+    pilot.save().then(function (savedPilot) {
+        var timesheet = new _timesheet2.default({
+            isAvailable: req.body.isAvailable,
+            pilot: savedPilot._id.toString(),
+            location: req.body.location
+        });
+        timesheet.save().then(function (timesheet) {
+            return res.json(timesheet);
+        }).catch(function (e) {
+            return next(e);
+        });
+    }).catch(function (e) {
+        return next(e);
+    });
+}
+
 exports.default = {
     load: load, get: get, create: create, update: update, list: list, remove: remove, listOfPilotsWithUserDetails: listOfPilotsWithUserDetails, updateLocation: updateLocation, updateTeams: updateTeams,
     getUnAssignedPilotsByTeam: getUnAssignedPilotsByTeam, createPilot: createPilot, getSales: getSales, getSalesByPilot: getSalesByPilot, getTimesheets: getTimesheets, getTimesheetsByPilot: getTimesheetsByPilot,
-    stats: stats, listByTeam: listByTeam };
+    stats: stats, listByTeam: listByTeam, updateAvailability: updateAvailability };
 module.exports = exports['default'];
 //# sourceMappingURL=pilot.controller.js.map

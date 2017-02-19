@@ -381,8 +381,26 @@ function listByTeam(req, res, next){
     .catch(e => next(e));
 }
 
+function updateAvailability(req, res, next){
+  const pilot = req.pilot;
+  pilot.isAvailable = req.body.isAvailable;
+  pilot.save()
+    .then(savedPilot => {
+      const timesheet = new Timesheet({
+        isAvailable: req.body.isAvailable,
+        pilot: savedPilot._id.toString(),
+        location: req.body.location
+      });
+      timesheet.save()
+        .then(timesheet => res.json(timesheet))
+        .catch(e => next(e));
+
+    })
+    .catch(e => next(e));
+}
+
 
 export default {
   load, get, create, update, list, remove, listOfPilotsWithUserDetails, updateLocation, updateTeams,
     getUnAssignedPilotsByTeam, createPilot, getSales, getSalesByPilot, getTimesheets, getTimesheetsByPilot,
-    stats, listByTeam};
+    stats, listByTeam, updateAvailability};
