@@ -6,7 +6,7 @@ function sendNotification(data) {
   axios.defaults.headers.common['Authorization'] = 'Basic YmIwMGMzZTAtOGMxNi00MmZlLWJkYjUtYjBjODY2ZWNkZTNi';
   axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencodeapplication/json; charset=utf-8';
 
-  axios.post('/notifications', data)
+  return axios.post('/notifications', data)
          .then((response) => {
            console.log(response);
          })
@@ -15,7 +15,7 @@ function sendNotification(data) {
          });
 }
 
-const message = { 
+const message = {
   app_id: "092a0af4-0df5-4e86-aebc-f42e4a8d383e",
   contents: {"en": "English Message From Node!"},
   included_segments: ["All"]

@@ -16,7 +16,7 @@ function sendNotification(data) {
   _axios2.default.defaults.headers.common['Authorization'] = 'Basic YmIwMGMzZTAtOGMxNi00MmZlLWJkYjUtYjBjODY2ZWNkZTNi';
   _axios2.default.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencodeapplication/json; charset=utf-8';
 
-  _axios2.default.post('/notifications', data).then(function (response) {
+  return _axios2.default.post('/notifications', data).then(function (response) {
     console.log(response);
   }).catch(function (error) {
     console.log(error);
