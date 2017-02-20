@@ -117,6 +117,12 @@ function updateOrders(req, res, next) {
     var tobeUpdatedOrder = void 0;
     return _order2.default.get(order._id).then(function (o) {
       tobeUpdatedOrder = o;
+      tobeUpdatedOrder.status = order.status;
+      tobeUpdatedOrder.timeline = order.timeline;
+      tobeUpdatedOrder.pilot_from_date_time = order.pilot_from_date_time;
+      tobeUpdatedOrder.pilot_to_date_time = order.pilot_to_date_time;
+      tobeUpdatedOrder.pilot_completed_date_time = order.pilot_completed_date_time;
+
       var attachmentsTobeUploaded = order.attachments.filter(function (a) {
         return !a.uploaded;
       });

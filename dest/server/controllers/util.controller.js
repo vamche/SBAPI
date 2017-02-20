@@ -24,6 +24,10 @@ var _cloudinary = require('cloudinary');
 
 var _cloudinary2 = _interopRequireDefault(_cloudinary);
 
+var _geolib = require('geolib');
+
+var _geolib2 = _interopRequireDefault(_geolib);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var maxDistance = 1; // 1 KM
@@ -122,6 +126,15 @@ function assignPending() {
       }
     });
   });
+}
+
+function calculateDistanceBetweenLatLongs(coordinates) {
+  var latLongs = coordinates.map(function (coordinate) {
+    return { latitude: coordinates[1],
+      longitude: coordinates[0]
+    };
+  });
+  return _geolib2.default.getPathLength(latLongs);
 }
 
 exports.default = { assign: assign, unAssign: unAssign, uploadImgAsync: uploadImgAsync, assignPending: assignPending };

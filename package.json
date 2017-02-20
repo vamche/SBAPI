@@ -65,6 +65,7 @@
     "express-jwt": "5.1.0",
     "express-validation": "1.0.1",
     "express-winston": "2.1.0",
+    "geolib": "2.0.22",
     "ghooks": "^1.2.4",
     "gulp": "3.9.1",
     "gulp-babel": "6.1.2",

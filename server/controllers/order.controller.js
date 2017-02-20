@@ -97,6 +97,12 @@ function updateOrders(req, res, next){
       return Order.get(order._id)
         .then(o => {
           tobeUpdatedOrder = o;
+          tobeUpdatedOrder.status = order.status;
+          tobeUpdatedOrder.timeline = order.timeline;
+          tobeUpdatedOrder.pilot_from_date_time = order.pilot_from_date_time;
+          tobeUpdatedOrder.pilot_to_date_time = order.pilot_to_date_time;
+          tobeUpdatedOrder.pilot_completed_date_time = order.pilot_completed_date_time;
+
           let attachmentsTobeUploaded = order.attachments.filter(a => !a.uploaded);
           tobeUpdatedOrder.attachments = order.attachments.filter(a => a.uploaded);
           let i = 0;

@@ -3,6 +3,7 @@ import Pilot from '../models/pilot.model';
 import orderCtrl from '../controllers/order.controller';
 import pilotCtrl from '../controllers/pilot.controller';
 import cloudinary from 'cloudinary';
+import geolib from 'geolib';
 
 const maxDistance = 1; // 1 KM
 
@@ -111,6 +112,17 @@ function assignPending(){
       })
     })
 }
+
+function calculateDistanceBetweenLatLongs(coordinates){
+  const latLongs = coordinates.map(coordinate => {
+    return { latitude : coordinates[1],
+             longitude : coordinates[0]
+           };
+  });
+  return geolib.getPathLength(latLongs);
+}
+
+
 
 
 export default { assign, unAssign, uploadImgAsync, assignPending };
