@@ -119,6 +119,8 @@ function updateOrders(req, res, next) {
       tobeUpdatedOrder = o;
       tobeUpdatedOrder.status = order.status;
       tobeUpdatedOrder.timeline = order.timeline;
+      tobeUpdatedOrder.pilot_movement = order.pilot_movement;
+      tobeUpdatedOrder.pilot_from_date_time = order.pilot_start_date_time;
       tobeUpdatedOrder.pilot_from_date_time = order.pilot_from_date_time;
       tobeUpdatedOrder.pilot_to_date_time = order.pilot_to_date_time;
       tobeUpdatedOrder.pilot_completed_date_time = order.pilot_completed_date_time;
