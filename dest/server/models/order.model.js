@@ -129,7 +129,7 @@ var OrderSchema = new _mongoose2.default.Schema({
     required: true
   },
   timeline: {
-    type: [[]], // [{ status: String, timestamp: Date, pilot: String }],
+    type: [[String]], // [[ status, datetime, location ]]
     required: false
   },
   acknowledged_notes: {
@@ -155,6 +155,10 @@ var OrderSchema = new _mongoose2.default.Schema({
     },
     coordinates: [[Number]]
 
+  },
+  pilot_start_date_time: {
+    type: Date,
+    default: Date.now
   },
   pilot_from_date_time: {
     type: Date,
