@@ -111,7 +111,8 @@ const OrderSchema = new mongoose.Schema({
   },
   timeline: {
     type: [[String]], // [[ status, datetime, location ]]
-    required: false
+    required: false,
+    default: [[]]
   },
   acknowledged_notes: {
     type: String,
