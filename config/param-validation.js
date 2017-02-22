@@ -74,7 +74,7 @@ export default {
     // POST /api/pilots
     createCustomer: {
         body: {
-            userId: Joi.string().required()
+            name: Joi.string().required()
         }
     },
 

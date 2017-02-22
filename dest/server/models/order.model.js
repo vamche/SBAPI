@@ -130,7 +130,8 @@ var OrderSchema = new _mongoose2.default.Schema({
   },
   timeline: {
     type: [[String]], // [[ status, datetime, location ]]
-    required: false
+    required: false,
+    default: [[]]
   },
   acknowledged_notes: {
     type: String,

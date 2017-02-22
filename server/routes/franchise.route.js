@@ -5,12 +5,6 @@ import franchiseCtrl from '../controllers/franchise.controller';
 
 const router = express.Router(); // eslint-disable-line new-cap
 
-
-router.route('/list')
-/** GET /api/pliots/list - Get list of franchises with respective user details*/
-  .get(franchiseCtrl.listOfFranchisesWithUserDetails);
-
-
 router.route('/')
 /** GET /api/franchises - Get list of franchises */
   .get(franchiseCtrl.list)
@@ -27,20 +21,6 @@ router.route('/:franchiseId')
 
   /** DELETE /api/franchises/:franchiseId - Delete franchise */
   .delete(franchiseCtrl.remove);
-
-router.route('/create')
-
-/** POST /api/franchises - Create new franchise */
-  .post(franchiseCtrl.createFranchise);
-
-router.route('/updateLocation/:franchiseId')
-
-  .put(franchiseCtrl.updateLocation);
-
-router.route('/updateTeams/:franchiseId')
-
-  .put(franchiseCtrl.updateTeams);
-
 
 router.route('/sales')
 /** GET /api/franchises/sales - Get sales by date range

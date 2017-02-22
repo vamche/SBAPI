@@ -31,19 +31,6 @@ function get(req, res) {
  * @returns {Manager}
  */
 function create(req, res, next) {
-  const manager = new Manager({
-    user : req.body.user,
-    teams : req.body.teams,
-    location : req.body.location
-  });
-
-  manager.save()
-    .then(savedManager => res.json(savedManager))
-    .catch(e => next(e));
-}
-
-function createManager(req, res, next){
-
   const user = new User({
     firstName : req.body.firstName,
     lastName : req.body.lastName,
@@ -58,9 +45,9 @@ function createManager(req, res, next){
       const manager = new Manager({
         user : savedUser._id,
         isAdmin : req.body.isAdmin,
-        teams : req.body.teams,
-        location : req.body.location,
-        geoFence : req.body.geoFence
+        isFranchiseAdmin : req.body.isFranchiseAdmin,
+        franchises : req.body.franchises,
+        teams : req.body.teams
       });
       manager.save()
         .then(savedManager => {
@@ -68,23 +55,6 @@ function createManager(req, res, next){
         })
         .catch(e => next(e));
     })
-    .catch(e => next(e));
-}
-
-
-function updateLocation(req, res, next) {
-  const manager = req.manager;
-  manager.location = req.body.location;
-  manager.save()
-    .then(savedManager => res.json(savedManager))
-    .catch(e => next(e));
-}
-
-function updateTeams(req, res, next) {
-  const manager = req.manager;
-  manager.teams = req.body.teams;
-  manager.save()
-    .then(savedManager => res.json(savedManager))
     .catch(e => next(e));
 }
 
@@ -96,6 +66,8 @@ function updateTeams(req, res, next) {
  */
 function update(req, res, next) {
   const manager = req.manager;
+  manager.teams = req.body.teams ? req.body.teams : manager.teams;
+  manager.franchises = req.body.franchises ? req.body.franchises : req.body.franchises;
   manager.save()
     .then(savedManager => res.json(savedManager))
     .catch(e => next(e));
@@ -125,38 +97,6 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-/**
- * Get manager list.
- * @property {number} req.query.skip - Number of Manager to be skipped.
- * @property {number} req.query.limit - Limit number of Manager to be returned.
- * @returns {Manager[]}
- */
-function listOfManagersWithUserDetails(req, res, next) {
-  const { limit = 100, skip = 0 } = req.query;
-  let managersWithUserIds = [];
-  Manager.list({ limit, skip })
-    .then((managers) => {
-      // managersWithUserIds = managers;
-      let updatedManagers = [];
-      managersWithUserIds = managers.map(
-        (manager) => {
-          let x;
-          const y = User.get(manager.user)
-            .then((user) => {
-              x = manager;
-              x.user = JSON.stringify(user);
-              updatedManagers.push(x);
-              return x;
-            });
-          return y;
-        });
-      BPromise.all(managersWithUserIds)
-        .then(() => res.json(updatedManagers))
-        .catch(e => next(e));
-    })
-    .catch(e => next(e));
-}
-
 
 function getSales(req, res, next){
   const { fromDate = moment().format('YYYYMMDD'), toDate = moment().format('YYYYMMDD') } = req.body;
@@ -167,7 +107,7 @@ function getSales(req, res, next){
       promises = managers.map(manager => {
         let total = 0;
         const p = Order.find()
-          .where('createdBy', manager._id.toString())
+          .where('team').in(manager.teams)
           .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
           .then(orders => {
             orders.forEach(order => {
@@ -212,5 +152,4 @@ function getSalesByManager(req, res, next){
 }
 
 export default {
-  load, get, create, update, list, remove, listOfManagersWithUserDetails,
-  updateLocation, updateTeams, createManager, getSales, getSalesByManager };
+  load, get, create, update, list, remove, getSales, getSalesByManager };

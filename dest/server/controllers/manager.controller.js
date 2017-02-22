@@ -53,21 +53,6 @@ function get(req, res) {
  * @returns {Manager}
  */
 function create(req, res, next) {
-  var manager = new _manager2.default({
-    user: req.body.user,
-    teams: req.body.teams,
-    location: req.body.location
-  });
-
-  manager.save().then(function (savedManager) {
-    return res.json(savedManager);
-  }).catch(function (e) {
-    return next(e);
-  });
-}
-
-function createManager(req, res, next) {
-
   var user = new _user2.default({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
@@ -81,35 +66,15 @@ function createManager(req, res, next) {
     var manager = new _manager2.default({
       user: savedUser._id,
       isAdmin: req.body.isAdmin,
-      teams: req.body.teams,
-      location: req.body.location,
-      geoFence: req.body.geoFence
+      isFranchiseAdmin: req.body.isFranchiseAdmin,
+      franchises: req.body.franchises,
+      teams: req.body.teams
     });
     manager.save().then(function (savedManager) {
       res.json(savedManager);
     }).catch(function (e) {
       return next(e);
     });
-  }).catch(function (e) {
-    return next(e);
-  });
-}
-
-function updateLocation(req, res, next) {
-  var manager = req.manager;
-  manager.location = req.body.location;
-  manager.save().then(function (savedManager) {
-    return res.json(savedManager);
-  }).catch(function (e) {
-    return next(e);
-  });
-}
-
-function updateTeams(req, res, next) {
-  var manager = req.manager;
-  manager.teams = req.body.teams;
-  manager.save().then(function (savedManager) {
-    return res.json(savedManager);
   }).catch(function (e) {
     return next(e);
   });
@@ -123,6 +88,8 @@ function updateTeams(req, res, next) {
  */
 function update(req, res, next) {
   var manager = req.manager;
+  manager.teams = req.body.teams ? req.body.teams : manager.teams;
+  manager.franchises = req.body.franchises ? req.body.franchises : req.body.franchises;
   manager.save().then(function (savedManager) {
     return res.json(savedManager);
   }).catch(function (e) {
@@ -163,43 +130,6 @@ function remove(req, res, next) {
   });
 }
 
-/**
- * Get manager list.
- * @property {number} req.query.skip - Number of Manager to be skipped.
- * @property {number} req.query.limit - Limit number of Manager to be returned.
- * @returns {Manager[]}
- */
-function listOfManagersWithUserDetails(req, res, next) {
-  var _req$query2 = req.query,
-      _req$query2$limit = _req$query2.limit,
-      limit = _req$query2$limit === undefined ? 100 : _req$query2$limit,
-      _req$query2$skip = _req$query2.skip,
-      skip = _req$query2$skip === undefined ? 0 : _req$query2$skip;
-
-  var managersWithUserIds = [];
-  _manager2.default.list({ limit: limit, skip: skip }).then(function (managers) {
-    // managersWithUserIds = managers;
-    var updatedManagers = [];
-    managersWithUserIds = managers.map(function (manager) {
-      var x = void 0;
-      var y = _user2.default.get(manager.user).then(function (user) {
-        x = manager;
-        x.user = JSON.stringify(user);
-        updatedManagers.push(x);
-        return x;
-      });
-      return y;
-    });
-    _bluebird2.default.all(managersWithUserIds).then(function () {
-      return res.json(updatedManagers);
-    }).catch(function (e) {
-      return next(e);
-    });
-  }).catch(function (e) {
-    return next(e);
-  });
-}
-
 function getSales(req, res, next) {
   var _req$body = req.body,
       _req$body$fromDate = _req$body.fromDate,
@@ -212,7 +142,7 @@ function getSales(req, res, next) {
   _manager2.default.find().then(function (managers) {
     promises = managers.map(function (manager) {
       var total = 0;
-      var p = _order2.default.find().where('createdBy', manager._id.toString()).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day')).then(function (orders) {
+      var p = _order2.default.find().where('team').in(manager.teams).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day')).then(function (orders) {
         orders.forEach(function (order) {
           total = total + order.final_cost;
         });
@@ -262,7 +192,6 @@ function getSalesByManager(req, res, next) {
 }
 
 exports.default = {
-  load: load, get: get, create: create, update: update, list: list, remove: remove, listOfManagersWithUserDetails: listOfManagersWithUserDetails,
-  updateLocation: updateLocation, updateTeams: updateTeams, createManager: createManager, getSales: getSales, getSalesByManager: getSalesByManager };
+  load: load, get: get, create: create, update: update, list: list, remove: remove, getSales: getSales, getSalesByManager: getSalesByManager };
 module.exports = exports['default'];
 //# sourceMappingURL=manager.controller.js.map

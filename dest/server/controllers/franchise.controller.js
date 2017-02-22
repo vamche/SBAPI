@@ -68,55 +68,6 @@ function create(req, res, next) {
   });
 }
 
-function createFranchise(req, res, next) {
-
-  var user = new _user2.default({
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    username: req.body.username,
-    password: req.body.password,
-    mobileNumber: req.body.mobileNumber,
-    emailAddress: req.body.emailAddress
-  });
-
-  user.save().then(function (savedUser) {
-    var franchise = new _franchise2.default({
-      user: savedUser._id,
-      isAdmin: req.body.isAdmin,
-      teams: req.body.teams,
-      location: req.body.location,
-      geoFence: req.body.geoFence
-    });
-    franchise.save().then(function (savedFranchise) {
-      res.json(savedFranchise);
-    }).catch(function (e) {
-      return next(e);
-    });
-  }).catch(function (e) {
-    return next(e);
-  });
-}
-
-function updateLocation(req, res, next) {
-  var franchise = req.franchise;
-  franchise.location = req.body.location;
-  franchise.save().then(function (savedFranchise) {
-    return res.json(savedFranchise);
-  }).catch(function (e) {
-    return next(e);
-  });
-}
-
-function updateTeams(req, res, next) {
-  var franchise = req.franchise;
-  franchise.teams = req.body.teams;
-  franchise.save().then(function (savedFranchise) {
-    return res.json(savedFranchise);
-  }).catch(function (e) {
-    return next(e);
-  });
-}
-
 /**
  * Update existing franchise
  * @property {string} req.body.username - The username of franchise.
@@ -125,6 +76,12 @@ function updateTeams(req, res, next) {
  */
 function update(req, res, next) {
   var franchise = req.franchise;
+  franchise.teams = req.body.teams ? req.body.teams : franchise.teams;
+  franchise.geo_fence = req.body.geo_fence ? req.body.geo_fence : franchise.geo_fence;
+  franchise.name = req.body.name ? req.body.name : franchise.name;
+  franchise.description = req.body.description ? req.body.description : franchise.description;
+  franchise.location = req.body.location ? req.body.location : franchise.location;
+
   franchise.save().then(function (savedFranchise) {
     return res.json(savedFranchise);
   }).catch(function (e) {
@@ -165,43 +122,6 @@ function remove(req, res, next) {
   });
 }
 
-/**
- * Get franchise list.
- * @property {number} req.query.skip - Number of Franchise to be skipped.
- * @property {number} req.query.limit - Limit number of Franchise to be returned.
- * @returns {Franchise[]}
- */
-function listOfFranchisesWithUserDetails(req, res, next) {
-  var _req$query2 = req.query,
-      _req$query2$limit = _req$query2.limit,
-      limit = _req$query2$limit === undefined ? 100 : _req$query2$limit,
-      _req$query2$skip = _req$query2.skip,
-      skip = _req$query2$skip === undefined ? 0 : _req$query2$skip;
-
-  var franchisesWithUserIds = [];
-  _franchise2.default.list({ limit: limit, skip: skip }).then(function (franchises) {
-    // franchisesWithUserIds = franchises;
-    var updatedFranchises = [];
-    franchisesWithUserIds = franchises.map(function (franchise) {
-      var x = void 0;
-      var y = _user2.default.get(franchise.user).then(function (user) {
-        x = franchise;
-        x.user = JSON.stringify(user);
-        updatedFranchises.push(x);
-        return x;
-      });
-      return y;
-    });
-    _bluebird2.default.all(franchisesWithUserIds).then(function () {
-      return res.json(updatedFranchises);
-    }).catch(function (e) {
-      return next(e);
-    });
-  }).catch(function (e) {
-    return next(e);
-  });
-}
-
 function getSales(req, res, next) {
   var _req$body = req.body,
       _req$body$fromDate = _req$body.fromDate,
@@ -214,7 +134,7 @@ function getSales(req, res, next) {
   _franchise2.default.find().then(function (franchises) {
     promises = franchises.map(function (franchise) {
       var total = 0;
-      var p = _order2.default.find().where('createdBy', franchise._id.toString()).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day')).then(function (orders) {
+      var p = _order2.default.find().where('team').in(franchise.teams).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day')).then(function (orders) {
         orders.forEach(function (order) {
           total = total + order.final_cost;
         });
@@ -264,7 +184,6 @@ function getSalesByFranchise(req, res, next) {
 }
 
 exports.default = {
-  load: load, get: get, create: create, update: update, list: list, remove: remove, listOfFranchisesWithUserDetails: listOfFranchisesWithUserDetails,
-  updateLocation: updateLocation, updateTeams: updateTeams, createFranchise: createFranchise, getSales: getSales, getSalesByFranchise: getSalesByFranchise };
+  load: load, get: get, create: create, update: update, list: list, remove: remove, getSales: getSales, getSalesByFranchise: getSalesByFranchise };
 module.exports = exports['default'];
 //# sourceMappingURL=franchise.controller.js.map

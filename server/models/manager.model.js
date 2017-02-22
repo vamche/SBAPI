@@ -12,11 +12,6 @@ const ManagerSchema = new mongoose.Schema({
     ref: 'User',
     required: false
   },
-  name: {
-    type: String,
-    required: true,
-    unique: true
-  },
   teams: {
     type: [String], // [mongoose.Schema.ObjectId],
     required: false
@@ -32,10 +27,6 @@ const ManagerSchema = new mongoose.Schema({
     default: false
   },
   franchises: {
-    type: [String],
-    required: false
-  },
-  teams: {
     type: [String],
     required: false
   },

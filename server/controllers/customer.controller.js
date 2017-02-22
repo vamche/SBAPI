@@ -31,14 +31,30 @@ function get(req, res) {
  * @returns {Customer}
  */
 function create(req, res, next) {
-  const customer = new Customer({
-    user : req.body.user,
-    teams : req.body.teams,
-    location : req.body.location
+  const user = new User({
+    firstName : req.body.firstName,
+    lastName : req.body.lastName,
+    username : req.body.username,
+    password : req.body.password,
+    mobileNumber : req.body.mobileNumber,
+    emailAddress : req.body.emailAddress
   });
 
-  customer.save()
-    .then(savedCustomer => res.json(savedCustomer))
+  user.save()
+    .then(savedUser => {
+      const customer = new Customer({
+        user : savedUser._id,
+        isMerchant : req.body.isMerchant,
+        teams : req.body.teams,
+        location : req.body.location,
+        name : req.body.name
+      });
+      customer.save()
+        .then(savedCustomer => {
+          res.json(savedCustomer);
+        })
+        .catch(e => next(e));
+    })
     .catch(e => next(e));
 }
 
@@ -59,7 +75,8 @@ function createCustomer(req, res, next){
                 user : savedUser._id,
                 isMerchant : req.body.isMerchant,
                 teams : req.body.teams,
-                location : req.body.location
+                location : req.body.location,
+                name : req.body.name
             });
             customer.save()
                 .then(savedCustomer => {
@@ -95,6 +112,10 @@ function updateTeams(req, res, next) {
  */
 function update(req, res, next) {
   const customer = req.customer;
+
+
+
+
   customer.save()
     .then(savedCustomer => res.json(savedCustomer))
     .catch(e => next(e));

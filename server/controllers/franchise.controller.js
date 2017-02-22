@@ -44,51 +44,6 @@ function create(req, res, next) {
     .catch(e => next(e));
 }
 
-function createFranchise(req, res, next){
-
-  const user = new User({
-    firstName : req.body.firstName,
-    lastName : req.body.lastName,
-    username : req.body.username,
-    password : req.body.password,
-    mobileNumber : req.body.mobileNumber,
-    emailAddress : req.body.emailAddress
-  });
-
-  user.save()
-    .then(savedUser => {
-      const franchise = new Franchise({
-        user : savedUser._id,
-        isAdmin : req.body.isAdmin,
-        teams : req.body.teams,
-        location : req.body.location,
-        geoFence : req.body.geoFence
-      });
-      franchise.save()
-        .then(savedFranchise => {
-          res.json(savedFranchise);
-        })
-        .catch(e => next(e));
-    })
-    .catch(e => next(e));
-}
-
-
-function updateLocation(req, res, next) {
-  const franchise = req.franchise;
-  franchise.location = req.body.location;
-  franchise.save()
-    .then(savedFranchise => res.json(savedFranchise))
-    .catch(e => next(e));
-}
-
-function updateTeams(req, res, next) {
-  const franchise = req.franchise;
-  franchise.teams = req.body.teams;
-  franchise.save()
-    .then(savedFranchise => res.json(savedFranchise))
-    .catch(e => next(e));
-}
 
 /**
  * Update existing franchise
@@ -98,6 +53,12 @@ function updateTeams(req, res, next) {
  */
 function update(req, res, next) {
   const franchise = req.franchise;
+  franchise.teams = req.body.teams ? req.body.teams : franchise.teams;
+  franchise.geo_fence = req.body.geo_fence ? req.body.geo_fence : franchise.geo_fence;
+  franchise.name = req.body.name ? req.body.name : franchise.name;
+  franchise.description = req.body.description ? req.body.description : franchise.description;
+  franchise.location = req.body.location ? req.body.location : franchise.location;
+
   franchise.save()
     .then(savedFranchise => res.json(savedFranchise))
     .catch(e => next(e));
@@ -127,38 +88,6 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-/**
- * Get franchise list.
- * @property {number} req.query.skip - Number of Franchise to be skipped.
- * @property {number} req.query.limit - Limit number of Franchise to be returned.
- * @returns {Franchise[]}
- */
-function listOfFranchisesWithUserDetails(req, res, next) {
-  const { limit = 100, skip = 0 } = req.query;
-  let franchisesWithUserIds = [];
-  Franchise.list({ limit, skip })
-    .then((franchises) => {
-      // franchisesWithUserIds = franchises;
-      let updatedFranchises = [];
-      franchisesWithUserIds = franchises.map(
-        (franchise) => {
-          let x;
-          const y = User.get(franchise.user)
-            .then((user) => {
-              x = franchise;
-              x.user = JSON.stringify(user);
-              updatedFranchises.push(x);
-              return x;
-            });
-          return y;
-        });
-      BPromise.all(franchisesWithUserIds)
-        .then(() => res.json(updatedFranchises))
-        .catch(e => next(e));
-    })
-    .catch(e => next(e));
-}
-
 
 function getSales(req, res, next){
   const { fromDate = moment().format('YYYYMMDD'), toDate = moment().format('YYYYMMDD') } = req.body;
@@ -169,7 +98,7 @@ function getSales(req, res, next){
       promises = franchises.map(franchise => {
         let total = 0;
         const p = Order.find()
-          .where('createdBy', franchise._id.toString())
+          .where('team').in(franchise.teams)
           .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
           .then(orders => {
             orders.forEach(order => {
@@ -214,5 +143,4 @@ function getSalesByFranchise(req, res, next){
 }
 
 export default {
-  load, get, create, update, list, remove, listOfFranchisesWithUserDetails,
-  updateLocation, updateTeams, createFranchise, getSales, getSalesByFranchise };
+  load, get, create, update, list, remove, getSales, getSalesByFranchise };

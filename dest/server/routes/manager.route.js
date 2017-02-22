@@ -25,10 +25,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var router = _express2.default.Router(); // eslint-disable-line new-cap
 
 
-router.route('/list')
-/** GET /api/pliots/list - Get list of managers with respective user details*/
-.get(_manager2.default.listOfManagersWithUserDetails);
-
 router.route('/')
 /** GET /api/managers - Get list of managers */
 .get(_manager2.default.list)
@@ -45,15 +41,6 @@ router.route('/:managerId')
 
 /** DELETE /api/managers/:managerId - Delete manager */
 .delete(_manager2.default.remove);
-
-router.route('/create')
-
-/** POST /api/managers - Create new manager */
-.post(_manager2.default.createManager);
-
-router.route('/updateLocation/:managerId').put(_manager2.default.updateLocation);
-
-router.route('/updateTeams/:managerId').put(_manager2.default.updateTeams);
 
 router.route('/sales')
 /** GET /api/managers/sales - Get sales by date range

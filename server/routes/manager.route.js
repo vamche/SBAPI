@@ -6,11 +6,6 @@ import managerCtrl from '../controllers/manager.controller';
 const router = express.Router(); // eslint-disable-line new-cap
 
 
-router.route('/list')
-/** GET /api/pliots/list - Get list of managers with respective user details*/
-  .get(managerCtrl.listOfManagersWithUserDetails);
-
-
 router.route('/')
 /** GET /api/managers - Get list of managers */
   .get(managerCtrl.list)
@@ -28,18 +23,6 @@ router.route('/:managerId')
   /** DELETE /api/managers/:managerId - Delete manager */
   .delete(managerCtrl.remove);
 
-router.route('/create')
-
-/** POST /api/managers - Create new manager */
-  .post(managerCtrl.createManager);
-
-router.route('/updateLocation/:managerId')
-
-  .put(managerCtrl.updateLocation);
-
-router.route('/updateTeams/:managerId')
-
-  .put(managerCtrl.updateTeams);
 
 
 router.route('/sales')

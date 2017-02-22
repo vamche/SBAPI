@@ -24,11 +24,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var router = _express2.default.Router(); // eslint-disable-line new-cap
 
-
-router.route('/list')
-/** GET /api/pliots/list - Get list of franchises with respective user details*/
-.get(_franchise2.default.listOfFranchisesWithUserDetails);
-
 router.route('/')
 /** GET /api/franchises - Get list of franchises */
 .get(_franchise2.default.list)
@@ -45,15 +40,6 @@ router.route('/:franchiseId')
 
 /** DELETE /api/franchises/:franchiseId - Delete franchise */
 .delete(_franchise2.default.remove);
-
-router.route('/create')
-
-/** POST /api/franchises - Create new franchise */
-.post(_franchise2.default.createFranchise);
-
-router.route('/updateLocation/:franchiseId').put(_franchise2.default.updateLocation);
-
-router.route('/updateTeams/:franchiseId').put(_franchise2.default.updateTeams);
 
 router.route('/sales')
 /** GET /api/franchises/sales - Get sales by date range
