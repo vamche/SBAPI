@@ -25,16 +25,54 @@ function login(req, res, next) {
                           const token = jwt.sign({
                               username: user.username
                           }, config.jwtSecret);
+                          pilot.userId.password = 'XXXXXXXXX';
                           return res.json({
                               token,
                               username: user.username,
-                              pilotId: pilot._id
+                              pilotId: pilot._id,
+                              pilot: pilot
                           });
                       })
                       .catch(e => {
                         const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED);
                         return next(err);
                       });
+                }else if(req.body.userRole === 'MANAGER'){
+                  Manager.getByUserId(user._id.toString())
+                    .then(manager => {
+                      const token = jwt.sign({
+                        username: user.username
+                      }, config.jwtSecret);
+                      manager.user.password = 'XXXXXXXXX';
+                      return res.json({
+                        token,
+                        username: user.username,
+                        managerId: manager._id,
+                        manager: manager
+                      });
+                    })
+                    .catch(e => {
+                      const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED);
+                      return next(err);
+                    });
+                }else if(req.body.userRole === 'MERCHANT'){
+                  Merchant.getByUserId(user._id.toString())
+                    .then(merchant => {
+                      const token = jwt.sign({
+                        username: user.username
+                      }, config.jwtSecret);
+                      merchant.user.password = 'XXXXXXXXX';
+                      return res.json({
+                        token,
+                        username: user.username,
+                        merchantId: merchant._id,
+                        merchant: merchant
+                      });
+                    })
+                    .catch(e => {
+                      const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED);
+                      return next(err);
+                    });
                 }
             }
         })

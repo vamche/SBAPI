@@ -1,7 +1,7 @@
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _jsonwebtoken = require('jsonwebtoken');
@@ -36,30 +36,64 @@ var config = require('../../config/env');
  * @returns {*}
  */
 function login(req, res, next) {
-    // Ideally you'll fetch this from the db
-    // Idea here was to show how jwt works with simplicity
-    _user2.default.getByUsername(req.body.username).then(function (user) {
-        if (user.password === req.body.password) {
-            if (req.body.userRole === 'PILOT') {
-                _pilot2.default.getByUserId(user._id.toString()).then(function (pilot) {
-                    var token = _jsonwebtoken2.default.sign({
-                        username: user.username
-                    }, config.jwtSecret);
-                    return res.json({
-                        token: token,
-                        username: user.username,
-                        pilotId: pilot._id
-                    });
-                }).catch(function (e) {
-                    var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED);
-                    return next(err);
-                });
-            }
-        }
-    }).catch(function (e) {
-        var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED);
-        return next(err);
-    });
+  // Ideally you'll fetch this from the db
+  // Idea here was to show how jwt works with simplicity
+  _user2.default.getByUsername(req.body.username).then(function (user) {
+    if (user.password === req.body.password) {
+      if (req.body.userRole === 'PILOT') {
+        _pilot2.default.getByUserId(user._id.toString()).then(function (pilot) {
+          var token = _jsonwebtoken2.default.sign({
+            username: user.username
+          }, config.jwtSecret);
+          pilot.userId.password = 'XXXXXXXXX';
+          return res.json({
+            token: token,
+            username: user.username,
+            pilotId: pilot._id,
+            pilot: pilot
+          });
+        }).catch(function (e) {
+          var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED);
+          return next(err);
+        });
+      } else if (req.body.userRole === 'MANAGER') {
+        Manager.getByUserId(user._id.toString()).then(function (manager) {
+          var token = _jsonwebtoken2.default.sign({
+            username: user.username
+          }, config.jwtSecret);
+          manager.user.password = 'XXXXXXXXX';
+          return res.json({
+            token: token,
+            username: user.username,
+            managerId: manager._id,
+            manager: manager
+          });
+        }).catch(function (e) {
+          var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED);
+          return next(err);
+        });
+      } else if (req.body.userRole === 'MERCHANT') {
+        Merchant.getByUserId(user._id.toString()).then(function (merchant) {
+          var token = _jsonwebtoken2.default.sign({
+            username: user.username
+          }, config.jwtSecret);
+          merchant.user.password = 'XXXXXXXXX';
+          return res.json({
+            token: token,
+            username: user.username,
+            merchantId: merchant._id,
+            merchant: merchant
+          });
+        }).catch(function (e) {
+          var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED);
+          return next(err);
+        });
+      }
+    }
+  }).catch(function (e) {
+    var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED);
+    return next(err);
+  });
 }
 
 /**
@@ -69,11 +103,11 @@ function login(req, res, next) {
  * @returns {*}
  */
 function getRandomNumber(req, res) {
-    // req.user is assigned by jwt middleware if valid token is provided
-    return res.json({
-        user: req.user,
-        num: Math.random() * 100
-    });
+  // req.user is assigned by jwt middleware if valid token is provided
+  return res.json({
+    user: req.user,
+    num: Math.random() * 100
+  });
 }
 
 exports.default = { login: login, getRandomNumber: getRandomNumber };
