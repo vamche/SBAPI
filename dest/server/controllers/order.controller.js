@@ -24,6 +24,18 @@ var _cloudinary = require('cloudinary');
 
 var _cloudinary2 = _interopRequireDefault(_cloudinary);
 
+var _manager = require('../models/manager.model');
+
+var _manager2 = _interopRequireDefault(_manager);
+
+var _customer = require('../models/customer.model');
+
+var _customer2 = _interopRequireDefault(_customer);
+
+var _franchise = require('../models/franchise.model');
+
+var _franchise2 = _interopRequireDefault(_franchise);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -237,16 +249,53 @@ function listByPilotAndDate(req, res, next) {
 function listByDate(req, res, next) {
   var _req$query3 = req.query,
       _req$query3$limit = _req$query3.limit,
-      limit = _req$query3$limit === undefined ? 50 : _req$query3$limit,
+      limit = _req$query3$limit === undefined ? 500 : _req$query3$limit,
       _req$query3$skip = _req$query3.skip,
       skip = _req$query3$skip === undefined ? 0 : _req$query3$skip;
   var date = req.body.date;
 
-  _order2.default.listByDate({ date: date, limit: limit, skip: skip }).then(function (orders) {
-    return res.json(orders);
-  }).catch(function (e) {
-    return next(e);
-  });
+
+  if (req.body.managerId) {
+    _manager2.default.get(req.body.managerId).then(function (manager) {
+      if (manager.isAdmin) {
+        _order2.default.listByDate({ date: date, limit: limit, skip: skip }).then(function (orders) {
+          return res.json(orders);
+        }).catch(function (e) {
+          return next(e);
+        });
+      } else if (manager.isFranchiseAdmin) {
+        _franchise2.default.get(manager.franchise).then(function (franchise) {
+          _order2.default.listByDate({ date: date, limit: limit, skip: skip }).where('team').in(franchise.teams).then(function (orders) {
+            return res.json(orders);
+          }).catch(function (e) {
+            return next(e);
+          });
+        }).catch(function (e) {
+          return next(e);
+        });
+      } else {
+        _order2.default.listByDate({ date: date, limit: limit, skip: skip }).where('team').in(manager.teams).then(function (orders) {
+          return res.json(orders);
+        }).catch(function (e) {
+          return next(e);
+        });
+      }
+    });
+  }if (req.body.managerId) {
+    _customer2.default.get(req.body.managerId).then(function (customer) {
+      _order2.default.listByDate({ date: date, limit: limit, skip: skip }).where('createdBy').in(customer._id.toString()).then(function (orders) {
+        return res.json(orders);
+      }).catch(function (e) {
+        return next(e);
+      });
+    });
+  } else {
+    _order2.default.listByDate({ date: date, limit: limit, skip: skip }).then(function (orders) {
+      return res.json(orders);
+    }).catch(function (e) {
+      return next(e);
+    });
+  }
 }
 
 function listByStatusPilotDateRange(req, res, next) {

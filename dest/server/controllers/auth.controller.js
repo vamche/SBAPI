@@ -24,6 +24,14 @@ var _pilot = require('../models/pilot.model');
 
 var _pilot2 = _interopRequireDefault(_pilot);
 
+var _manager = require('../models/manager.model');
+
+var _manager2 = _interopRequireDefault(_manager);
+
+var _customer = require('../models/customer.model');
+
+var _customer2 = _interopRequireDefault(_customer);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var config = require('../../config/env');
@@ -57,7 +65,7 @@ function login(req, res, next) {
           return next(err);
         });
       } else if (req.body.userRole === 'MANAGER') {
-        Manager.getByUserId(user._id.toString()).then(function (manager) {
+        _manager2.default.getByUserId(user._id.toString()).then(function (manager) {
           var token = _jsonwebtoken2.default.sign({
             username: user.username
           }, config.jwtSecret);
@@ -72,17 +80,17 @@ function login(req, res, next) {
           var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED);
           return next(err);
         });
-      } else if (req.body.userRole === 'MERCHANT') {
-        Merchant.getByUserId(user._id.toString()).then(function (merchant) {
+      } else if (req.body.userRole === 'CUSTOMER') {
+        _customer2.default.getByUserId(user._id.toString()).then(function (customer) {
           var token = _jsonwebtoken2.default.sign({
             username: user.username
           }, config.jwtSecret);
-          merchant.user.password = 'XXXXXXXXX';
+          customer.user.password = 'XXXXXXXXX';
           return res.json({
             token: token,
             username: user.username,
-            merchantId: merchant._id,
-            merchant: merchant
+            customerId: customer._id,
+            customer: customer
           });
         }).catch(function (e) {
           var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED);

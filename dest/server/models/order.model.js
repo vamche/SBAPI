@@ -190,7 +190,7 @@ var OrderSchema = new _mongoose2.default.Schema({
     required: false
   },
   createdBy: {
-    type: String, // User ID
+    type: String, // merchant ID
     required: false
   },
   final_cost: {

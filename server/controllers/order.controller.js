@@ -4,6 +4,10 @@ import { sendNotification, message } from '../notifications/send';
 import { assign, unAssign, uploadImgAsync } from './util.controller';
 import BPromise from 'bluebird';
 import cloudinary from 'cloudinary';
+import Manager from '../models/manager.model';
+import Customer from '../models/customer.model';
+import Franchise from '../models/franchise.model';
+
 
 /**
  * Load order and append to req.
@@ -193,11 +197,45 @@ function listByPilotAndDate(req, res, next) {
 }
 
 function listByDate(req, res, next) {
-    const { limit = 50, skip = 0 } = req.query;
+    const { limit = 500, skip = 0 } = req.query;
     const { date } = req.body;
-    Order.listByDate({date, limit, skip})
+
+    if(req.body.managerId){
+      Manager.get(req.body.managerId)
+        .then(manager => {
+          if(manager.isAdmin){
+            Order.listByDate({date, limit, skip})
+              .then(orders => res.json(orders))
+              .catch(e => next(e));
+          }else if(manager.isFranchiseAdmin){
+            Franchise.get(manager.franchise)
+              .then(franchise => {
+                Order.listByDate({date, limit, skip})
+                  .where('team').in(franchise.teams)
+                  .then(orders => res.json(orders))
+                  .catch(e => next(e));
+              })
+              .catch(e => next(e));
+          }else {
+            Order.listByDate({date, limit, skip})
+              .where('team').in(manager.teams)
+              .then(orders => res.json(orders))
+              .catch(e => next(e));
+          }
+        });
+    }if(req.body.managerId){
+      Customer.get(req.body.managerId)
+        .then(customer => {
+           Order.listByDate({date, limit, skip})
+              .where('createdBy').in(customer._id.toString())
+              .then(orders => res.json(orders))
+              .catch(e => next(e));
+        });
+    }else {
+      Order.listByDate({date, limit, skip})
         .then(orders => res.json(orders))
         .catch(e => next(e));
+    }
 }
 
 function listByStatusPilotDateRange(req, res, next){

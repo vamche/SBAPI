@@ -46,7 +46,7 @@ function create(req, res, next) {
         user : savedUser._id,
         isAdmin : req.body.isAdmin,
         isFranchiseAdmin : req.body.isFranchiseAdmin,
-        franchises : req.body.franchises,
+        franchise : req.body.franchise,
         teams : req.body.teams
       });
       manager.save()
@@ -67,7 +67,7 @@ function create(req, res, next) {
 function update(req, res, next) {
   const manager = req.manager;
   manager.teams = req.body.teams ? req.body.teams : manager.teams;
-  manager.franchises = req.body.franchises ? req.body.franchises : req.body.franchises;
+  manager.franchise = req.body.franchise ? req.body.franchise : req.body.franchise;
   manager.save()
     .then(savedManager => res.json(savedManager))
     .catch(e => next(e));

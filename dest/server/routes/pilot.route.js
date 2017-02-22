@@ -27,7 +27,7 @@ var router = _express2.default.Router(); // eslint-disable-line new-cap
 
 router.route('/list')
 /** GET /api/pliots/list - Get list of pilots with respective user details*/
-.get(_pilot2.default.listOfPilotsWithUserDetails);
+.post(_pilot2.default.listByManager);
 
 router.route('/')
 /** GET /api/pilots - Get list of pilots */

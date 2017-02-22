@@ -45,8 +45,8 @@ var ManagerSchema = new _mongoose2.default.Schema({
     required: false,
     default: false
   },
-  franchises: {
-    type: [String],
+  franchise: {
+    type: String,
     required: false
   },
   registration_status: {

@@ -28,6 +28,14 @@ var _moment = require('moment');
 
 var _moment2 = _interopRequireDefault(_moment);
 
+var _manager = require('../models/manager.model');
+
+var _manager2 = _interopRequireDefault(_manager);
+
+var _franchise = require('../models/franchise.model');
+
+var _franchise2 = _interopRequireDefault(_franchise);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -427,6 +435,48 @@ function stats(req, res, next) {
     });
 }
 
+function listByManager(req, res, next) {
+    var _req$query3 = req.query,
+        _req$query3$limit = _req$query3.limit,
+        limit = _req$query3$limit === undefined ? 500 : _req$query3$limit,
+        _req$query3$skip = _req$query3.skip,
+        skip = _req$query3$skip === undefined ? 0 : _req$query3$skip;
+
+    if (req.body.managerId) {
+        _manager2.default.get(req.body.managerId).then(function (manager) {
+            if (manager.isAdmin) {
+                _pilot2.default.list({ limit: limit, skip: skip }).then(function (pilots) {
+                    return res.json(pilots);
+                }).catch(function (e) {
+                    return next(e);
+                });
+            } else if (manager.isFranchiseAdmin) {
+                _franchise2.default.get(manager.franchise).then(function (franchise) {
+                    _pilot2.default.list({ limit: limit, skip: skip }).where('teams').in(franchise.teams).then(function (pilots) {
+                        return res.json(pilots);
+                    }).catch(function (e) {
+                        return next(e);
+                    });
+                }).catch(function (e) {
+                    return next(e);
+                });
+            } else {
+                _pilot2.default.list({ limit: limit, skip: skip }).where('teams').in(manager.teams).then(function (pilots) {
+                    return res.json(pilots);
+                }).catch(function (e) {
+                    return next(e);
+                });
+            }
+        });
+    } else {
+        _pilot2.default.list({ limit: limit, skip: skip }).then(function (pilots) {
+            return res.json(pilots);
+        }).catch(function (e) {
+            return next(e);
+        });
+    }
+}
+
 function listByTeam(req, res, next) {
     var team = req.body.team;
     _pilot2.default.find().where('teams').in([team]).then(function (pilots) {
@@ -458,6 +508,6 @@ function updateAvailability(req, res, next) {
 exports.default = {
     load: load, get: get, create: create, update: update, list: list, remove: remove, listOfPilotsWithUserDetails: listOfPilotsWithUserDetails, updateLocation: updateLocation, updateTeams: updateTeams,
     getUnAssignedPilotsByTeam: getUnAssignedPilotsByTeam, createPilot: createPilot, getSales: getSales, getSalesByPilot: getSalesByPilot, getTimesheets: getTimesheets, getTimesheetsByPilot: getTimesheetsByPilot,
-    stats: stats, listByTeam: listByTeam, updateAvailability: updateAvailability };
+    stats: stats, listByTeam: listByTeam, updateAvailability: updateAvailability, listByManager: listByManager };
 module.exports = exports['default'];
 //# sourceMappingURL=pilot.controller.js.map

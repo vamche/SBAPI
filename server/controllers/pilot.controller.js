@@ -4,6 +4,8 @@ import User from '../models/user.model';
 import Order from '../models/order.model';
 import Timesheet from '../models/timesheet.model';
 import moment from 'moment';
+import Manager from '../models/manager.model';
+import Franchise from '../models/franchise.model';
 
 /**
  * Load pilot and append to req.
@@ -373,6 +375,38 @@ function stats(req, res, next){
 
 }
 
+function listByManager(req, res, next) {
+  const { limit = 500, skip = 0 } = req.query;
+  if(req.body.managerId){
+    Manager.get(req.body.managerId)
+      .then(manager => {
+        if(manager.isAdmin){
+          Pilot.list({ limit, skip })
+            .then(pilots => res.json(pilots))
+            .catch(e => next(e));
+        }else if(manager.isFranchiseAdmin) {
+          Franchise.get(manager.franchise)
+            .then(franchise => {
+              Pilot.list({ limit, skip })
+                .where('teams').in(franchise.teams)
+                .then(pilots => res.json(pilots))
+                .catch(e => next(e));
+            })
+            .catch(e => next(e));
+        }else {
+          Pilot.list({ limit, skip })
+            .where('teams').in(manager.teams)
+            .then(pilots => res.json(pilots))
+            .catch(e => next(e));
+        }
+      });
+  }else {
+    Pilot.list({ limit, skip })
+      .then(pilots => res.json(pilots))
+      .catch(e => next(e));
+  }
+}
+
 function listByTeam(req, res, next){
   const team = req.body.team;
   Pilot.find()
@@ -403,4 +437,4 @@ function updateAvailability(req, res, next){
 export default {
   load, get, create, update, list, remove, listOfPilotsWithUserDetails, updateLocation, updateTeams,
     getUnAssignedPilotsByTeam, createPilot, getSales, getSalesByPilot, getTimesheets, getTimesheetsByPilot,
-    stats, listByTeam, updateAvailability};
+    stats, listByTeam, updateAvailability, listByManager};

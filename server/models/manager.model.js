@@ -26,8 +26,8 @@ const ManagerSchema = new mongoose.Schema({
     required: false,
     default: false
   },
-  franchises: {
-    type: [String],
+  franchise: {
+    type: String,
     required: false
   },
   registration_status: {

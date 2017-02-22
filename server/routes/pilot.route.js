@@ -8,8 +8,7 @@ const router = express.Router(); // eslint-disable-line new-cap
 
 router.route('/list')
   /** GET /api/pliots/list - Get list of pilots with respective user details*/
-  .get(pilotCtrl.listOfPilotsWithUserDetails);
-
+  .post(pilotCtrl.listByManager);
 
 router.route('/')
   /** GET /api/pilots - Get list of pilots */

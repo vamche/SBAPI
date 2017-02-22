@@ -3,6 +3,9 @@ import httpStatus from 'http-status';
 import APIError from '../helpers/APIError';
 import User from '../models/user.model';
 import Pilot from '../models/pilot.model';
+import Manager from '../models/manager.model';
+import Customer from '../models/customer.model';
+
 
 const config = require('../../config/env');
 
@@ -55,18 +58,18 @@ function login(req, res, next) {
                       const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED);
                       return next(err);
                     });
-                }else if(req.body.userRole === 'MERCHANT'){
-                  Merchant.getByUserId(user._id.toString())
-                    .then(merchant => {
+                }else if(req.body.userRole === 'CUSTOMER'){
+                  Customer.getByUserId(user._id.toString())
+                    .then(customer => {
                       const token = jwt.sign({
                         username: user.username
                       }, config.jwtSecret);
-                      merchant.user.password = 'XXXXXXXXX';
+                      customer.user.password = 'XXXXXXXXX';
                       return res.json({
                         token,
                         username: user.username,
-                        merchantId: merchant._id,
-                        merchant: merchant
+                        customerId: customer._id,
+                        customer: customer
                       });
                     })
                     .catch(e => {
