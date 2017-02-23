@@ -67,11 +67,11 @@ function create(req, res, next) {
       }
     })
     .then((savedOrder) => {
+      message.contents.en = `New Order Placed \n${order.title}. \nPick at ${order.from_address}`;
       if(savedOrder.pilot && savedOrder.pilot != ''){
-        message.contents.en = `New Order Placed \n${order.title}. \nPick at ${order.from_address}`;
         message.filters.push({'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot});
-        sendNotification(message);
       }
+      sendNotification(message);
       res.json(savedOrder)
     })
     .catch(e => next(e));

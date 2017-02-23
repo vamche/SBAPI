@@ -94,11 +94,11 @@ function create(req, res, next) {
       return savedOrder;
     }
   }).then(function (savedOrder) {
+    _send.message.contents.en = 'New Order Placed \n' + order.title + '. \nPick at ' + order.from_address;
     if (savedOrder.pilot && savedOrder.pilot != '') {
-      _send.message.contents.en = 'New Order Placed \n' + order.title + '. \nPick at ' + order.from_address;
       _send.message.filters.push({ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot });
-      (0, _send.sendNotification)(_send.message);
     }
+    (0, _send.sendNotification)(_send.message);
     res.json(savedOrder);
   }).catch(function (e) {
     return next(e);
