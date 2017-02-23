@@ -347,7 +347,7 @@ function stats(req, res, next){
     let teams = [];
     const team = req.body.team;
     let getPilots;
-    if (!team || team != '*' || team != 'ALL') {
+    if (team && team != '*' && team != 'ALL' && teams != '') {
       teams = [team];
       getPilots = Pilot.find()
         .where('teams').in(teams);

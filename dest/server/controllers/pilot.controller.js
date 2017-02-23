@@ -409,7 +409,7 @@ function stats(req, res, next) {
     var teams = [];
     var team = req.body.team;
     var getPilots = void 0;
-    if (!team || team != '*' || team != 'ALL') {
+    if (team && team != '*' && team != 'ALL' && teams != '') {
         teams = [team];
         getPilots = _pilot2.default.find().where('teams').in(teams);
     } else {
