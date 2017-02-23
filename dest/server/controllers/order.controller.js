@@ -96,7 +96,7 @@ function create(req, res, next) {
   }).then(function (savedOrder) {
     if (savedOrder.pilot && savedOrder.pilot != '') {
       _send.message.contents.en = 'New Order Placed \n' + order.title + '. \nPick at ' + order.from_address;
-      _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot }];
+      _send.message.filters.push({ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot });
       (0, _send.sendNotification)(_send.message);
     }
     res.json(savedOrder);
@@ -136,6 +136,10 @@ function updateOrders(req, res, next) {
       tobeUpdatedOrder.pilot_from_date_time = order.pilot_from_date_time;
       tobeUpdatedOrder.pilot_to_date_time = order.pilot_to_date_time;
       tobeUpdatedOrder.pilot_completed_date_time = order.pilot_completed_date_time;
+
+      _send.message.contents.en = 'Order Update \n' + order.title + '. \nStatus ' + order.status;
+      _send.message.filters.push({ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': order.pilot });
+      (0, _send.sendNotification)(_send.message);
 
       var attachmentsTobeUploaded = order.attachments.filter(function (a) {
         return !a.uploaded;

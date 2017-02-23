@@ -69,7 +69,7 @@ function create(req, res, next) {
     .then((savedOrder) => {
       if(savedOrder.pilot && savedOrder.pilot != ''){
         message.contents.en = `New Order Placed \n${order.title}. \nPick at ${order.from_address}`;
-        message.filters = [{'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot}];
+        message.filters.push({'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot});
         sendNotification(message);
       }
       res.json(savedOrder)
@@ -108,6 +108,10 @@ function updateOrders(req, res, next){
           tobeUpdatedOrder.pilot_from_date_time = order.pilot_from_date_time;
           tobeUpdatedOrder.pilot_to_date_time = order.pilot_to_date_time;
           tobeUpdatedOrder.pilot_completed_date_time = order.pilot_completed_date_time;
+
+          message.contents.en = `Order Update \n${order.title}. \nStatus ${order.status}`;
+          message.filters.push({'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': order.pilot});
+          sendNotification(message);
 
           let attachmentsTobeUploaded = order.attachments.filter(a => !a.uploaded);
           tobeUpdatedOrder.attachments = order.attachments.filter(a => a.uploaded);
