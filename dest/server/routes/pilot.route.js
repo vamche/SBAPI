@@ -89,6 +89,8 @@ router.route('/listByTeam').post(_pilot2.default.listByTeam);
 
 router.route('/updateAvailability/:pilotId').post(_pilot2.default.updateAvailability);
 
+router.route('/activity/:pilotId').post(_pilot2.default.getActivity);
+
 /** Load pilot when API with pilotId route parameter is hit */
 router.param('pilotId', _pilot2.default.load);
 

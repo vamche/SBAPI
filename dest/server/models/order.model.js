@@ -269,7 +269,8 @@ OrderSchema.statics = {
         _ref2$limit = _ref2.limit,
         limit = _ref2$limit === undefined ? 50 : _ref2$limit;
 
-    return this.find().where('pilot', pilot).populate('attachments').where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day').tz(timeZone)).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day').tz(timeZone)).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    var diffInMinutes = (0, _momentTimezone2.default)().tz(timeZone).utcOffset();
+    return this.find().where('pilot', pilot).populate('attachments').where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
   listByTeamAndDate: function listByTeamAndDate() {
     var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},

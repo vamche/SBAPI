@@ -433,8 +433,41 @@ function updateAvailability(req, res, next){
     .catch(e => next(e));
 }
 
+function getActivity(req, res, next) {
+  const pilot = req.pilot;
+  const pilotId = pilot._id.toString();
+  const { limit = 100, skip = 0 } = req.query;
+  const { date, timeZone } = req.body;
+  Order.listByPilotAndDate({pilotId, date, timeZone, limit, skip})
+    .then(orders => {
+      let completed = 0;
+      let assigned = 0;
+      let distance = 0;
+      let amount = 0;
+      orders.forEach(o => {
+        distance += o.distance_in_meters;
+        amount +=  o.amount;
+        if(o.status == 'COMPLETED' || o.status == 'FAILED'){
+          completed++;
+        }else {
+          assigned++;
+        }
+      });
+      pilot.userId.password = 'XXXXXXXXX';
+      res.json({
+        completed: completed,
+        assigned: assigned,
+        distanceInMeters: distance,
+        amount: amount,
+        pilot: pilot
+      });
+    })
+    .catch(e => next(e));
+
+}
+
 
 export default {
   load, get, create, update, list, remove, listOfPilotsWithUserDetails, updateLocation, updateTeams,
     getUnAssignedPilotsByTeam, createPilot, getSales, getSalesByPilot, getTimesheets, getTimesheetsByPilot,
-    stats, listByTeam, updateAvailability, listByManager};
+    stats, listByTeam, updateAvailability, listByManager, getActivity};

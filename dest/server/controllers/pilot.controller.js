@@ -505,9 +505,48 @@ function updateAvailability(req, res, next) {
     });
 }
 
+function getActivity(req, res, next) {
+    var pilot = req.pilot;
+    var pilotId = pilot._id.toString();
+    var _req$query4 = req.query,
+        _req$query4$limit = _req$query4.limit,
+        limit = _req$query4$limit === undefined ? 100 : _req$query4$limit,
+        _req$query4$skip = _req$query4.skip,
+        skip = _req$query4$skip === undefined ? 0 : _req$query4$skip;
+    var _req$body5 = req.body,
+        date = _req$body5.date,
+        timeZone = _req$body5.timeZone;
+
+    _order2.default.listByPilotAndDate({ pilotId: pilotId, date: date, timeZone: timeZone, limit: limit, skip: skip }).then(function (orders) {
+        var completed = 0;
+        var assigned = 0;
+        var distance = 0;
+        var amount = 0;
+        orders.forEach(function (o) {
+            distance += o.distance_in_meters;
+            amount += o.amount;
+            if (o.status == 'COMPLETED' || o.status == 'FAILED') {
+                completed++;
+            } else {
+                assigned++;
+            }
+        });
+        pilot.userId.password = 'XXXXXXXXX';
+        res.json({
+            completed: completed,
+            assigned: assigned,
+            distanceInMeters: distance,
+            amount: amount,
+            pilot: pilot
+        });
+    }).catch(function (e) {
+        return next(e);
+    });
+}
+
 exports.default = {
     load: load, get: get, create: create, update: update, list: list, remove: remove, listOfPilotsWithUserDetails: listOfPilotsWithUserDetails, updateLocation: updateLocation, updateTeams: updateTeams,
     getUnAssignedPilotsByTeam: getUnAssignedPilotsByTeam, createPilot: createPilot, getSales: getSales, getSalesByPilot: getSalesByPilot, getTimesheets: getTimesheets, getTimesheetsByPilot: getTimesheetsByPilot,
-    stats: stats, listByTeam: listByTeam, updateAvailability: updateAvailability, listByManager: listByManager };
+    stats: stats, listByTeam: listByTeam, updateAvailability: updateAvailability, listByManager: listByManager, getActivity: getActivity };
 module.exports = exports['default'];
 //# sourceMappingURL=pilot.controller.js.map

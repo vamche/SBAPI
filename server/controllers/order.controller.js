@@ -93,13 +93,88 @@ function update(req, res, next) {
     .catch(e => next(e));
 }
 
-function updateOrders(req, res, next){
+
+function updateOrder(order){
+  return new Promise((resolve, reject) => {
+      Order.get(order._id)
+        .then(o => {
+          let tobeUpdatedOrder = o;
+          tobeUpdatedOrder.status = order.status;
+          tobeUpdatedOrder.timeline = order.timeline;
+          tobeUpdatedOrder.pilot_movement = order.pilot_movement;
+          tobeUpdatedOrder.pilot_from_date_time = order.pilot_start_date_time;
+          tobeUpdatedOrder.pilot_from_date_time = order.pilot_from_date_time;
+          tobeUpdatedOrder.pilot_to_date_time = order.pilot_to_date_time;
+          tobeUpdatedOrder.pilot_completed_date_time = order.pilot_completed_date_time;
+
+          let attachmentsTobeUploaded = order.attachments.filter(a => !a.uploaded);
+          tobeUpdatedOrder.attachments = order.attachments.filter(a => a.uploaded);
+
+          let aPromises = attachmentsTobeUploaded.map(attachment => {
+            return uploadImgAsync("data:image/png;base64," + attachment.source)
+                      .then(result => {
+                        let a = new Attachment({
+                          source: result.url,
+                          uploaded: true,
+                          orderId: attachment.orderId,
+                          orderStatus: attachment.orderStatus,
+                          type: attachment.type,
+                          extension: attachment.extension
+                        });
+                        return a;
+                      })
+                      .then(a => {
+                        i ++;
+                        return a.save()
+                          .then(savedAttachment => {
+                            tobeUpdatedOrder.attachments.push(savedAttachment._id);
+                          })
+                          .catch(e => reject(e));
+                      })
+                      .catch(e => reject(e));
+          });
+
+          BPromise.all(aPromises)
+            .then(() => {
+              tobeUpdatedOrder.save()
+                  .then(updatedOrder => {
+                    resolve(updatedOrder);
+                  })
+                  .catch(e => reject(e));
+            })
+            .catch(e => reject(e));
+      })
+      .catch(e => reject(e));
+  });
+}
+
+function updateOrders(req, res, next) {
+  let updatedOrders = [];
+  const promises = req.body.orders.map(order => {
+    return updateOrder(order)
+      .then(updatedOrder => {
+        updatedOrders.push(updatedOrder);
+      })
+      .catch(e => next(e));
+  });
+  BPromise.all(promises)
+    .then(() => res.json(updatedOrders))
+    .catch(e => next(e));
+
+}
+
+
+
+
+
+function updateOrdersOld(req, res, next) {
   let updatedOrders = [];
   const promises = req.body.orders.map(
     order => {
       let tobeUpdatedOrder;
       return Order.get(order._id)
         .then(o => {
+
           tobeUpdatedOrder = o;
           tobeUpdatedOrder.status = order.status;
           tobeUpdatedOrder.timeline = order.timeline;
@@ -108,6 +183,7 @@ function updateOrders(req, res, next){
           tobeUpdatedOrder.pilot_from_date_time = order.pilot_from_date_time;
           tobeUpdatedOrder.pilot_to_date_time = order.pilot_to_date_time;
           tobeUpdatedOrder.pilot_completed_date_time = order.pilot_completed_date_time;
+
 
           message.contents.en = `Order Update \n${order.title}. \nStatus ${order.status}`;
           message.filters.push({'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': order.pilot});
@@ -193,10 +269,12 @@ function list(req, res, next) {
 
 
 function listByPilotAndDate(req, res, next) {
-  const { limit = 50, skip = 0 } = req.query;
+  const { limit = 100, skip = 0 } = req.query;
   const { pilot, date, timeZone } = req.body;
   Order.listByPilotAndDate({pilot, date, timeZone, limit, skip})
-        .then(orders => res.json(orders))
+        .then(orders => {
+          res.json(orders);
+        })
         .catch(e => next(e));
 }
 

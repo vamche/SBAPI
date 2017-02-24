@@ -242,11 +242,12 @@ OrderSchema.statics = {
   },
 
   listByPilotAndDate({ pilot, date, timeZone = 'Europe/London' ,skip = 0, limit = 50 } = {}) {
-        return this.find()
+    const diffInMinutes = moment().tz(timeZone).utcOffset();
+    return this.find()
             .where('pilot', pilot)
             .populate('attachments')
-            .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day').tz(timeZone))
-                               .lte(moment(date, "YYYYMMDD").endOf('day').tz(timeZone))
+            .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes'))
+                               .lte(moment(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes'))
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)

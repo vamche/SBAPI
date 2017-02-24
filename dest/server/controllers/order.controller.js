@@ -123,11 +123,85 @@ function update(req, res, next) {
   });
 }
 
+function updateOrder(order) {
+  return new Promise(function (resolve, reject) {
+    _order2.default.get(order._id).then(function (o) {
+      var tobeUpdatedOrder = o;
+      tobeUpdatedOrder.status = order.status;
+      tobeUpdatedOrder.timeline = order.timeline;
+      tobeUpdatedOrder.pilot_movement = order.pilot_movement;
+      tobeUpdatedOrder.pilot_from_date_time = order.pilot_start_date_time;
+      tobeUpdatedOrder.pilot_from_date_time = order.pilot_from_date_time;
+      tobeUpdatedOrder.pilot_to_date_time = order.pilot_to_date_time;
+      tobeUpdatedOrder.pilot_completed_date_time = order.pilot_completed_date_time;
+
+      var attachmentsTobeUploaded = order.attachments.filter(function (a) {
+        return !a.uploaded;
+      });
+      tobeUpdatedOrder.attachments = order.attachments.filter(function (a) {
+        return a.uploaded;
+      });
+
+      var aPromises = attachmentsTobeUploaded.map(function (attachment) {
+        return (0, _util.uploadImgAsync)("data:image/png;base64," + attachment.source).then(function (result) {
+          var a = new _attachment2.default({
+            source: result.url,
+            uploaded: true,
+            orderId: attachment.orderId,
+            orderStatus: attachment.orderStatus,
+            type: attachment.type,
+            extension: attachment.extension
+          });
+          return a;
+        }).then(function (a) {
+          i++;
+          return a.save().then(function (savedAttachment) {
+            tobeUpdatedOrder.attachments.push(savedAttachment._id);
+          }).catch(function (e) {
+            return reject(e);
+          });
+        }).catch(function (e) {
+          return reject(e);
+        });
+      });
+
+      _bluebird2.default.all(aPromises).then(function () {
+        tobeUpdatedOrder.save().then(function (updatedOrder) {
+          resolve(updatedOrder);
+        }).catch(function (e) {
+          return reject(e);
+        });
+      }).catch(function (e) {
+        return reject(e);
+      });
+    }).catch(function (e) {
+      return reject(e);
+    });
+  });
+}
+
 function updateOrders(req, res, next) {
+  var updatedOrders = [];
+  var promises = req.body.orders.map(function (order) {
+    return updateOrder(order).then(function (updatedOrder) {
+      updatedOrders.push(updatedOrder);
+    }).catch(function (e) {
+      return next(e);
+    });
+  });
+  _bluebird2.default.all(promises).then(function () {
+    return res.json(updatedOrders);
+  }).catch(function (e) {
+    return next(e);
+  });
+}
+
+function updateOrdersOld(req, res, next) {
   var updatedOrders = [];
   var promises = req.body.orders.map(function (order) {
     var tobeUpdatedOrder = void 0;
     return _order2.default.get(order._id).then(function (o) {
+
       tobeUpdatedOrder = o;
       tobeUpdatedOrder.status = order.status;
       tobeUpdatedOrder.timeline = order.timeline;
@@ -235,7 +309,7 @@ function list(req, res, next) {
 function listByPilotAndDate(req, res, next) {
   var _req$query2 = req.query,
       _req$query2$limit = _req$query2.limit,
-      limit = _req$query2$limit === undefined ? 50 : _req$query2$limit,
+      limit = _req$query2$limit === undefined ? 100 : _req$query2$limit,
       _req$query2$skip = _req$query2.skip,
       skip = _req$query2$skip === undefined ? 0 : _req$query2$skip;
   var _req$body = req.body,
@@ -244,7 +318,7 @@ function listByPilotAndDate(req, res, next) {
       timeZone = _req$body.timeZone;
 
   _order2.default.listByPilotAndDate({ pilot: pilot, date: date, timeZone: timeZone, limit: limit, skip: skip }).then(function (orders) {
-    return res.json(orders);
+    res.json(orders);
   }).catch(function (e) {
     return next(e);
   });

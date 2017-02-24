@@ -77,6 +77,9 @@ router.route('/listByTeam')
 router.route('/updateAvailability/:pilotId')
   .post(pilotCtrl.updateAvailability)
 
+router.route('/activity/:pilotId')
+  .post(pilotCtrl.getActivity)
+
 /** Load pilot when API with pilotId route parameter is hit */
 router.param('pilotId', pilotCtrl.load);
 
