@@ -154,7 +154,6 @@ function updateOrder(order) {
           });
           return a;
         }).then(function (a) {
-          i++;
           return a.save().then(function (savedAttachment) {
             tobeUpdatedOrder.attachments.push(savedAttachment._id);
           }).catch(function (e) {

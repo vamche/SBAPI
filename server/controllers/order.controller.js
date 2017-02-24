@@ -124,7 +124,6 @@ function updateOrder(order){
                         return a;
                       })
                       .then(a => {
-                        i ++;
                         return a.save()
                           .then(savedAttachment => {
                             tobeUpdatedOrder.attachments.push(savedAttachment._id);
