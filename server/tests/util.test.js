@@ -20,24 +20,26 @@ after((done) => {
 });
 
 describe('## User APIs', () => {
-    let user = {
-        username: 'KK123',
-        mobileNumber: '1234567890'
-    };
 
     let pilot = {
-        userId: '',
+        emailAddress: 'kk1@gmail.com',
+        password: '123',
+        firstName: 'K',
+        lastName: 'K',
+        username: 'KK',
+        mobileNumber: '1234567890',
         teams: ['magic'],
         location : {
             "type": "Point",
             "coordinates": [78,78]
-        },
-        isActive: false
+        }
     };
 
+    let pilotUserId;
+
     let order = {
-      "title": "Order TZ",
-      "description": "desc TZ",
+      "title": "Order Testing",
+      "description": "desc testing",
       "from_name": "po",
       "from_phone": "6088885568",
       "from_email": "pooii@ghh.vhh",
@@ -72,31 +74,15 @@ describe('## User APIs', () => {
       }
     };
 
-    describe('# POST /api/users', () => {
-        it('should create a new user', (done) => {
-            request(app)
-                .post('/api/users')
-                .send(user)
-                .expect(httpStatus.OK)
-                .then((res) => {
-                    expect(res.body.username).to.equal(user.username);
-                    expect(res.body.mobileNumber).to.equal(user.mobileNumber);
-                    user = res.body;
-                    done();
-                })
-                .catch(done);
-        });
-    });
-
     describe('# POST /api/pilots', () => {
         it('should create a new pilot', (done) => {
-            pilot.userId = user._id.toString();
             request(app)
                 .post('/api/pilots')
                 .send(pilot)
                 .expect(httpStatus.OK)
                 .then((res) => {
-                    expect(res.body.userId).to.equal(pilot.userId);
+                    expect(res.body.user).to.be.ok;
+                    pilotUserId = res.body.user;
                     pilot = res.body;
                     done();
                 })
@@ -120,20 +106,6 @@ describe('## User APIs', () => {
     });
 
 
-    describe('# DELETE /api/users/', () => {
-        it('should delete user', (done) => {
-            request(app)
-                .delete(`/api/users/${user._id}`)
-                .expect(httpStatus.OK)
-                .then((res) => {
-                    expect(res.body.username).to.equal('KK123');
-                    expect(res.body.mobileNumber).to.equal(user.mobileNumber);
-                    done();
-                })
-                .catch(done);
-        });
-    });
-
     describe('# DELETE /api/pilots/', () => {
         it('should delete pilot', (done) => {
             request(app)
@@ -145,6 +117,19 @@ describe('## User APIs', () => {
                 })
                 .catch(done);
         });
+    });
+
+    describe('# DELETE /api/users/', () => {
+      it('should delete pilot user id', (done) => {
+        request(app)
+          .delete(`/api/users/${pilotUserId}`)
+          .expect(httpStatus.OK)
+          .then((res) => {
+            expect(res.body._id).to.equal(pilotUserId);
+            done();
+          })
+          .catch(done);
+      });
     });
 
     describe('# DELETE /api/orders/', () => {

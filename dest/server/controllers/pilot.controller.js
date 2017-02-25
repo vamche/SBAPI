@@ -73,15 +73,25 @@ function getUnAssignedPilotsByTeam(team, isActive) {
  * @returns {Pilot}
  */
 function create(req, res, next) {
-    var pilotId = req.body.userId;
-    var pilot = new _pilot2.default({
-        userId: pilotId,
-        teams: req.body.teams,
-        location: req.body.location
+    var user = new _user2.default({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        username: req.body.username,
+        password: req.body.password,
+        mobileNumber: req.body.mobileNumber,
+        emailAddress: req.body.emailAddress
     });
 
-    pilot.save().then(function (savedPilot) {
-        return res.json(savedPilot);
+    user.save().then(function (savedUser) {
+        var customer = new _pilot2.default({
+            user: savedUser._id,
+            teams: req.body.teams
+        });
+        customer.save().then(function (savedCustomer) {
+            res.json(savedCustomer);
+        }).catch(function (e) {
+            return next(e);
+        });
     }).catch(function (e) {
         return next(e);
     });
@@ -100,7 +110,7 @@ function createPilot(req, res, next) {
 
     user.save().then(function (savedUser) {
         var customer = new _pilot2.default({
-            userId: savedUser._id,
+            user: savedUser._id,
             teams: req.body.teams,
             location: req.body.location
         });
@@ -145,12 +155,7 @@ function updateTeams(req, res, next) {
  */
 function update(req, res, next) {
     var pilot = req.pilot;
-    pilot.latitude = req.body.latitude;
-    pilot.longitude = req.body.longitude;
-    pilot.isActive = req.body.isActive;
-    pilot.isAvailable = req.body.isAvailable;
-    pilot.battery = req.pilot.battery;
-
+    pilot.teams = req.body.teams;
     pilot.save().then(function (savedPilot) {
         return res.json(savedPilot);
     }).catch(function (e) {
@@ -186,43 +191,6 @@ function remove(req, res, next) {
     var pilot = req.pilot;
     pilot.remove().then(function (deletedPilot) {
         return res.json(deletedPilot);
-    }).catch(function (e) {
-        return next(e);
-    });
-}
-
-/**
- * Get pilot list.
- * @property {number} req.query.skip - Number of Pilot to be skipped.
- * @property {number} req.query.limit - Limit number of Pilot to be returned.
- * @returns {Pilot[]}
- */
-function listOfPilotsWithUserDetails(req, res, next) {
-    var _req$query2 = req.query,
-        _req$query2$limit = _req$query2.limit,
-        limit = _req$query2$limit === undefined ? 100 : _req$query2$limit,
-        _req$query2$skip = _req$query2.skip,
-        skip = _req$query2$skip === undefined ? 0 : _req$query2$skip;
-
-    var promises = [];
-    _pilot2.default.list({ limit: limit, skip: skip }).then(function (pilots) {
-        // pilotsWithUserIds = pilots;
-        var updatedPilots = [];
-        promises = pilots.map(function (pilot) {
-            var pilotToBeUpdated = void 0;
-            var p = _user2.default.get(pilot.userId).then(function (user) {
-                pilotToBeUpdated = pilot;
-                pilotToBeUpdated.userId = JSON.stringify(user);
-                updatedPilots.push(pilotToBeUpdated);
-                return pilotToBeUpdated;
-            });
-            return p;
-        });
-        _bluebird2.default.all(promises).then(function () {
-            return res.json(updatedPilots);
-        }).catch(function (e) {
-            return next(e);
-        });
     }).catch(function (e) {
         return next(e);
     });
@@ -436,13 +404,16 @@ function stats(req, res, next) {
 }
 
 function listByManager(req, res, next) {
-    var _req$query3 = req.query,
-        _req$query3$limit = _req$query3.limit,
-        limit = _req$query3$limit === undefined ? 500 : _req$query3$limit,
-        _req$query3$skip = _req$query3.skip,
-        skip = _req$query3$skip === undefined ? 0 : _req$query3$skip;
+    var _req$query2 = req.query,
+        _req$query2$limit = _req$query2.limit,
+        limit = _req$query2$limit === undefined ? 500 : _req$query2$limit,
+        _req$query2$skip = _req$query2.skip,
+        skip = _req$query2$skip === undefined ? 0 : _req$query2$skip;
+    var _req$body5 = req.body,
+        team = _req$body5.team,
+        manager = _req$body5.manager;
 
-    if (req.body.managerId) {
+    if (!team || team === '' || team === '*' || team === 'ALL') {
         _manager2.default.get(req.body.managerId).then(function (manager) {
             if (manager.isAdmin) {
                 _pilot2.default.list({ limit: limit, skip: skip }).then(function (pilots) {
@@ -469,11 +440,7 @@ function listByManager(req, res, next) {
             }
         });
     } else {
-        _pilot2.default.list({ limit: limit, skip: skip }).then(function (pilots) {
-            return res.json(pilots);
-        }).catch(function (e) {
-            return next(e);
-        });
+        listByTeam(req, res, next);
     }
 }
 
@@ -508,14 +475,14 @@ function updateAvailability(req, res, next) {
 function getActivity(req, res, next) {
     var pilot = req.pilot;
     var pilotId = pilot._id.toString();
-    var _req$query4 = req.query,
-        _req$query4$limit = _req$query4.limit,
-        limit = _req$query4$limit === undefined ? 100 : _req$query4$limit,
-        _req$query4$skip = _req$query4.skip,
-        skip = _req$query4$skip === undefined ? 0 : _req$query4$skip;
-    var _req$body5 = req.body,
-        date = _req$body5.date,
-        timeZone = _req$body5.timeZone;
+    var _req$query3 = req.query,
+        _req$query3$limit = _req$query3.limit,
+        limit = _req$query3$limit === undefined ? 100 : _req$query3$limit,
+        _req$query3$skip = _req$query3.skip,
+        skip = _req$query3$skip === undefined ? 0 : _req$query3$skip;
+    var _req$body6 = req.body,
+        date = _req$body6.date,
+        timeZone = _req$body6.timeZone;
 
     _order2.default.listByPilotAndDate({ pilotId: pilotId, date: date, timeZone: timeZone, limit: limit, skip: skip }).then(function (orders) {
         var completed = 0;
@@ -531,7 +498,7 @@ function getActivity(req, res, next) {
                 assigned++;
             }
         });
-        pilot.userId.password = 'XXXXXXXXX';
+        pilot.user.password = 'XXXXXXXXX';
         res.json({
             completed: completed,
             assigned: assigned,
@@ -545,7 +512,7 @@ function getActivity(req, res, next) {
 }
 
 exports.default = {
-    load: load, get: get, create: create, update: update, list: list, remove: remove, listOfPilotsWithUserDetails: listOfPilotsWithUserDetails, updateLocation: updateLocation, updateTeams: updateTeams,
+    load: load, get: get, create: create, update: update, list: list, remove: remove, updateLocation: updateLocation, updateTeams: updateTeams,
     getUnAssignedPilotsByTeam: getUnAssignedPilotsByTeam, createPilot: createPilot, getSales: getSales, getSalesByPilot: getSalesByPilot, getTimesheets: getTimesheets, getTimesheetsByPilot: getTimesheetsByPilot,
     stats: stats, listByTeam: listByTeam, updateAvailability: updateAvailability, listByManager: listByManager, getActivity: getActivity };
 module.exports = exports['default'];

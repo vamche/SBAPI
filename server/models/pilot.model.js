@@ -7,7 +7,7 @@ import APIError from '../helpers/APIError';
  * Pilot Schema
  */
 const PilotSchema = new mongoose.Schema({
-  userId: {
+  user: {
     type: String,
     ref: 'User',
     required: true
@@ -47,7 +47,10 @@ const PilotSchema = new mongoose.Schema({
       type: String,
       default: 'Point'
     },
-    coordinates: [Number]
+    coordinates: {
+      type: [Number],
+      default: [78.4867, 17.3850]
+    }
   },
   // TO DO : IDK!
   last_updated_location_time: {
@@ -60,7 +63,8 @@ const PilotSchema = new mongoose.Schema({
   },
   registration_status: {
     type: Boolean,
-    required: false
+    required: false,
+    default: true
   },
   createdAt: {
     type: Date,
@@ -95,7 +99,7 @@ PilotSchema.statics = {
    */
   get(id) {
     return this.findById(id)
-      .populate('userId')
+      .populate('user')
       .exec()
       .then((order) => {
         if (order) {
@@ -108,8 +112,8 @@ PilotSchema.statics = {
 
   getByUserId(userId) {
     return this.findOne()
-        .where('userId', userId)
-        .populate('userId')
+        .where('user', userId)
+        .populate('user')
         .exec()
         .then((order) => {
                 if (order) {
@@ -128,7 +132,7 @@ PilotSchema.statics = {
    */
   list({ skip = 0, limit = 50 } = {}) {
     return this.find()
-      .populate('userId')
+      .populate('user')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)

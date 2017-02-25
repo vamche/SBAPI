@@ -45,15 +45,27 @@ function getUnAssignedPilotsByTeam(team, isActive){
  * @returns {Pilot}
  */
 function create(req, res, next) {
-  const pilotId = req.body.userId;
-  const pilot = new Pilot({
-    userId: pilotId,
-    teams: req.body.teams,
-    location: req.body.location
+  const user = new User({
+    firstName : req.body.firstName,
+    lastName : req.body.lastName,
+    username : req.body.username,
+    password : req.body.password,
+    mobileNumber : req.body.mobileNumber,
+    emailAddress : req.body.emailAddress
   });
 
-  pilot.save()
-    .then(savedPilot => res.json(savedPilot))
+  user.save()
+    .then(savedUser => {
+      const customer = new Pilot({
+        user : savedUser._id,
+        teams : req.body.teams
+      });
+      customer.save()
+        .then(savedCustomer => {
+          res.json(savedCustomer);
+        })
+        .catch(e => next(e));
+    })
     .catch(e => next(e));
 }
 
@@ -72,7 +84,7 @@ function createPilot(req, res, next){
     user.save()
         .then(savedUser => {
             const customer = new Pilot({
-                userId : savedUser._id,
+                user : savedUser._id,
                 teams : req.body.teams,
                 location : req.body.location
             });
@@ -112,12 +124,7 @@ function updateTeams(req, res, next) {
  */
 function update(req, res, next) {
   const pilot = req.pilot;
-  pilot.latitude = req.body.latitude;
-  pilot.longitude = req.body.longitude;
-  pilot.isActive = req.body.isActive;
-  pilot.isAvailable = req.body.isAvailable;
-  pilot.battery = req.pilot.battery;
-
+  pilot.teams = req.body.teams;
   pilot.save()
     .then(savedPilot => res.json(savedPilot))
     .catch(e => next(e));
@@ -146,38 +153,6 @@ function remove(req, res, next) {
     .then(deletedPilot => res.json(deletedPilot))
     .catch(e => next(e));
 }
-
-/**
- * Get pilot list.
- * @property {number} req.query.skip - Number of Pilot to be skipped.
- * @property {number} req.query.limit - Limit number of Pilot to be returned.
- * @returns {Pilot[]}
- */
-function listOfPilotsWithUserDetails(req, res, next) {
-  const { limit = 100, skip = 0 } = req.query;
-  let promises = [];
-  Pilot.list({ limit, skip })
-       .then((pilots) => {
-         // pilotsWithUserIds = pilots;
-         let updatedPilots = [];
-         promises = pilots.map((pilot) => {
-                                        let pilotToBeUpdated;
-                                        const p = User.get(pilot.userId)
-                                            .then((user) => {
-                                              pilotToBeUpdated = pilot;
-                                              pilotToBeUpdated.userId = JSON.stringify(user);
-                                              updatedPilots.push(pilotToBeUpdated);
-                                              return pilotToBeUpdated;
-                                            });
-                                        return p;
-                                      });
-         BPromise.all(promises)
-                .then(() => res.json(updatedPilots))
-                .catch(e => next(e));
-       })
-       .catch(e => next(e));
-}
-
 
 function getSales(req, res, next){
     const { fromDate = moment().format('YYYYMMDD'), toDate = moment().format('YYYYMMDD') } = req.body;
@@ -377,7 +352,8 @@ function stats(req, res, next){
 
 function listByManager(req, res, next) {
   const { limit = 500, skip = 0 } = req.query;
-  if(req.body.managerId){
+  const { team, manager } = req.body;
+  if(!team || team === '' || team === '*' || team === 'ALL'){
     Manager.get(req.body.managerId)
       .then(manager => {
         if(manager.isAdmin){
@@ -401,9 +377,7 @@ function listByManager(req, res, next) {
         }
       });
   }else {
-    Pilot.list({ limit, skip })
-      .then(pilots => res.json(pilots))
-      .catch(e => next(e));
+    listByTeam(req, res, next);
   }
 }
 
@@ -453,7 +427,7 @@ function getActivity(req, res, next) {
           assigned++;
         }
       });
-      pilot.userId.password = 'XXXXXXXXX';
+      pilot.user.password = 'XXXXXXXXX';
       res.json({
         completed: completed,
         assigned: assigned,
@@ -468,6 +442,6 @@ function getActivity(req, res, next) {
 
 
 export default {
-  load, get, create, update, list, remove, listOfPilotsWithUserDetails, updateLocation, updateTeams,
+  load, get, create, update, list, remove, updateLocation, updateTeams,
     getUnAssignedPilotsByTeam, createPilot, getSales, getSalesByPilot, getTimesheets, getTimesheetsByPilot,
     stats, listByTeam, updateAvailability, listByManager, getActivity};

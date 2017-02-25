@@ -69,7 +69,7 @@ exports.default = {
   // POST /api/pilots
   createPilot: {
     body: {
-      userId: _joi2.default.string().required()
+      username: _joi2.default.string().required()
     }
   },
 

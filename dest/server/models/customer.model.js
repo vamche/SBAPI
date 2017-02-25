@@ -43,7 +43,7 @@ var CustomerSchema = new _mongoose2.default.Schema({
   isMerchant: {
     type: Boolean,
     required: false,
-    default: false
+    default: true
   },
   location: {
     type: {

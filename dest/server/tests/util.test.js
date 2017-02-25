@@ -40,24 +40,26 @@ after(function (done) {
 });
 
 describe('## User APIs', function () {
-    var user = {
-        username: 'KK123',
-        mobileNumber: '1234567890'
-    };
 
     var pilot = {
-        userId: '',
+        emailAddress: 'kk1@gmail.com',
+        password: '123',
+        firstName: 'K',
+        lastName: 'K',
+        username: 'KK',
+        mobileNumber: '1234567890',
         teams: ['magic'],
         location: {
             "type": "Point",
             "coordinates": [78, 78]
-        },
-        isActive: false
+        }
     };
 
+    var pilotUserId = void 0;
+
     var order = {
-        "title": "Order TZ",
-        "description": "desc TZ",
+        "title": "Order Testing",
+        "description": "desc testing",
         "from_name": "po",
         "from_phone": "6088885568",
         "from_email": "pooii@ghh.vhh",
@@ -86,22 +88,11 @@ describe('## User APIs', function () {
         }
     };
 
-    describe('# POST /api/users', function () {
-        it('should create a new user', function (done) {
-            (0, _supertestAsPromised2.default)(_index2.default).post('/api/users').send(user).expect(_httpStatus2.default.OK).then(function (res) {
-                (0, _chai.expect)(res.body.username).to.equal(user.username);
-                (0, _chai.expect)(res.body.mobileNumber).to.equal(user.mobileNumber);
-                user = res.body;
-                done();
-            }).catch(done);
-        });
-    });
-
     describe('# POST /api/pilots', function () {
         it('should create a new pilot', function (done) {
-            pilot.userId = user._id.toString();
             (0, _supertestAsPromised2.default)(_index2.default).post('/api/pilots').send(pilot).expect(_httpStatus2.default.OK).then(function (res) {
-                (0, _chai.expect)(res.body.userId).to.equal(pilot.userId);
+                (0, _chai.expect)(res.body.user).to.be.ok;
+                pilotUserId = res.body.user;
                 pilot = res.body;
                 done();
             }).catch(done);
@@ -118,20 +109,19 @@ describe('## User APIs', function () {
         });
     });
 
-    describe('# DELETE /api/users/', function () {
-        it('should delete user', function (done) {
-            (0, _supertestAsPromised2.default)(_index2.default).delete('/api/users/' + user._id).expect(_httpStatus2.default.OK).then(function (res) {
-                (0, _chai.expect)(res.body.username).to.equal('KK123');
-                (0, _chai.expect)(res.body.mobileNumber).to.equal(user.mobileNumber);
+    describe('# DELETE /api/pilots/', function () {
+        it('should delete pilot', function (done) {
+            (0, _supertestAsPromised2.default)(_index2.default).delete('/api/pilots/' + pilot._id).expect(_httpStatus2.default.OK).then(function (res) {
+                (0, _chai.expect)(res.body._id).to.equal(pilot._id);
                 done();
             }).catch(done);
         });
     });
 
-    describe('# DELETE /api/pilots/', function () {
-        it('should delete pilot', function (done) {
-            (0, _supertestAsPromised2.default)(_index2.default).delete('/api/pilots/' + pilot._id).expect(_httpStatus2.default.OK).then(function (res) {
-                (0, _chai.expect)(res.body._id).to.equal(pilot._id);
+    describe('# DELETE /api/users/', function () {
+        it('should delete pilot user id', function (done) {
+            (0, _supertestAsPromised2.default)(_index2.default).delete('/api/users/' + pilotUserId).expect(_httpStatus2.default.OK).then(function (res) {
+                (0, _chai.expect)(res.body._id).to.equal(pilotUserId);
                 done();
             }).catch(done);
         });

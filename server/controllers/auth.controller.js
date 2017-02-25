@@ -28,7 +28,7 @@ function login(req, res, next) {
                           const token = jwt.sign({
                               username: user.username
                           }, config.jwtSecret);
-                          pilot.userId.password = 'XXXXXXXXX';
+                          pilot.user.password = 'XXXXXXXXX';
                           return res.json({
                               token,
                               username: user.username,
@@ -50,7 +50,6 @@ function login(req, res, next) {
                       return res.json({
                         token,
                         username: user.username,
-                        managerId: manager._id,
                         manager: manager
                       });
                     })
@@ -68,7 +67,6 @@ function login(req, res, next) {
                       return res.json({
                         token,
                         username: user.username,
-                        customerId: customer._id,
                         customer: customer
                       });
                     })

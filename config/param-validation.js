@@ -59,7 +59,7 @@ export default {
   // POST /api/pilots
   createPilot: {
     body: {
-      userId: Joi.string().required()
+      username: Joi.string().required()
     }
   },
 

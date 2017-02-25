@@ -37,7 +37,7 @@ after(function (done) {
 
 describe('## User APIs', function () {
   var user = {
-    username: 'KK123',
+    username: 'KK',
     mobileNumber: '1234567890'
   };
 

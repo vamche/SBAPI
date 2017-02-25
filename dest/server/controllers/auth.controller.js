@@ -53,7 +53,7 @@ function login(req, res, next) {
           var token = _jsonwebtoken2.default.sign({
             username: user.username
           }, config.jwtSecret);
-          pilot.userId.password = 'XXXXXXXXX';
+          pilot.user.password = 'XXXXXXXXX';
           return res.json({
             token: token,
             username: user.username,
@@ -73,7 +73,6 @@ function login(req, res, next) {
           return res.json({
             token: token,
             username: user.username,
-            managerId: manager._id,
             manager: manager
           });
         }).catch(function (e) {
@@ -89,7 +88,6 @@ function login(req, res, next) {
           return res.json({
             token: token,
             username: user.username,
-            customerId: customer._id,
             customer: customer
           });
         }).catch(function (e) {

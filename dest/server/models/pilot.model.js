@@ -26,7 +26,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * Pilot Schema
  */
 var PilotSchema = new _mongoose2.default.Schema({
-  userId: {
+  user: {
     type: String,
     ref: 'User',
     required: true
@@ -66,7 +66,10 @@ var PilotSchema = new _mongoose2.default.Schema({
       type: String,
       default: 'Point'
     },
-    coordinates: [Number]
+    coordinates: {
+      type: [Number],
+      default: [78.4867, 17.3850]
+    }
   },
   // TO DO : IDK!
   last_updated_location_time: {
@@ -79,7 +82,8 @@ var PilotSchema = new _mongoose2.default.Schema({
   },
   registration_status: {
     type: Boolean,
-    required: false
+    required: false,
+    default: true
   },
   createdAt: {
     type: Date,
@@ -111,7 +115,7 @@ PilotSchema.statics = {
    * @returns {Promise<User, APIError>}
    */
   get: function get(id) {
-    return this.findById(id).populate('userId').exec().then(function (order) {
+    return this.findById(id).populate('user').exec().then(function (order) {
       if (order) {
         return order;
       }
@@ -120,7 +124,7 @@ PilotSchema.statics = {
     });
   },
   getByUserId: function getByUserId(userId) {
-    return this.findOne().where('userId', userId).populate('userId').exec().then(function (order) {
+    return this.findOne().where('user', userId).populate('user').exec().then(function (order) {
       if (order) {
         return order;
       }
@@ -143,7 +147,7 @@ PilotSchema.statics = {
         _ref$limit = _ref.limit,
         limit = _ref$limit === undefined ? 50 : _ref$limit;
 
-    return this.find().populate('userId').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    return this.find().populate('user').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   }
 };
 
