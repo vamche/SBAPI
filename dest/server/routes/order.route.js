@@ -51,7 +51,7 @@ router.route('/:orderId')
 
 router.route('/listByPilot').post(_order2.default.listByPilotAndDate);
 
-router.route('/listByDate').post((0, _expressJwt2.default)({ secret: _env2.default.jwtSecret }), _order2.default.listByDate);
+router.route('/listByDate').post(_order2.default.listByDate);
 
 router.route('/listByTeam').post(_order2.default.listByTeam);
 

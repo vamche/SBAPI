@@ -28,7 +28,7 @@ router.route('/listByPilot')
     .post(orderCtrl.listByPilotAndDate)
 
 router.route('/listByDate')
-    .post(expressJwt({ secret: config.jwtSecret }), orderCtrl.listByDate)
+    .post(orderCtrl.listByDate)
 
 router.route('/listByTeam')
     .post(orderCtrl.listByTeam)
