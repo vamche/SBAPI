@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import cloudinary from 'cloudinary';
 import util from 'util';
 import config from './config/env';
-import app from './config/express';
+import { app, server, io }  from './config/express';
 import schedule from 'node-schedule';
 import { assignPending } from './server/controllers/util.controller';
 
@@ -42,9 +42,17 @@ let assign = schedule.scheduleJob('* * * * *', () =>{
 // src: https://github.com/mochajs/mocha/issues/1912
 if (!module.parent) {
   // listen on port config.port
-  app.listen(process.env.PORT || config.port, () => {
+  server.listen(process.env.PORT || config.port, () => {
     debug(`server started on port ${config.port} (${config.env})`);
   });
 }
+
+// Set socket.io listeners.
+io.on('connection', (socket) => {
+  console.log('Client Connected...');
+  socket.on('disconnect', () => {
+    console.log('Client Disconnected.');
+  });
+});
 
 export default app;

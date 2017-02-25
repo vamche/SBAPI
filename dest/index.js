@@ -22,8 +22,6 @@ var _env2 = _interopRequireDefault(_env);
 
 var _express = require('./config/express');
 
-var _express2 = _interopRequireDefault(_express);
-
 var _nodeSchedule = require('node-schedule');
 
 var _nodeSchedule2 = _interopRequireDefault(_nodeSchedule);
@@ -67,11 +65,19 @@ var assign = _nodeSchedule2.default.scheduleJob('* * * * *', function () {
 // src: https://github.com/mochajs/mocha/issues/1912
 if (!module.parent) {
   // listen on port config.port
-  _express2.default.listen(process.env.PORT || _env2.default.port, function () {
+  _express.server.listen(process.env.PORT || _env2.default.port, function () {
     debug('server started on port ' + _env2.default.port + ' (' + _env2.default.env + ')');
   });
 }
 
-exports.default = _express2.default;
+// Set socket.io listeners.
+_express.io.on('connection', function (socket) {
+  console.log('Client Connected...');
+  socket.on('disconnect', function () {
+    console.log('Client Disconnected.');
+  });
+});
+
+exports.default = _express.app;
 module.exports = exports['default'];
 //# sourceMappingURL=index.js.map

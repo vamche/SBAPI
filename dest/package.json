@@ -87,6 +87,7 @@
     "morgan": "1.7.0",
     "node-schedule": "1.2.0",
     "run-sequence": "^1.1.5",
+    "socket.io": "1.7.3",
     "supertest": "2.0.1",
     "supertest-as-promised": "4.0.2",
     "validate-commit-msg": "^2.6.1",

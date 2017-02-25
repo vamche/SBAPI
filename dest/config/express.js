@@ -68,6 +68,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var app = (0, _express2.default)();
 
+var server = require("http").Server(app);
+var io = require("socket.io")(server);
+
 if (_env2.default.env === 'development') {
   app.use((0, _morgan2.default)('dev'));
 }
@@ -140,6 +143,6 @@ app.use(function (err, req, res, next) {
   );
 });
 
-exports.default = app;
+exports.default = { app: app, server: server, io: io };
 module.exports = exports['default'];
 //# sourceMappingURL=express.js.map

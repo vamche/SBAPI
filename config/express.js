@@ -16,6 +16,9 @@ import APIError from '../server/helpers/APIError';
 
 const app = express();
 
+const server = require("http").Server(app);
+const io = require("socket.io")(server);
+
 if (config.env === 'development') {
   app.use(logger('dev'));
 }
@@ -84,4 +87,4 @@ app.use((err, req, res, next) => // eslint-disable-line no-unused-vars
   })
 );
 
-export default app;
+export default { app, server, io };
