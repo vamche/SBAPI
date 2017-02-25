@@ -281,7 +281,7 @@ function listByDate(req, res, next) {
     const { limit = 500, skip = 0 } = req.query;
     const { date } = req.body;
 
-    if(req.body.managerId){
+    if(req.body.manager){
       Manager.get(req.body.managerId)
         .then(manager => {
           if(manager.isAdmin){

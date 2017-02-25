@@ -354,7 +354,7 @@ function listByManager(req, res, next) {
   const { limit = 500, skip = 0 } = req.query;
   const { team, manager } = req.body;
   if(!team || team === '' || team === '*' || team === 'ALL'){
-    Manager.get(req.body.managerId)
+    Manager.get(req.body.manager)
       .then(manager => {
         if(manager.isAdmin){
           Pilot.list({ limit, skip })

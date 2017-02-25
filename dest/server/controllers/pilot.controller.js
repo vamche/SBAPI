@@ -414,7 +414,7 @@ function listByManager(req, res, next) {
         manager = _req$body5.manager;
 
     if (!team || team === '' || team === '*' || team === 'ALL') {
-        _manager2.default.get(req.body.managerId).then(function (manager) {
+        _manager2.default.get(req.body.manager).then(function (manager) {
             if (manager.isAdmin) {
                 _pilot2.default.list({ limit: limit, skip: skip }).then(function (pilots) {
                     return res.json(pilots);

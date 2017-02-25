@@ -51,7 +51,7 @@ router.route('/:orderId')
 
 router.route('/listByPilot').post(_order2.default.listByPilotAndDate);
 
-router.route('/listByDate').post(_order2.default.listByDate);
+router.route('/list').post(_order2.default.listByDate);
 
 router.route('/listByTeam').post(_order2.default.listByTeam);
 

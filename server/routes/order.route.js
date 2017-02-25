@@ -27,7 +27,7 @@ router.route('/:orderId')
 router.route('/listByPilot')
     .post(orderCtrl.listByPilotAndDate)
 
-router.route('/listByDate')
+router.route('/list')
     .post(orderCtrl.listByDate)
 
 router.route('/listByTeam')

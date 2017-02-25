@@ -332,7 +332,7 @@ function listByDate(req, res, next) {
   var date = req.body.date;
 
 
-  if (req.body.managerId) {
+  if (req.body.manager) {
     _manager2.default.get(req.body.managerId).then(function (manager) {
       if (manager.isAdmin) {
         _order2.default.listByDate({ date: date, limit: limit, skip: skip }).then(function (orders) {
