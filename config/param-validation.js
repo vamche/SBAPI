@@ -88,7 +88,7 @@ export default {
   // POST /api/pilots
   createManager: {
     body: {
-      userId: Joi.string().required()
+      username: Joi.string().required()
     }
   },
 

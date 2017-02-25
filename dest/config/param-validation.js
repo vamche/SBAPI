@@ -98,7 +98,7 @@ exports.default = {
   // POST /api/pilots
   createManager: {
     body: {
-      userId: _joi2.default.string().required()
+      username: _joi2.default.string().required()
     }
   },
 
