@@ -412,12 +412,13 @@ function getActivity(req, res, next) {
   const pilotId = pilot._id.toString();
   const { limit = 100, skip = 0 } = req.query;
   const { date, timeZone } = req.body;
-  Order.listByPilotAndDate({pilotId, date, timeZone, limit, skip})
+  Order.listByPilotAndDate({pilot : pilotId, date, timeZone, limit, skip})
     .then(orders => {
       let completed = 0;
       let assigned = 0;
       let distance = 0;
       let amount = 0;
+      let activeOrder = {};
       orders.forEach(o => {
         distance += o.distance_in_meters;
         amount +=  o.amount;
@@ -426,6 +427,10 @@ function getActivity(req, res, next) {
         }else {
           assigned++;
         }
+        if(o.status != 'ASSIGNED' && o.status != 'COMPLETED' && o.status != 'FAILED') {
+          activeOrder = o;
+        }
+
       });
       pilot.user.password = 'XXXXXXXXX';
       res.json({
@@ -434,7 +439,8 @@ function getActivity(req, res, next) {
         distanceInMeters: distance,
         amount: amount,
         pilot: pilot,
-        orders: orders
+        orders: orders,
+        activeOrder : activeOrder
       });
     })
     .catch(e => next(e));
