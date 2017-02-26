@@ -169,6 +169,8 @@ function updateOrder(order) {
 
       _bluebird2.default.all(aPromises).then(function () {
         tobeUpdatedOrder.save().then(function (updatedOrder) {
+          _send.message.contents.en = 'Order Update \n' + updatedOrder.title + '. \nStatus ' + updatedOrder.status;
+          (0, _send.sendNotification)(_send.message);
           resolve(updatedOrder);
         }).catch(function (e) {
           return reject(e);
@@ -213,10 +215,6 @@ function updateOrdersOld(req, res, next) {
       tobeUpdatedOrder.pilot_from_date_time = order.pilot_from_date_time;
       tobeUpdatedOrder.pilot_to_date_time = order.pilot_to_date_time;
       tobeUpdatedOrder.pilot_completed_date_time = order.pilot_completed_date_time;
-
-      _send.message.contents.en = 'Order Update \n' + order.title + '. \nStatus ' + order.status;
-      _send.message.filters.push({ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': order.pilot });
-      (0, _send.sendNotification)(_send.message);
 
       var attachmentsTobeUploaded = order.attachments.filter(function (a) {
         return !a.uploaded;

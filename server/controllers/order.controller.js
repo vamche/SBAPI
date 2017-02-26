@@ -138,6 +138,8 @@ function updateOrder(order){
             .then(() => {
               tobeUpdatedOrder.save()
                   .then(updatedOrder => {
+                    message.contents.en = `Order Update \n${updatedOrder.title}. \nStatus ${updatedOrder.status}`;
+                    sendNotification(message);
                     resolve(updatedOrder);
                   })
                   .catch(e => reject(e));
@@ -184,11 +186,6 @@ function updateOrdersOld(req, res, next) {
           tobeUpdatedOrder.pilot_from_date_time = order.pilot_from_date_time;
           tobeUpdatedOrder.pilot_to_date_time = order.pilot_to_date_time;
           tobeUpdatedOrder.pilot_completed_date_time = order.pilot_completed_date_time;
-
-
-          message.contents.en = `Order Update \n${order.title}. \nStatus ${order.status}`;
-          message.filters.push({'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': order.pilot});
-          sendNotification(message);
 
           let attachmentsTobeUploaded = order.attachments.filter(a => !a.uploaded);
           tobeUpdatedOrder.attachments = order.attachments.filter(a => a.uploaded);
