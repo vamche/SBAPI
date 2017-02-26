@@ -152,6 +152,7 @@ function updateOrders(req, res, next) {
   const promises = req.body.orders.map(order => {
     return updateOrder(order)
       .then(updatedOrder => {
+        updatedOrder.attachments = [];
         updatedOrders.push(updatedOrder);
       })
       .catch(e => next(e));
