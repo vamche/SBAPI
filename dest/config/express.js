@@ -76,8 +76,8 @@ if (_env2.default.env === 'development') {
 }
 
 // parse body params and attache them to req.body
-app.use(_bodyParser2.default.json());
-app.use(_bodyParser2.default.urlencoded({ extended: true }));
+app.use(_bodyParser2.default.json({ limit: '50mb' }));
+app.use(_bodyParser2.default.urlencoded({ extended: true, limit: '50mb' }));
 
 app.use((0, _cookieParser2.default)());
 app.use((0, _compression2.default)());

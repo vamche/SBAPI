@@ -504,7 +504,8 @@ function getActivity(req, res, next) {
             assigned: assigned,
             distanceInMeters: distance,
             amount: amount,
-            pilot: pilot
+            pilot: pilot,
+            orders: orders
         });
     }).catch(function (e) {
         return next(e);
