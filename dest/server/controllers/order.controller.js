@@ -142,6 +142,14 @@ function updateOrder(order) {
       tobeUpdatedOrder.pilot_to_date_time = order.pilot_to_date_time;
       tobeUpdatedOrder.pilot_completed_date_time = order.pilot_completed_date_time;
 
+      if (order.status === 'COMPLETED') {
+        var distance = (0, _util.calculateDistanceBetweenLatLongs)(order.pilot_movement.coordinates);
+        var duration = (0, _util.calculateDuration)(order.pilot_start_date_time, order.pilot_completed_date_time);
+        tobeUpdatedOrder.distance_in_meters = distance;
+        tobeUpdatedOrder.time_in_seconds = duration;
+        tobeUpdatedOrder.final_cost = (0, _util.calculateFinalCost)(distance, duration);
+      }
+
       var attachmentsTobeUploaded = order.attachments.filter(function (a) {
         return !a.uploaded;
       });

@@ -200,6 +200,7 @@ var OrderSchema = new _mongoose2.default.Schema({
   },
   payment_pending: {
     type: Boolean,
+    default: true,
     required: false
   },
   createdAt: {

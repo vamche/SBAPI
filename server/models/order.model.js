@@ -181,6 +181,7 @@ const OrderSchema = new mongoose.Schema({
   },
   payment_pending: {
     type: Boolean,
+    default: true,
     required: false
   },
   createdAt: {

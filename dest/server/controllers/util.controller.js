@@ -28,6 +28,10 @@ var _geolib = require('geolib');
 
 var _geolib2 = _interopRequireDefault(_geolib);
 
+var _moment = require('moment');
+
+var _moment2 = _interopRequireDefault(_moment);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var maxDistance = 1; // 1 KM
@@ -128,6 +132,11 @@ function assignPending() {
   });
 }
 
+/**
+ * Returns distance in meters
+ * @param coordinates
+ * @returns {*}
+ */
 function calculateDistanceBetweenLatLongs(coordinates) {
   var latLongs = coordinates.map(function (coordinate) {
     return { latitude: coordinates[1],
@@ -137,6 +146,37 @@ function calculateDistanceBetweenLatLongs(coordinates) {
   return _geolib2.default.getPathLength(latLongs);
 }
 
-exports.default = { assign: assign, unAssign: unAssign, uploadImgAsync: uploadImgAsync, assignPending: assignPending };
+/**
+ * Final Cost in INR
+ * @param distance
+ * @param timeInSeconds
+ * @returns {number}
+ */
+function calculateFinalCost(distance, timeInSeconds) {
+  var minDistance = 4000;
+  var baseFare = 50;
+  var finalCost = 0;
+  var perKM = 10;
+  var perHour = 10;
+  if (distance < minDistance) {
+    finalCost = baseFare;
+  } else {
+    finalCost = baseFare + (distance - minDistance) / 1000 * perKM + timeInSeconds / 3600 * perHour;
+  }
+  return finalCost;
+}
+
+/**
+ * Returns duration in seconds
+ * @param fromTime
+ * @param toTime
+ * @returns {number}
+ */
+function calculateDuration(fromTime, toTime) {
+  return (0, _moment2.default)(toTime).diff((0, _moment2.default)(fromTime)) / 1000;
+}
+
+exports.default = { assign: assign, unAssign: unAssign, uploadImgAsync: uploadImgAsync, assignPending: assignPending,
+  calculateDistanceBetweenLatLongs: calculateDistanceBetweenLatLongs, calculateDuration: calculateDuration, calculateFinalCost: calculateFinalCost };
 module.exports = exports['default'];
 //# sourceMappingURL=util.controller.js.map

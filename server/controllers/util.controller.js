@@ -4,6 +4,7 @@ import orderCtrl from '../controllers/order.controller';
 import pilotCtrl from '../controllers/pilot.controller';
 import cloudinary from 'cloudinary';
 import geolib from 'geolib';
+import moment from 'moment';
 
 const maxDistance = 1; // 1 KM
 
@@ -113,6 +114,11 @@ function assignPending(){
     })
 }
 
+/**
+ * Returns distance in meters
+ * @param coordinates
+ * @returns {*}
+ */
 function calculateDistanceBetweenLatLongs(coordinates){
   const latLongs = coordinates.map(coordinate => {
     return { latitude : coordinates[1],
@@ -122,7 +128,38 @@ function calculateDistanceBetweenLatLongs(coordinates){
   return geolib.getPathLength(latLongs);
 }
 
+/**
+ * Final Cost in INR
+ * @param distance
+ * @param timeInSeconds
+ * @returns {number}
+ */
+function calculateFinalCost(distance, timeInSeconds) {
+  const minDistance = 4000;
+  const baseFare = 50;
+  let finalCost = 0;
+  let perKM = 10;
+  let perHour = 10;
+  if(distance < minDistance){
+    finalCost = baseFare;
+  }else{
+    finalCost = baseFare + (((distance - minDistance)/1000)*perKM) + ((timeInSeconds/3600)*perHour);
+  }
+  return finalCost
+}
+
+/**
+ * Returns duration in seconds
+ * @param fromTime
+ * @param toTime
+ * @returns {number}
+ */
+function calculateDuration(fromTime, toTime) {
+    return (moment(toTime).diff(moment(fromTime)))/1000;
+}
 
 
 
-export default { assign, unAssign, uploadImgAsync, assignPending };
+
+export default { assign, unAssign, uploadImgAsync, assignPending,
+  calculateDistanceBetweenLatLongs, calculateDuration, calculateFinalCost };
