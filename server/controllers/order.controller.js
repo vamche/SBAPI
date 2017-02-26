@@ -7,6 +7,8 @@ import cloudinary from 'cloudinary';
 import Manager from '../models/manager.model';
 import Customer from '../models/customer.model';
 import Franchise from '../models/franchise.model';
+import { io } from '../../config/express';
+import mongoose from 'mongoose';
 
 
 /**
@@ -71,6 +73,7 @@ function create(req, res, next) {
       if(savedOrder.pilot && savedOrder.pilot != ''){
         message.filters.push({'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot});
       }
+      io.email('ORDER_ADDED', savedOrder);
       sendNotification(message);
       res.json(savedOrder)
     })
@@ -138,6 +141,7 @@ function updateOrder(order){
             .then(() => {
               tobeUpdatedOrder.save()
                   .then(updatedOrder => {
+                    io.email('ORDER_UPDATE', updatedOrder );
                     message.contents.en = `Order Update \n${updatedOrder.title}. \nStatus ${updatedOrder.status}`;
                     sendNotification(message);
                     resolve(updatedOrder);
@@ -164,67 +168,6 @@ function updateOrders(req, res, next) {
     .then(() => res.json(updatedOrders))
     .catch(e => next(e));
 
-}
-
-
-
-
-
-function updateOrdersOld(req, res, next) {
-  let updatedOrders = [];
-  const promises = req.body.orders.map(
-    order => {
-      let tobeUpdatedOrder;
-      return Order.get(order._id)
-        .then(o => {
-
-          tobeUpdatedOrder = o;
-          tobeUpdatedOrder.status = order.status;
-          tobeUpdatedOrder.timeline = order.timeline;
-          tobeUpdatedOrder.pilot_movement = order.pilot_movement;
-          tobeUpdatedOrder.pilot_from_date_time = order.pilot_start_date_time;
-          tobeUpdatedOrder.pilot_from_date_time = order.pilot_from_date_time;
-          tobeUpdatedOrder.pilot_to_date_time = order.pilot_to_date_time;
-          tobeUpdatedOrder.pilot_completed_date_time = order.pilot_completed_date_time;
-
-          let attachmentsTobeUploaded = order.attachments.filter(a => !a.uploaded);
-          tobeUpdatedOrder.attachments = order.attachments.filter(a => a.uploaded);
-          let i = 0;
-          let aPromises = attachmentsTobeUploaded.map(attachment => {
-            uploadImgAsync("data:image/png;base64," + attachment.source)
-              .then(result => {
-                let a = new Attachment({
-                  source: result.url,
-                  uploaded: true,
-                  orderId: attachment.orderId,
-                  orderStatus: attachment.orderStatus,
-                  type: attachment.type,
-                  extension: attachment.extension
-                });
-                return a;
-              })
-              .then(a => {
-                i ++;
-                return a.save()
-                  .then(savedAttachment => {
-                    tobeUpdatedOrder.attachments.push(savedAttachment._id);
-                    if(i == attachmentsTobeUploaded.length){
-                      return tobeUpdatedOrder.save()
-                                .then(updatedOrder => {
-                                  updatedOrders.push(updatedOrder);
-                                })
-                                .catch(e => next(e));
-                    }
-                  })
-                  .catch(e => next(e));
-              })
-              .catch(e => next(e));
-          });
-        })
-    });
-    BPromise.all(promises)
-      .then(() => res.json(updatedOrders))
-      .catch(e => next(e));
 }
 
 

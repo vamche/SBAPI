@@ -36,6 +36,12 @@ var _franchise = require('../models/franchise.model');
 
 var _franchise2 = _interopRequireDefault(_franchise);
 
+var _express = require('../../config/express');
+
+var _mongoose = require('mongoose');
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -98,6 +104,7 @@ function create(req, res, next) {
     if (savedOrder.pilot && savedOrder.pilot != '') {
       _send.message.filters.push({ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot });
     }
+    _express.io.email('ORDER_ADDED', savedOrder);
     (0, _send.sendNotification)(_send.message);
     res.json(savedOrder);
   }).catch(function (e) {
@@ -142,7 +149,7 @@ function updateOrder(order) {
         return a.uploaded;
       });
       tobeUpdatedOrder.attachments = tobeUpdatedOrder.attachments.map(function (a) {
-        return mongoose.Types.ObjectId(a._id);
+        return _mongoose2.default.Types.ObjectId(a._id);
       });
 
       var aPromises = attachmentsTobeUploaded.map(function (attachment) {
@@ -169,6 +176,7 @@ function updateOrder(order) {
 
       _bluebird2.default.all(aPromises).then(function () {
         tobeUpdatedOrder.save().then(function (updatedOrder) {
+          _express.io.email('ORDER_UPDATE', updatedOrder);
           _send.message.contents.en = 'Order Update \n' + updatedOrder.title + '. \nStatus ' + updatedOrder.status;
           (0, _send.sendNotification)(_send.message);
           resolve(updatedOrder);
@@ -192,66 +200,6 @@ function updateOrders(req, res, next) {
       updatedOrders.push(updatedOrder);
     }).catch(function (e) {
       return next(e);
-    });
-  });
-  _bluebird2.default.all(promises).then(function () {
-    return res.json(updatedOrders);
-  }).catch(function (e) {
-    return next(e);
-  });
-}
-
-function updateOrdersOld(req, res, next) {
-  var updatedOrders = [];
-  var promises = req.body.orders.map(function (order) {
-    var tobeUpdatedOrder = void 0;
-    return _order2.default.get(order._id).then(function (o) {
-
-      tobeUpdatedOrder = o;
-      tobeUpdatedOrder.status = order.status;
-      tobeUpdatedOrder.timeline = order.timeline;
-      tobeUpdatedOrder.pilot_movement = order.pilot_movement;
-      tobeUpdatedOrder.pilot_from_date_time = order.pilot_start_date_time;
-      tobeUpdatedOrder.pilot_from_date_time = order.pilot_from_date_time;
-      tobeUpdatedOrder.pilot_to_date_time = order.pilot_to_date_time;
-      tobeUpdatedOrder.pilot_completed_date_time = order.pilot_completed_date_time;
-
-      var attachmentsTobeUploaded = order.attachments.filter(function (a) {
-        return !a.uploaded;
-      });
-      tobeUpdatedOrder.attachments = order.attachments.filter(function (a) {
-        return a.uploaded;
-      });
-      var i = 0;
-      var aPromises = attachmentsTobeUploaded.map(function (attachment) {
-        (0, _util.uploadImgAsync)("data:image/png;base64," + attachment.source).then(function (result) {
-          var a = new _attachment2.default({
-            source: result.url,
-            uploaded: true,
-            orderId: attachment.orderId,
-            orderStatus: attachment.orderStatus,
-            type: attachment.type,
-            extension: attachment.extension
-          });
-          return a;
-        }).then(function (a) {
-          i++;
-          return a.save().then(function (savedAttachment) {
-            tobeUpdatedOrder.attachments.push(savedAttachment._id);
-            if (i == attachmentsTobeUploaded.length) {
-              return tobeUpdatedOrder.save().then(function (updatedOrder) {
-                updatedOrders.push(updatedOrder);
-              }).catch(function (e) {
-                return next(e);
-              });
-            }
-          }).catch(function (e) {
-            return next(e);
-          });
-        }).catch(function (e) {
-          return next(e);
-        });
-      });
     });
   });
   _bluebird2.default.all(promises).then(function () {
