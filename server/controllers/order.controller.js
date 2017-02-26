@@ -109,6 +109,7 @@ function updateOrder(order){
 
           let attachmentsTobeUploaded = order.attachments.filter(a => !a.uploaded);
           tobeUpdatedOrder.attachments = order.attachments.filter(a => a.uploaded);
+          tobeUpdatedOrder.attachments = tobeUpdatedOrder.attachments.map(a => mongoose.Types.ObjectId(a._id));
 
           let aPromises = attachmentsTobeUploaded.map(attachment => {
             return uploadImgAsync("data:image/png;base64," + attachment.source)

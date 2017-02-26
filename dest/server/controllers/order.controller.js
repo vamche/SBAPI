@@ -141,6 +141,9 @@ function updateOrder(order) {
       tobeUpdatedOrder.attachments = order.attachments.filter(function (a) {
         return a.uploaded;
       });
+      tobeUpdatedOrder.attachments = tobeUpdatedOrder.attachments.map(function (a) {
+        return mongoose.Types.ObjectId(a._id);
+      });
 
       var aPromises = attachmentsTobeUploaded.map(function (attachment) {
         return (0, _util.uploadImgAsync)("data:image/png;base64," + attachment.source).then(function (result) {
