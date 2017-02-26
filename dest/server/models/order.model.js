@@ -287,12 +287,15 @@ OrderSchema.statics = {
   listByDate: function listByDate() {
     var _ref4 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         date = _ref4.date,
+        _ref4$timeZone = _ref4.timeZone,
+        timeZone = _ref4$timeZone === undefined ? 'Europe/London' : _ref4$timeZone,
         _ref4$skip = _ref4.skip,
         skip = _ref4$skip === undefined ? 0 : _ref4$skip,
         _ref4$limit = _ref4.limit,
         limit = _ref4$limit === undefined ? 1000 : _ref4$limit;
 
-    return this.find().where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day')).populate('attachments').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    var diffInMinutes = (0, _momentTimezone2.default)().tz(timeZone).utcOffset();
+    return this.find().where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).populate('attachments').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
   listByPilotDateRangeStatus: function listByPilotDateRangeStatus() {
     var _ref5 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},

@@ -230,41 +230,41 @@ function listByPilotAndDate(req, res, next) {
 
 function listByDate(req, res, next) {
     const { limit = 500, skip = 0 } = req.query;
-    const { date } = req.body;
+    const { date, timeZone } = req.body;
 
     if(req.body.manager){
-      Manager.get(req.body.managerId)
+      Manager.get(req.body.manager)
         .then(manager => {
           if(manager.isAdmin){
-            Order.listByDate({date, limit, skip})
+            Order.listByDate({date, timeZone, limit, skip})
               .then(orders => res.json(orders))
               .catch(e => next(e));
           }else if(manager.isFranchiseAdmin){
             Franchise.get(manager.franchise)
               .then(franchise => {
-                Order.listByDate({date, limit, skip})
+                Order.listByDate({date, timeZone, limit, skip})
                   .where('team').in(franchise.teams)
                   .then(orders => res.json(orders))
                   .catch(e => next(e));
               })
               .catch(e => next(e));
           }else {
-            Order.listByDate({date, limit, skip})
+            Order.listByDate({date, timeZone, limit, skip})
               .where('team').in(manager.teams)
               .then(orders => res.json(orders))
               .catch(e => next(e));
           }
         });
-    }if(req.body.managerId){
-      Customer.get(req.body.managerId)
+    }if(req.body.customer){
+      Customer.get(req.body.customer)
         .then(customer => {
-           Order.listByDate({date, limit, skip})
+           Order.listByDate({date, timeZone, limit, skip})
               .where('createdBy').in(customer._id.toString())
               .then(orders => res.json(orders))
               .catch(e => next(e));
         });
     }else {
-      Order.listByDate({date, limit, skip})
+      Order.listByDate({date, timeZone, limit, skip})
         .then(orders => res.json(orders))
         .catch(e => next(e));
     }
