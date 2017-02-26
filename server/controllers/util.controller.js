@@ -121,8 +121,8 @@ function assignPending(){
  */
 function calculateDistanceBetweenLatLongs(coordinates){
   const latLongs = coordinates.map(coordinate => {
-    return { latitude : coordinates[1],
-             longitude : coordinates[0]
+    return { latitude : coordinate[1],
+             longitude : coordinate[0]
            };
   });
   return geolib.getPathLength(latLongs);

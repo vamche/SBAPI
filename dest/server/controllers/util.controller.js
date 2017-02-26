@@ -139,8 +139,8 @@ function assignPending() {
  */
 function calculateDistanceBetweenLatLongs(coordinates) {
   var latLongs = coordinates.map(function (coordinate) {
-    return { latitude: coordinates[1],
-      longitude: coordinates[0]
+    return { latitude: coordinate[1],
+      longitude: coordinate[0]
     };
   });
   return _geolib2.default.getPathLength(latLongs);
