@@ -216,6 +216,7 @@ OrderSchema.statics = {
    */
   get(id) {
     return this.findById(id)
+      .populate('attachments')
       .exec()
       .then((order) => {
         if (order) {
@@ -245,9 +246,9 @@ OrderSchema.statics = {
     const diffInMinutes = moment().tz(timeZone).utcOffset();
     return this.find()
             .where('pilot', pilot)
-            .populate('attachments')
             .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes'))
                                .lte(moment(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes'))
+            .populate('attachments')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
@@ -258,6 +259,7 @@ OrderSchema.statics = {
     return this.find()
       .where('team', team)
       .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day')).lte(moment(date, "YYYYMMDD").endOf('day'))
+      .populate('attachments')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -267,6 +269,7 @@ OrderSchema.statics = {
   listByDate({ date, skip = 0, limit = 1000 } = {}) {
         return this.find()
             .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day')).lte(moment(date, "YYYYMMDD").endOf('day'))
+            .populate('attachments')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
@@ -278,6 +281,7 @@ OrderSchema.statics = {
           .where('pilot', pilot)
           .where('status', status)
           .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
+          .populate('attachments')
           .exec();
   },
 
