@@ -1,0 +1,396 @@
+package app.com.seasonboy.pilotapp.ui.main;
+
+import android.content.Context;
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.HashMap;
+
+import javax.inject.Inject;
+
+import app.com.seasonboy.pilotapp.R;
+import app.com.seasonboy.pilotapp.data.SyncService;
+import app.com.seasonboy.pilotapp.data.local.PreferencesHelper;
+import app.com.seasonboy.pilotapp.ui.base.BaseActivity;
+import app.com.seasonboy.pilotapp.util.Globals;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+public class DashboardActivity extends BaseActivity implements DashboardMvpView {
+
+    @BindView(R.id.rlHeader)
+    RelativeLayout mRlHeader;
+
+    @BindView(R.id.txtHeaderCount)
+    TextView mTxtHeaderCount;
+
+    @BindView(R.id.textCount1)
+    TextView mTextCount1;
+
+    @BindView(R.id.textCount2)
+    TextView mTextCount2;
+
+    @BindView(R.id.textCount3)
+    TextView mTextCount3;
+
+    @BindView(R.id.textCount4)
+    TextView mTextCount4;
+
+    @Inject
+    DashboardPresenter mDashboardPresenter;
+
+    private static final String EXTRA_TRIGGER_SYNC_FLAG =
+            "uk.co.ribot.androidboilerplate.ui.main.MainActivity.EXTRA_TRIGGER_SYNC_FLAG";
+
+
+    /**
+     * Return an Intent to start this Activity.
+     * triggerDataSyncOnCreate allows disabling the background sync service onCreate. Should
+     * only be set to false during testing.
+     */
+    public static Intent getStartIntent(Context context, boolean triggerDataSyncOnCreate) {
+        Intent intent = new Intent(context, OrdersListActivity.class);
+        intent.putExtra(EXTRA_TRIGGER_SYNC_FLAG, triggerDataSyncOnCreate);
+        return intent;
+    }
+
+
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if (getIntent().getBooleanExtra(EXTRA_TRIGGER_SYNC_FLAG, true)) {
+            startService(SyncService.getStartIntent(this));
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        activityComponent().injectDashboardActivity(this);
+        setContentView(R.layout.activity_dashboard);
+
+        ButterKnife.bind(this);
+
+        mDashboardPresenter.attachView(this);
+        mDashboardPresenter.loadOrders();
+
+        if (getIntent().getBooleanExtra(EXTRA_TRIGGER_SYNC_FLAG, true)) {
+            startService(SyncService.getStartIntent(this));
+        }
+
+    }
+
+    @Override
+    public void showActivity(HashMap<String, Object> activityInfo){
+        mTxtHeaderCount.setText(activityInfo.get("assigned").toString());
+        mTextCount1.setText(activityInfo.get("completed").toString());
+        mTextCount2.setText(activityInfo.get("distance").toString());
+        mTextCount3.setText(activityInfo.get("sales").toString());
+        mTextCount4.setText("4.5/5");
+    }
+
+    @OnClick(R.id.rlHeader)
+    public void navigateToOrders() {
+        Intent i = new Intent(getApplicationContext(), OrdersListActivity.class);
+        startActivity(i);
+        //start service to update LatLong values.
+        startService(new Intent(DashboardActivity.this, LocationService.class));
+    }
+
+    @OnClick(R.id.btnLogout)
+    public void navigateToLogin() {
+
+        if(mDashboardPresenter.isActive()){
+            Globals.showToast(this,"Please complete active order before you sign off",null,"#FFFFFF",0,false);
+            //Toast.makeText(this, "Please complete active order before you sign off", Toast.LENGTH_SHORT).show();
+        }else{
+            PreferencesHelper helper = new PreferencesHelper(DashboardActivity.this);
+            helper.clear();
+            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(i);
+        }
+
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        //super.onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        mDashboardPresenter.detachView();
+    }
+
+}
+
+
+
+
+
+
+package app.com.seasonboy.pilotapp.ui.main;
+
+import android.annotation.TargetApi;
+import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.transition.Fade;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import javax.inject.Inject;
+
+import app.com.seasonboy.pilotapp.R;
+import app.com.seasonboy.pilotapp.data.model.Order;
+import app.com.seasonboy.pilotapp.ui.base.BaseActivity;
+import app.com.seasonboy.pilotapp.util.Globals;
+import app.com.seasonboy.pilotapp.util.ViewUtil;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import timber.log.Timber;
+
+public class OrderDetails extends BaseActivity implements OrderDetailsMvpView {
+
+    Order mOrder;
+
+    // TO DO : Remove when the Observable is returning valid
+    String currentStatus;
+
+    @Inject
+    OrderDetailsPresenter mOrdersDetailsPresenter;
+
+    @BindView(R.id.layoutStatus)
+    LinearLayout mLayoutStatus;
+
+    @BindView(R.id.txtStatus)
+    TextView mTxtStatus;
+
+    @BindView(R.id.txtTitle)
+    TextView mTxtTitle;
+
+    @BindView(R.id.txtDescription)
+    TextView mTxtDescription;
+
+    @BindView(R.id.btnPositive)
+    Button mBtnPositive;
+
+    @BindView(R.id.btnNegative)
+    Button mBtnNegative;
+
+    @BindView(R.id.layoutMenu)
+    LinearLayout mLayoutMenu;
+
+    @BindView(R.id.ivFingerPrint)
+    ImageView ivFingerPrint;
+
+    @BindView(R.id.txtDuration)
+    TextView mTxtDuration;
+
+    @BindView(R.id.txtDistance)
+    TextView mTxtDistance;
+
+    @BindView(R.id.txtPickupTime)
+    TextView mTxtPickupTime;
+
+    @BindView(R.id.textPickupAddress)
+    TextView mTxtPickupAddress;
+
+    @BindView(R.id.textPickupContact)
+    TextView mTxtPickupContact;
+
+    @BindView(R.id.txtDeliveryTime)
+    TextView mTxtDeliveryTime;
+
+    @BindView(R.id.txtDeliveryAddress)
+    TextView mTxtDeliveryAddress;
+
+    @BindView(R.id.txtDeliveryContact)
+    TextView mTxtDeliveryContact;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        activityComponent().injectOrderDetailsActivity(this);
+        setContentView(R.layout.activity_order_details);
+
+        ButterKnife.bind(this);
+        getSupportActionBar().hide();
+        setupWindowAnimations();
+
+        Bundle bundle = getIntent().getExtras();
+        String _id = bundle.getString("_id");
+
+        mOrdersDetailsPresenter.attachView(this);
+        mOrdersDetailsPresenter.loadOrderDetails(_id);
+    }
+
+    @TargetApi(21)
+    private void setupWindowAnimations() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Fade fade = new Fade();
+            fade.setDuration(1000);
+            getWindow().setEnterTransition(fade);
+        }
+    }
+
+    @OnClick(R.id.layoutPickupDirections)
+    public void navigateToPickupDirections() {
+        Intent intent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://maps.google.com/?" +
+                        "&saddr="+ LocationService.location.getLatitude() + ","+ LocationService.location.getLongitude() + "&" +
+                        "daddr="+ mOrder.from_location().coordinates().get(1) + ","+ mOrder.from_location().coordinates().get(0)  + "&hl=zh&t=m&dirflg=d"));
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.layoutDeliveryDirections)
+    public void navigateToDeliveryDirections() {
+        Intent intent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://maps.google.com/?" +
+                        "&saddr="+ LocationService.location.getLatitude() + ","+ LocationService.location.getLongitude() + "&" +
+                        "daddr="+ mOrder.to_location().coordinates().get(1) + ","+ mOrder.to_location().coordinates().get(0)  + "&hl=zh&t=m&dirflg=d"));
+        startActivity(intent);
+    }
+
+
+    @Override
+    public void showOrderDetails(Order order) {
+        mOrder = order;
+        currentStatus = mOrder.status();
+        Timber.i("Order details  %s", order);
+        String status = order.status();
+
+        mLayoutStatus.setBackgroundColor(Color.parseColor(ViewUtil.getStatusColor(status)));
+        mTxtStatus.setText(status);
+        mTxtTitle.setText(order.title());
+        mTxtDescription.setText(order.description());
+
+        mTxtPickupAddress.setText(order.from_address().substring(0, 20));
+        mTxtPickupContact.setText(order.from_phone());
+
+        mTxtDeliveryAddress.setText(order.to_address().substring(0, 20));
+        mTxtDeliveryContact.setText(order.to_phone());
+
+
+        if(order.status().equalsIgnoreCase("ASSIGNED")){
+            mTxtDuration.setText("00:00");
+        }else if(order.status().equalsIgnoreCase("COMPLETED")){
+            mTxtDuration.setText(ViewUtil.getHHMMFromSeconds(order.time_in_seconds()));
+        }else {
+            mTxtDuration.setText(ViewUtil.getDuration(order.pilot_start_date_time()));
+        }
+        if(order.status().equalsIgnoreCase("COMPLETED")){
+            mTxtDistance.setText(Math.round(ViewUtil.getDistanceFromCoordinates(order.pilot_movement().coordinates())*10)/10 + " Km");
+        }else {
+            mTxtDistance.setText(order.distance_in_meters()/1000 + " Km");        }
+        try{
+            mTxtPickupTime.setText(ViewUtil.getLocalTimeString(order.from_date_time(), "hh:mm a"));
+            mTxtDeliveryTime.setText(ViewUtil.getLocalTimeString(order.to_date_time(), "hh:mm a"));
+        }catch(Exception e){
+        }
+        Timber.i("current utc %s " + ViewUtil.getCurrentTimeUTC());
+
+        showValidActions(status);
+    }
+
+    @Override
+    public void showError() {
+    };
+
+    @OnClick(R.id.btnNegative)
+    public void rejectOrder() {
+        if (ViewUtil.isOnline(OrderDetails.this)) {
+            mOrdersDetailsPresenter.rejectOrder(mOrder._id());
+        }else{
+            Globals.showToast(this,"Please make sure you are connected to internet to reject the order.",null,"#FFFFFF",android.R.drawable.stat_sys_warning,false);
+//            Toast.makeText(this, "Please make sure you are connected to internet to reject the order.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @OnClick(R.id.btnPositive)
+    public void updateOrderStatus() {
+        if(mOrdersDetailsPresenter.isActive(mOrder._id())){
+            Globals.showToast(this,"Please complete your active order, before you start.",null,"#FFFFFF",0,false);
+        }else{
+            String updatedStatus = ViewUtil.getUpdatedPositiveStatus(currentStatus);
+            mOrdersDetailsPresenter.updateOrderStatus(mOrder._id(), updatedStatus);
+        }
+        /*showValidActions(updatedStatus);
+        currentStatus = updatedStatus;
+        mLayoutStatus.setBackgroundColor(Color.parseColor(ViewUtil.getStatusColor(currentStatus)));
+        mTxtStatus.setText(currentStatus);*/
+    }
+
+    public void showValidActions(String status) {
+        String tobeUpdatedPositiveStatus = ViewUtil.getUpdatedPositiveStatus(status);
+        String tobeUpdatedNegativeStatus = ViewUtil.getUpdatedNegativeStatus(status);
+
+        mBtnPositive.setText(tobeUpdatedPositiveStatus);
+        if (Build.VERSION.SDK_INT >= 21) {
+            mBtnPositive.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(ViewUtil.getStatusColor(tobeUpdatedPositiveStatus))));
+        }
+
+        if (status.equalsIgnoreCase("ASSIGNED")) {
+            mBtnNegative.setText(tobeUpdatedNegativeStatus);
+            mBtnNegative.setVisibility(View.VISIBLE);
+            mBtnPositive.setVisibility(View.VISIBLE);
+        } else if (status.equalsIgnoreCase("FAILED") || status.equalsIgnoreCase("COMPLETED") || status.equalsIgnoreCase("REJECTED")) {
+            mBtnPositive.setVisibility(View.GONE);
+            mBtnNegative.setVisibility(View.GONE);
+        } else {
+            mBtnPositive.setVisibility(View.VISIBLE);
+            mBtnNegative.setVisibility(View.GONE);
+        }
+
+        if (status.equalsIgnoreCase("PICKED") || status.equalsIgnoreCase("STARTED")  ||
+                status.equalsIgnoreCase("FAILED") || status.equalsIgnoreCase("COMPLETED")
+                || status.equalsIgnoreCase("REJECTED") || status.equalsIgnoreCase("DELIVERED")) {
+            mLayoutMenu.setVisibility(View.VISIBLE);
+        } else {
+            mLayoutMenu.setVisibility(View.GONE);
+        }
+
+
+    }
+
+    @OnClick({R.id.ivUploadImage, R.id.ivFingerPrint})
+    public void onClick(View view) {
+        Intent intent;
+        switch (view.getId()) {
+            case R.id.ivUploadImage:
+                intent = new Intent(OrderDetails.this, UploadImageActivity.class);
+                intent.putExtra("Order", mOrder);
+                startActivity(intent);
+                break;
+            case R.id.ivFingerPrint:
+                intent = new Intent(OrderDetails.this, SignatureActivity.class);
+                intent.putExtra("Order", mOrder);
+                startActivity(intent);
+                break;
+        }
+    }
+
+    @Override
+    public void rejectOrderSuccess(){
+        Intent intent = new Intent(OrderDetails.this,OrdersListActivity.class);
+        startActivity(intent);
+    }
+}
