@@ -184,7 +184,7 @@ function updateOrder(order) {
 
       _bluebird2.default.all(aPromises).then(function () {
         tobeUpdatedOrder.save().then(function (updatedOrder) {
-          _express.io && _express.io.emit('ORDER_UPDATE', updatedOrder);
+          _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
           _send.message.contents.en = 'Order Update \n' + updatedOrder.title + '. \nStatus ' + updatedOrder.status;
           (0, _send.sendNotification)(_send.message);
           resolve(updatedOrder);

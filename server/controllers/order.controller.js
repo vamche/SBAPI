@@ -150,7 +150,7 @@ function updateOrder(order){
             .then(() => {
               tobeUpdatedOrder.save()
                   .then(updatedOrder => {
-                    io && io.emit('ORDER_UPDATE', updatedOrder );
+                    io && io.emit('ORDER_UPDATED', updatedOrder );
                     message.contents.en = `Order Update \n${updatedOrder.title}. \nStatus ${updatedOrder.status}`;
                     sendNotification(message);
                     resolve(updatedOrder);

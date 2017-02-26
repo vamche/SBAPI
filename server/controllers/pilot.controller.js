@@ -421,7 +421,7 @@ function getActivity(req, res, next) {
       let activeOrder = {};
       orders.forEach(o => {
         distance += o.distance_in_meters;
-        amount +=  o.amount;
+        amount +=  o.final_cost;
         if(o.status == 'COMPLETED' || o.status == 'FAILED'){
           completed++;
         }else {
