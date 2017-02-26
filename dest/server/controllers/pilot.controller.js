@@ -129,7 +129,6 @@ function updateLocation(req, res, next) {
     pilot.location = req.body.location;
     pilot.battery = req.body.battery;
     pilot.isAvailable = req.body.isAvailable;
-    pilot.status = req.body.status;
     pilot.save().then(function (savedPilot) {
         return res.json(savedPilot);
     }).catch(function (e) {

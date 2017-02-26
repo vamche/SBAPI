@@ -145,9 +145,9 @@ function updateOrder(order) {
       if (order.status === 'COMPLETED') {
         var distance = (0, _util.calculateDistanceBetweenLatLongs)(order.pilot_movement.coordinates);
         var duration = (0, _util.calculateDuration)(order.pilot_start_date_time, order.pilot_completed_date_time);
-        tobeUpdatedOrder.distance_in_meters = distance;
+        tobeUpdatedOrder.distance_in_meters = +distance.toFixed(2);
         tobeUpdatedOrder.time_in_seconds = duration;
-        tobeUpdatedOrder.final_cost = (0, _util.calculateFinalCost)(distance, duration);
+        tobeUpdatedOrder.final_cost = +(0, _util.calculateFinalCost)(distance, duration).toFixed(2);
       }
 
       var attachmentsTobeUploaded = order.attachments.filter(function (a) {

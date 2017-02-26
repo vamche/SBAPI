@@ -117,9 +117,9 @@ function updateOrder(order){
           if(order.status === 'COMPLETED') {
             const distance = calculateDistanceBetweenLatLongs(order.pilot_movement.coordinates);
             const duration = calculateDuration(order.pilot_start_date_time, order.pilot_completed_date_time);
-            tobeUpdatedOrder.distance_in_meters = distance;
+            tobeUpdatedOrder.distance_in_meters = +distance.toFixed(2);
             tobeUpdatedOrder.time_in_seconds = duration;
-            tobeUpdatedOrder.final_cost = calculateFinalCost(distance, duration);
+            tobeUpdatedOrder.final_cost = +calculateFinalCost(distance, duration).toFixed(2);
           }
 
           let attachmentsTobeUploaded = order.attachments.filter(a => !a.uploaded);
