@@ -73,7 +73,7 @@ function create(req, res, next) {
       if(savedOrder.pilot && savedOrder.pilot != ''){
         message.filters.push({'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot});
       }
-      io.email('ORDER_ADDED', savedOrder);
+      io && io.emit('ORDER_ADDED', savedOrder);
       sendNotification(message);
       res.json(savedOrder)
     })
@@ -141,7 +141,7 @@ function updateOrder(order){
             .then(() => {
               tobeUpdatedOrder.save()
                   .then(updatedOrder => {
-                    io.email('ORDER_UPDATE', updatedOrder );
+                    io && io.emit('ORDER_UPDATE', updatedOrder );
                     message.contents.en = `Order Update \n${updatedOrder.title}. \nStatus ${updatedOrder.status}`;
                     sendNotification(message);
                     resolve(updatedOrder);

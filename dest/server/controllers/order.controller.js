@@ -104,7 +104,7 @@ function create(req, res, next) {
     if (savedOrder.pilot && savedOrder.pilot != '') {
       _send.message.filters.push({ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot });
     }
-    _express.io.email('ORDER_ADDED', savedOrder);
+    _express.io && _express.io.emit('ORDER_ADDED', savedOrder);
     (0, _send.sendNotification)(_send.message);
     res.json(savedOrder);
   }).catch(function (e) {
@@ -176,7 +176,7 @@ function updateOrder(order) {
 
       _bluebird2.default.all(aPromises).then(function () {
         tobeUpdatedOrder.save().then(function (updatedOrder) {
-          _express.io.email('ORDER_UPDATE', updatedOrder);
+          _express.io && _express.io.emit('ORDER_UPDATE', updatedOrder);
           _send.message.contents.en = 'Order Update \n' + updatedOrder.title + '. \nStatus ' + updatedOrder.status;
           (0, _send.sendNotification)(_send.message);
           resolve(updatedOrder);
