@@ -11,7 +11,6 @@ import Franchise from '../models/franchise.model';
 import { io } from '../../config/express';
 import mongoose from 'mongoose';
 
-
 /**
  * Load order and append to req.
  */

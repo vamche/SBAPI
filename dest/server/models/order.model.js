@@ -24,6 +24,10 @@ var _momentTimezone = require('moment-timezone');
 
 var _momentTimezone2 = _interopRequireDefault(_momentTimezone);
 
+var _mongooseAutoIncrement = require('mongoose-auto-increment');
+
+var _mongooseAutoIncrement2 = _interopRequireDefault(_mongooseAutoIncrement);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -211,6 +215,15 @@ var OrderSchema = new _mongoose2.default.Schema({
 
 OrderSchema.index({ from_location: '2dsphere' });
 OrderSchema.index({ to_location: '2dsphere' });
+
+_mongooseAutoIncrement2.default.initialize(_mongoose2.default.connection);
+
+OrderSchema.plugin(_mongooseAutoIncrement2.default.plugin, {
+  model: 'Order',
+  field: 'id',
+  startAt: 1000000,
+  incrementBy: 1
+});
 
 /**
  * Add your

@@ -4,6 +4,7 @@ import httpStatus from 'http-status';
 import APIError from '../helpers/APIError';
 
 import moment from 'moment-timezone';
+import autoIncrement from 'mongoose-auto-increment';
 
 /**
  * Job Schema
@@ -192,6 +193,16 @@ const OrderSchema = new mongoose.Schema({
 
 OrderSchema.index({ from_location: '2dsphere' });
 OrderSchema.index({ to_location: '2dsphere' });
+
+autoIncrement.initialize(mongoose.connection);
+
+OrderSchema.plugin(autoIncrement.plugin, {
+  model: 'Order',
+  field: 'id',
+  startAt: 1000000,
+  incrementBy: 1
+});
+
 
 /**
  * Add your
