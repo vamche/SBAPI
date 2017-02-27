@@ -73,6 +73,7 @@ function create(req, res, next) {
       if(savedOrder.pilot && savedOrder.pilot != ''){
         message.filters = [
           {'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot},
+          {'operator' : 'OR'},
           {'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'}
           ];
       }
