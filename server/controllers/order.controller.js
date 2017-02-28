@@ -245,22 +245,23 @@ function listByDate(req, res, next) {
           }else if(manager.isFranchiseAdmin){
             Franchise.get(manager.franchise)
               .then(franchise => {
-                Order.listByDate({date, timeZone, limit, skip})
+                const teams = manager.teams;
+                Order.listByTeamsAndDate({date, timeZone, teams, limit, skip})
                   .where('team').in(franchise.teams)
                   .then(orders => res.json(orders))
                   .catch(e => next(e));
               })
               .catch(e => next(e));
           }else {
-            Order.listByDate({date, timeZone, limit, skip})
-              .where('team').in(manager.teams)
+            const teams = manager.teams;
+            Order.listByTeamsAndDate({date, timeZone, teams, limit, skip})
               .then(orders => res.json(orders))
               .catch(e => next(e));
           }
         });
     }if(req.body.customer){
-      Order.listByDate({date, timeZone, limit, skip})
-        .where('createdBy', req.body.customer)
+      const customer = req.body.customer;
+      Order.listByCustomerAndDate({date, timeZone, customer, limit, skip})
         .then(orders => res.json(orders))
         .catch(e => next(e));
     }else {

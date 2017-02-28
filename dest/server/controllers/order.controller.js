@@ -302,7 +302,8 @@ function listByDate(req, res, next) {
         });
       } else if (manager.isFranchiseAdmin) {
         _franchise2.default.get(manager.franchise).then(function (franchise) {
-          _order2.default.listByDate({ date: date, timeZone: timeZone, limit: limit, skip: skip }).where('team').in(franchise.teams).then(function (orders) {
+          var teams = manager.teams;
+          _order2.default.listByTeamsAndDate({ date: date, timeZone: timeZone, teams: teams, limit: limit, skip: skip }).where('team').in(franchise.teams).then(function (orders) {
             return res.json(orders);
           }).catch(function (e) {
             return next(e);
@@ -311,7 +312,8 @@ function listByDate(req, res, next) {
           return next(e);
         });
       } else {
-        _order2.default.listByDate({ date: date, timeZone: timeZone, limit: limit, skip: skip }).where('team').in(manager.teams).then(function (orders) {
+        var teams = manager.teams;
+        _order2.default.listByTeamsAndDate({ date: date, timeZone: timeZone, teams: teams, limit: limit, skip: skip }).then(function (orders) {
           return res.json(orders);
         }).catch(function (e) {
           return next(e);
@@ -319,7 +321,8 @@ function listByDate(req, res, next) {
       }
     });
   }if (req.body.customer) {
-    _order2.default.listByDate({ date: date, timeZone: timeZone, limit: limit, skip: skip }).where('createdBy', req.body.customer).then(function (orders) {
+    var customer = req.body.customer;
+    _order2.default.listByCustomerAndDate({ date: date, timeZone: timeZone, customer: customer, limit: limit, skip: skip }).then(function (orders) {
       return res.json(orders);
     }).catch(function (e) {
       return next(e);

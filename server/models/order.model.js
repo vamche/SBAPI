@@ -290,6 +290,32 @@ OrderSchema.statics = {
             .exec();
     },
 
+  listByCustomerAndDate({ date, timeZone = 'Europe/London', customer, skip = 0, limit = 1000 } = {}) {
+    const diffInMinutes = moment().tz(timeZone).utcOffset();
+    return this.find()
+      .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes'))
+      .lte(moment(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes'))
+      .where('createdBy', customer)
+      .populate('attachments')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+  },
+
+  listByTeamsAndDate({ date, timeZone = 'Europe/London', teams, skip = 0, limit = 1000 } = {}) {
+    const diffInMinutes = moment().tz(timeZone).utcOffset();
+    return this.find()
+      .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes'))
+      .lte(moment(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes'))
+      .where('team').in(teams)
+      .populate('attachments')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+  },
+
   listByPilotDateRangeStatus({ pilot, fromDate, toDate, status } = {}){
       return this.find()
           .where('pilot', pilot)
