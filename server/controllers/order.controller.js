@@ -57,6 +57,7 @@ function create(req, res, next) {
     status: req.body.status,
     tags: req.body.tags,
     team: req.body.team,
+    createdBy: req.body.createdBy,
     pilot: req.body.pilot ?  req.body.pilot : ''
   });
 
