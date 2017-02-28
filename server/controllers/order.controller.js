@@ -259,15 +259,12 @@ function listByDate(req, res, next) {
           }
         });
     }if(req.body.customer){
-      Customer.get(req.body.customer)
-        .then(customer => {
-           Order.listByDate({date, timeZone, limit, skip})
-              .where('createdBy').in(customer._id.toString())
-              .then(orders => res.json(orders))
-              .catch(e => next(e));
-        });
-    }else {
       Order.listByDate({date, timeZone, limit, skip})
+        .where('createdBy', req.body.customer)
+        .then(orders => res.json(orders))
+        .catch(e => next(e));
+    }else {
+       Order.listByDate({date, timeZone, limit, skip})
         .then(orders => res.json(orders))
         .catch(e => next(e));
     }

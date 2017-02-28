@@ -319,12 +319,10 @@ function listByDate(req, res, next) {
       }
     });
   }if (req.body.customer) {
-    _customer2.default.get(req.body.customer).then(function (customer) {
-      _order2.default.listByDate({ date: date, timeZone: timeZone, limit: limit, skip: skip }).where('createdBy').in(customer._id.toString()).then(function (orders) {
-        return res.json(orders);
-      }).catch(function (e) {
-        return next(e);
-      });
+    _order2.default.listByDate({ date: date, timeZone: timeZone, limit: limit, skip: skip }).where('createdBy', req.body.customer).then(function (orders) {
+      return res.json(orders);
+    }).catch(function (e) {
+      return next(e);
     });
   } else {
     _order2.default.listByDate({ date: date, timeZone: timeZone, limit: limit, skip: skip }).then(function (orders) {
