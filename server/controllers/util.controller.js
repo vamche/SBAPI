@@ -6,7 +6,7 @@ import cloudinary from 'cloudinary';
 import geolib from 'geolib';
 import moment from 'moment';
 
-const maxDistance = 1; // 1 KM
+const maxDistance = 1000; // 1000 KM
 
 
 /**
@@ -38,12 +38,12 @@ function assign(order, pilotId){
         })
         .then(pilots => {
           if(pilots.length > 0){
-            let validPilots = pilots.filter(pilot => pilot._id != pilotId);
+            let validPilots = pilots.filter(pilot => pilot._id.toString() != pilotId);
             let pilot = validPilots[0];
             pilot.isActive = true;
             return pilot.save(pilot)
               .then(pilot => {
-                order.pilot = pilot._id.toString();
+                order.pilot = pilot._id;
                 return order.save(order);
               });
           }else {
@@ -78,6 +78,7 @@ function uploadImgAsync(img) {
 }
 
 function assignPending(){
+  console.info("Assign Pending...");
   Order.getUnAssigned()
     .then(orders => {
       orders.forEach(order => {
@@ -90,7 +91,7 @@ function assignPending(){
             })
             .then(pilot => {
               if(pilot && pilot._id){
-                order.pilot = pilot._id.toString();
+                order.pilot = pilot._id;
                 order.save();
               }
             })
@@ -103,7 +104,7 @@ function assignPending(){
             })
             .then(pilot => {
               if(pilot && pilot._id){
-                order.pilot = pilot._id.toString();
+                order.pilot = pilot._id;
                 order.save();
               }
             })

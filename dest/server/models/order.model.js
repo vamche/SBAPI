@@ -53,7 +53,8 @@ var OrderSchema = new _mongoose2.default.Schema({
   pilot: {
     type: String, // mongoose.Schema.ObjectId,
     required: false,
-    default: ''
+    ref: 'Pilot',
+    default: null
   },
   from_name: {
     type: String,
@@ -247,7 +248,7 @@ OrderSchema.statics = {
    * @returns {Promise<User, APIError>}
    */
   get: function get(id) {
-    return this.findById(id).populate('attachments').exec().then(function (order) {
+    return this.findById(id).populate('attachments').populate('pilot').exec().then(function (order) {
       if (order) {
         return order;
       }
@@ -270,7 +271,7 @@ OrderSchema.statics = {
         _ref$limit = _ref.limit,
         limit = _ref$limit === undefined ? 50 : _ref$limit;
 
-    return this.find().populate('attachments').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    return this.find().populate('attachments').populate('pilot').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
   listByPilotAndDate: function listByPilotAndDate() {
     var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -295,7 +296,8 @@ OrderSchema.statics = {
         _ref3$limit = _ref3.limit,
         limit = _ref3$limit === undefined ? 1000 : _ref3$limit;
 
-    return this.find().where('team', team).where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day')).populate('attachments').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    return this.find().where('team', team).where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day')).populate('attachments').populate({ path: 'pilot',
+      populate: { path: 'user' } }).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
   listByDate: function listByDate() {
     var _ref4 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -308,7 +310,9 @@ OrderSchema.statics = {
         limit = _ref4$limit === undefined ? 1000 : _ref4$limit;
 
     var diffInMinutes = (0, _momentTimezone2.default)().tz(timeZone).utcOffset();
-    return this.find().where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).populate('attachments').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    return this.find().where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).populate('attachments').populate({
+      path: 'pilot',
+      populate: { path: 'user' } }).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
   listByCustomerAndDate: function listByCustomerAndDate() {
     var _ref5 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -322,7 +326,7 @@ OrderSchema.statics = {
         limit = _ref5$limit === undefined ? 1000 : _ref5$limit;
 
     var diffInMinutes = (0, _momentTimezone2.default)().tz(timeZone).utcOffset();
-    return this.find().where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).where('createdBy', customer).populate('attachments').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    return this.find().where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).where('createdBy', customer).populate('attachments').populate('pilot').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
   listByTeamsAndDate: function listByTeamsAndDate() {
     var _ref6 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -336,7 +340,7 @@ OrderSchema.statics = {
         limit = _ref6$limit === undefined ? 1000 : _ref6$limit;
 
     var diffInMinutes = (0, _momentTimezone2.default)().tz(timeZone).utcOffset();
-    return this.find().where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).where('team').in(teams).populate('attachments').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    return this.find().where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).where('team').in(teams).populate('attachments').populate('pilot').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
   listByPilotDateRangeStatus: function listByPilotDateRangeStatus() {
     var _ref7 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -345,10 +349,10 @@ OrderSchema.statics = {
         toDate = _ref7.toDate,
         status = _ref7.status;
 
-    return this.find().where('pilot', pilot).where('status', status).where('createdAt').gte((0, _momentTimezone2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _momentTimezone2.default)(toDate, "YYYYMMDD").endOf('day')).populate('attachments').exec();
+    return this.find().where('pilot', pilot).where('status', status).where('createdAt').gte((0, _momentTimezone2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _momentTimezone2.default)(toDate, "YYYYMMDD").endOf('day')).populate('attachments').populate('pilot').exec();
   },
   getUnAssigned: function getUnAssigned() {
-    return this.find().or([{ 'status': 'PENDING' }, { 'pilot': '' }]).exec();
+    return this.find().or([{ 'status': 'PENDING' }, { 'pilot': null }]).exec();
   }
 };
 

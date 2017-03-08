@@ -29,7 +29,8 @@ const OrderSchema = new mongoose.Schema({
   pilot: {
     type: String, // mongoose.Schema.ObjectId,
     required: false,
-    default: ''
+    ref: 'Pilot',
+    default: null
   },
   from_name: {
     type: String,
@@ -229,6 +230,7 @@ OrderSchema.statics = {
   get(id) {
     return this.findById(id)
       .populate('attachments')
+      .populate('pilot')
       .exec()
       .then((order) => {
         if (order) {
@@ -248,6 +250,7 @@ OrderSchema.statics = {
   list({ skip = 0, limit = 50 } = {}) {
     return this.find()
       .populate('attachments')
+      .populate('pilot')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -272,6 +275,8 @@ OrderSchema.statics = {
       .where('team', team)
       .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day')).lte(moment(date, "YYYYMMDD").endOf('day'))
       .populate('attachments')
+      .populate({path: 'pilot',
+                populate: { path: 'user' }})
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -284,6 +289,9 @@ OrderSchema.statics = {
             .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes'))
                               .lte(moment(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes'))
             .populate('attachments')
+            .populate({
+              path: 'pilot',
+              populate: { path: 'user' }})
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
@@ -297,6 +305,7 @@ OrderSchema.statics = {
       .lte(moment(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes'))
       .where('createdBy', customer)
       .populate('attachments')
+      .populate('pilot')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -310,6 +319,7 @@ OrderSchema.statics = {
       .lte(moment(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes'))
       .where('team').in(teams)
       .populate('attachments')
+      .populate('pilot')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -322,12 +332,13 @@ OrderSchema.statics = {
           .where('status', status)
           .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
           .populate('attachments')
+          .populate('pilot')
           .exec();
   },
 
   getUnAssigned() {
     return this.find()
-      .or([{'status' : 'PENDING'}, {'pilot' : ''}])
+      .or([{'status' : 'PENDING'}, {'pilot' : null}])
       .exec();
   }
 

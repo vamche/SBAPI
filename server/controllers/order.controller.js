@@ -58,12 +58,12 @@ function create(req, res, next) {
     tags: req.body.tags,
     team: req.body.team,
     createdBy: req.body.createdBy,
-    pilot: req.body.pilot ?  req.body.pilot : ''
+    pilot: req.body.pilot ? (new mongoose.Types.ObjectId(req.body.pilot)) : null
   });
 
   order.save()
     .then(savedOrder => {
-      if(savedOrder.pilot == ''){
+      if(savedOrder.pilot === null){
         return assign(savedOrder, savedOrder.team);
       }else{
         return savedOrder;
@@ -265,11 +265,12 @@ function listByDate(req, res, next) {
       Order.listByCustomerAndDate({date, timeZone, customer, limit, skip})
         .then(orders => res.json(orders))
         .catch(e => next(e));
-    }else {
-       Order.listByDate({date, timeZone, limit, skip})
-        .then(orders => res.json(orders))
-        .catch(e => next(e));
-    }
+     }
+    // else {
+    //    Order.listByDate({date, timeZone, limit, skip})
+    //     .then(orders => res.json(orders))
+    //     .catch(e => next(e));
+    // }
 }
 
 function listByStatusPilotDateRange(req, res, next){
@@ -326,9 +327,9 @@ function stats(req, res, next){
 
 function reject(req, res, next){
   const order = req.order;
-  const pilot = order.pilot;
+  const pilot = order.pilot.toString();
   order.status = 'PENDING';
-  order.pilot = '';
+  order.pilot = null;
   order.save()
     .then(savedOrder => {
       return assign(savedOrder, pilot);

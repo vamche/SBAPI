@@ -33,7 +33,7 @@ cloudinary.config({
   api_secret: config.cloudinary_api_secret
 });
 
-let assign = schedule.scheduleJob('* * * * *', () =>{
+let assign = schedule.scheduleJob('*/30 * * * * *', () => {
   assignPending();
 });
 

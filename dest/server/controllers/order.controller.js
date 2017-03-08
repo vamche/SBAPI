@@ -91,11 +91,11 @@ function create(req, res, next) {
     tags: req.body.tags,
     team: req.body.team,
     createdBy: req.body.createdBy,
-    pilot: req.body.pilot ? req.body.pilot : ''
+    pilot: req.body.pilot ? new _mongoose2.default.Types.ObjectId(req.body.pilot) : null
   });
 
   order.save().then(function (savedOrder) {
-    if (savedOrder.pilot == '') {
+    if (savedOrder.pilot === null) {
       return (0, _util.assign)(savedOrder, savedOrder.team);
     } else {
       return savedOrder;
@@ -328,13 +328,12 @@ function listByDate(req, res, next) {
     }).catch(function (e) {
       return next(e);
     });
-  } else {
-    _order2.default.listByDate({ date: date, timeZone: timeZone, limit: limit, skip: skip }).then(function (orders) {
-      return res.json(orders);
-    }).catch(function (e) {
-      return next(e);
-    });
   }
+  // else {
+  //    Order.listByDate({date, timeZone, limit, skip})
+  //     .then(orders => res.json(orders))
+  //     .catch(e => next(e));
+  // }
 }
 
 function listByStatusPilotDateRange(req, res, next) {
@@ -401,9 +400,9 @@ function stats(req, res, next) {
 
 function reject(req, res, next) {
   var order = req.order;
-  var pilot = order.pilot;
+  var pilot = order.pilot.toString();
   order.status = 'PENDING';
-  order.pilot = '';
+  order.pilot = null;
   order.save().then(function (savedOrder) {
     return (0, _util.assign)(savedOrder, pilot);
   }).then(function (order) {

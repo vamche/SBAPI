@@ -34,7 +34,7 @@ var _moment2 = _interopRequireDefault(_moment);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var maxDistance = 1; // 1 KM
+var maxDistance = 1000; // 1000 KM
 
 
 /**
@@ -65,12 +65,12 @@ function assign(order, pilotId) {
     }).then(function (pilots) {
       if (pilots.length > 0) {
         var validPilots = pilots.filter(function (pilot) {
-          return pilot._id != pilotId;
+          return pilot._id.toString() != pilotId;
         });
         var pilot = validPilots[0];
         pilot.isActive = true;
         return pilot.save(pilot).then(function (pilot) {
-          order.pilot = pilot._id.toString();
+          order.pilot = pilot._id;
           return order.save(order);
         });
       } else {
@@ -101,6 +101,7 @@ function uploadImgAsync(img) {
 }
 
 function assignPending() {
+  console.info("Assign Pending...");
   _order2.default.getUnAssigned().then(function (orders) {
     orders.forEach(function (order) {
       if (order.team != null && order.team != '' && order.team != "*" && order.team != "ALL") {
@@ -109,7 +110,7 @@ function assignPending() {
           maxDistance: maxDistance * 1000
         }).then(function (pilot) {
           if (pilot && pilot._id) {
-            order.pilot = pilot._id.toString();
+            order.pilot = pilot._id;
             order.save();
           }
         }).catch(function (e) {
@@ -121,7 +122,7 @@ function assignPending() {
           maxDistance: maxDistance * 1000
         }).then(function (pilot) {
           if (pilot && pilot._id) {
-            order.pilot = pilot._id.toString();
+            order.pilot = pilot._id;
             order.save();
           }
         }).catch(function (e) {

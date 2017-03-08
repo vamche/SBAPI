@@ -57,7 +57,7 @@ _cloudinary2.default.config({
   api_secret: _env2.default.cloudinary_api_secret
 });
 
-var assign = _nodeSchedule2.default.scheduleJob('* * * * *', function () {
+var assign = _nodeSchedule2.default.scheduleJob('*/30 * * * * *', function () {
   (0, _util3.assignPending)();
 });
 
