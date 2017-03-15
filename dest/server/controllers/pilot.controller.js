@@ -455,6 +455,8 @@ function listByTeam(req, res, next) {
 function updateAvailability(req, res, next) {
     var pilot = req.pilot;
     pilot.isAvailable = req.body.isAvailable;
+    pilot.location = req.body.location;
+    pilot.battery = req.body.battery;
     pilot.save().then(function (savedPilot) {
         var timesheet = new _timesheet2.default({
             isAvailable: req.body.isAvailable,

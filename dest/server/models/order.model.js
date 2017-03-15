@@ -248,7 +248,9 @@ OrderSchema.statics = {
    * @returns {Promise<User, APIError>}
    */
   get: function get(id) {
-    return this.findById(id).populate('attachments').populate('pilot').exec().then(function (order) {
+    return this.findById(id).populate('attachments').populate({
+      path: 'pilot',
+      populate: { path: 'user' } }).exec().then(function (order) {
       if (order) {
         return order;
       }
@@ -271,7 +273,9 @@ OrderSchema.statics = {
         _ref$limit = _ref.limit,
         limit = _ref$limit === undefined ? 50 : _ref$limit;
 
-    return this.find().populate('attachments').populate('pilot').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    return this.find().populate('attachments').populate({
+      path: 'pilot',
+      populate: { path: 'user' } }).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
   listByPilotAndDate: function listByPilotAndDate() {
     var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -326,7 +330,9 @@ OrderSchema.statics = {
         limit = _ref5$limit === undefined ? 1000 : _ref5$limit;
 
     var diffInMinutes = (0, _momentTimezone2.default)().tz(timeZone).utcOffset();
-    return this.find().where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).where('createdBy', customer).populate('attachments').populate('pilot').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    return this.find().where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).where('createdBy', customer).populate('attachments').populate({
+      path: 'pilot',
+      populate: { path: 'user' } }).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
   listByTeamsAndDate: function listByTeamsAndDate() {
     var _ref6 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},

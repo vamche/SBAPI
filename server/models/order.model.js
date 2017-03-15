@@ -230,7 +230,9 @@ OrderSchema.statics = {
   get(id) {
     return this.findById(id)
       .populate('attachments')
-      .populate('pilot')
+      .populate({
+        path: 'pilot',
+        populate: { path: 'user' }})
       .exec()
       .then((order) => {
         if (order) {
@@ -250,7 +252,9 @@ OrderSchema.statics = {
   list({ skip = 0, limit = 50 } = {}) {
     return this.find()
       .populate('attachments')
-      .populate('pilot')
+      .populate({
+        path: 'pilot',
+        populate: { path: 'user' }})
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -305,7 +309,9 @@ OrderSchema.statics = {
       .lte(moment(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes'))
       .where('createdBy', customer)
       .populate('attachments')
-      .populate('pilot')
+      .populate({
+        path: 'pilot',
+        populate: { path: 'user' }})
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
