@@ -5,6 +5,8 @@ import pilotCtrl from '../controllers/pilot.controller';
 import cloudinary from 'cloudinary';
 import geolib from 'geolib';
 import moment from 'moment';
+import { sendNotification, message } from '../notifications/send';
+import { io } from '../../config/express';
 
 const maxDistance = 1000; // 1000 KM
 
@@ -92,7 +94,19 @@ function assignPending(){
             .then(pilot => {
               if(pilot && pilot._id){
                 order.pilot = pilot._id;
-                order.save();
+                order.save()
+                  .then((updatedOrder) => {
+                    message.contents.en = `New Order Placed \n${updatedOrder.title}. 
+                                           \nPick at ${updatedOrder.from_address}`;
+                    message.filters = [
+                      {'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': updatedOrder.pilot.toString()},
+                      {'operator' : 'OR'},
+                      {'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'}
+                    ];
+                    io && io.emit('ORDER_UPDATED', updatedOrder);
+                    sendNotification(message);
+                    console.info("Order Assigned :: " + updatedOrder.title + " :: " + updatedOrder.pilot.toString());
+                  });
               }
             })
             .catch(e => console.error(e));
@@ -105,14 +119,27 @@ function assignPending(){
             .then(pilot => {
               if(pilot && pilot._id){
                 order.pilot = pilot._id;
-                order.save();
+                order.save()
+                  .then((updatedOrder) => {
+                    message.contents.en = `New Order Placed \n${updatedOrder.title}. 
+                    \nPick at ${updatedOrder.from_address}`;
+                    message.filters = [
+                      {'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': updatedOrder.pilot.toString()},
+                      {'operator' : 'OR'},
+                      {'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'}
+                    ];
+                    io && io.emit('ORDER_UPDATED', updatedOrder);
+                    sendNotification(message);
+                    console.info("Order Assigned :: " + updatedOrder.title + " :: " + updatedOrder.pilot.toString());
+                  });
               }
             })
             .catch(e => console.error(e));
 
         }
       })
-    })
+    });
+
 }
 
 /**

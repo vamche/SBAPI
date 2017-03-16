@@ -73,7 +73,7 @@ function create(req, res, next) {
       message.contents.en = `New Order Placed \n${order.title}. \nPick at ${order.from_address}`;
       if(savedOrder.pilot && savedOrder.pilot != ''){
         message.filters = [
-          {'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot},
+          {'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot.toString()},
           {'operator' : 'OR'},
           {'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'}
           ];

@@ -32,6 +32,10 @@ var _moment = require('moment');
 
 var _moment2 = _interopRequireDefault(_moment);
 
+var _send = require('../notifications/send');
+
+var _express = require('../../config/express');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var maxDistance = 1000; // 1000 KM
@@ -111,7 +115,13 @@ function assignPending() {
         }).then(function (pilot) {
           if (pilot && pilot._id) {
             order.pilot = pilot._id;
-            order.save();
+            order.save().then(function (updatedOrder) {
+              _send.message.contents.en = 'New Order Placed \n' + updatedOrder.title + '. \n                                           \nPick at ' + updatedOrder.from_address;
+              _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': updatedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
+              _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
+              (0, _send.sendNotification)(_send.message);
+              console.info("Order Assigned :: " + updatedOrder.title + " :: " + updatedOrder.pilot.toString());
+            });
           }
         }).catch(function (e) {
           return console.error(e);
@@ -123,7 +133,13 @@ function assignPending() {
         }).then(function (pilot) {
           if (pilot && pilot._id) {
             order.pilot = pilot._id;
-            order.save();
+            order.save().then(function (updatedOrder) {
+              _send.message.contents.en = 'New Order Placed \n' + updatedOrder.title + '. \n                    \nPick at ' + updatedOrder.from_address;
+              _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': updatedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
+              _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
+              (0, _send.sendNotification)(_send.message);
+              console.info("Order Assigned :: " + updatedOrder.title + " :: " + updatedOrder.pilot.toString());
+            });
           }
         }).catch(function (e) {
           return console.error(e);

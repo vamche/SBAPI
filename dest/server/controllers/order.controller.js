@@ -103,7 +103,7 @@ function create(req, res, next) {
   }).then(function (savedOrder) {
     _send.message.contents.en = 'New Order Placed \n' + order.title + '. \nPick at ' + order.from_address;
     if (savedOrder.pilot && savedOrder.pilot != '') {
-      _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
+      _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
     }
     _express.io && _express.io.emit('ORDER_ADDED', savedOrder);
     (0, _send.sendNotification)(_send.message);
