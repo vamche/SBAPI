@@ -86,7 +86,7 @@ function assignPending(){
       orders.forEach(order => {
         if(order.team != null && order.team != '' && order.team != "*" && order.team != "ALL"){
           Pilot.findOne()
-            .where('team', order.team)
+            .where('teams').in([order.team])
             .where('location').near({
                 center: order.from_location,
                 maxDistance: maxDistance * 1000
@@ -94,6 +94,8 @@ function assignPending(){
             .then(pilot => {
               if(pilot && pilot._id){
                 order.pilot = pilot._id;
+                pilot.isActive = true;
+                order.status = 'ASSIGNED';
                 order.save()
                   .then((updatedOrder) => {
                     message.contents.en = `Pending Order Assigned \n${updatedOrder.title}. 
@@ -106,6 +108,7 @@ function assignPending(){
                     io && io.emit('ORDER_UPDATED', updatedOrder);
                     sendNotification(message);
                     console.info("Order Assigned :: " + updatedOrder.title + " :: " + updatedOrder.pilot.toString());
+                    pilot.save();
                   });
               }
             })
@@ -119,6 +122,8 @@ function assignPending(){
             .then(pilot => {
               if(pilot && pilot._id){
                 order.pilot = pilot._id;
+                pilot.isActive = true;
+                order.status = 'ASSIGNED';
                 order.save()
                   .then((updatedOrder) => {
                     message.contents.en = `Pending Order Assigned \n${updatedOrder.title}. 
@@ -131,6 +136,7 @@ function assignPending(){
                     io && io.emit('ORDER_UPDATED', updatedOrder);
                     sendNotification(message);
                     console.info("Order Assigned :: " + updatedOrder.title + " :: " + updatedOrder.pilot.toString());
+                    pilot.save();
                   });
               }
             })

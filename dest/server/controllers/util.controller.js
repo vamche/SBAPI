@@ -109,18 +109,21 @@ function assignPending() {
   _order2.default.getUnAssigned().then(function (orders) {
     orders.forEach(function (order) {
       if (order.team != null && order.team != '' && order.team != "*" && order.team != "ALL") {
-        _pilot2.default.findOne().where('team', order.team).where('location').near({
+        _pilot2.default.findOne().where('teams').in([order.team]).where('location').near({
           center: order.from_location,
           maxDistance: maxDistance * 1000
         }).then(function (pilot) {
           if (pilot && pilot._id) {
             order.pilot = pilot._id;
+            pilot.isActive = true;
+            order.status = 'ASSIGNED';
             order.save().then(function (updatedOrder) {
               _send.message.contents.en = 'Pending Order Assigned \n' + updatedOrder.title + '. \n                                           \nPick at ' + updatedOrder.from_address;
               _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': updatedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
               _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
               (0, _send.sendNotification)(_send.message);
               console.info("Order Assigned :: " + updatedOrder.title + " :: " + updatedOrder.pilot.toString());
+              pilot.save();
             });
           }
         }).catch(function (e) {
@@ -133,12 +136,15 @@ function assignPending() {
         }).then(function (pilot) {
           if (pilot && pilot._id) {
             order.pilot = pilot._id;
+            pilot.isActive = true;
+            order.status = 'ASSIGNED';
             order.save().then(function (updatedOrder) {
               _send.message.contents.en = 'Pending Order Assigned \n' + updatedOrder.title + '. \n                    \nPick at ' + updatedOrder.from_address;
               _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': updatedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
               _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
               (0, _send.sendNotification)(_send.message);
               console.info("Order Assigned :: " + updatedOrder.title + " :: " + updatedOrder.pilot.toString());
+              pilot.save();
             });
           }
         }).catch(function (e) {

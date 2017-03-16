@@ -59,7 +59,7 @@ function get(req, res) {
 }
 
 function getUnAssignedPilotsByTeam(team, isActive) {
-    if (team == 'ALL' || team == '*') {
+    if (team === 'ALL' || team === '*' || team === '' || team === null) {
         return _pilot2.default.find().where('isActive', isActive);
     } else {
         return _pilot2.default.find().where('isActive', isActive).where('teams').in([team]);
