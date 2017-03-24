@@ -62,7 +62,10 @@ function unAssign(orderId, pilotId){
         .then(order =>
         {
             order.pilot = null;
-            return order.save(order);
+            return order.save()
+                    .then(savedOrder => {
+                      assign(savedOrder, pilotId);
+                    });
         });
 
 }

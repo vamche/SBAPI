@@ -89,7 +89,9 @@ function assign(order, pilotId) {
 function unAssign(orderId, pilotId) {
   return _order2.default.get(orderId).then(function (order) {
     order.pilot = null;
-    return order.save(order);
+    return order.save().then(function (savedOrder) {
+      assign(savedOrder, pilotId);
+    });
   });
 }
 
