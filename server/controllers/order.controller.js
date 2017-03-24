@@ -107,6 +107,10 @@ function updateOrder(order){
       Order.get(order._id)
         .then(o => {
           let tobeUpdatedOrder = o;
+          let statusChanged = false;
+          if(o.status !== order.status) {
+            statusChanged = true;
+          }
           tobeUpdatedOrder.status = order.status;
           tobeUpdatedOrder.timeline = order.timeline;
           tobeUpdatedOrder.pilot_movement = order.pilot_movement;
@@ -154,9 +158,11 @@ function updateOrder(order){
             .then(() => {
               tobeUpdatedOrder.save()
                   .then(updatedOrder => {
-                    io && io.emit('ORDER_UPDATED', updatedOrder );
-                    message.contents.en = `Order Update \n${updatedOrder.title}. \nStatus ${updatedOrder.status}`;
-                    sendNotification(message);
+                    if (statusChanged) {
+                      io && io.emit('ORDER_UPDATED', updatedOrder );
+                      message.contents.en = `Order Update \n${updatedOrder.title}. \nStatus ${updatedOrder.status}`;
+                      sendNotification(message);
+                    }
                     resolve(updatedOrder);
                   })
                   .catch(e => reject(e));
@@ -173,6 +179,7 @@ function updateOrders(req, res, next) {
     return updateOrder(order)
       .then(updatedOrder => {
         updatedOrder.attachments = [];
+        updatedOrder.pilot = '';
         updatedOrders.push(updatedOrder);
       })
       .catch(e => next(e));

@@ -135,6 +135,10 @@ function updateOrder(order) {
   return new Promise(function (resolve, reject) {
     _order2.default.get(order._id).then(function (o) {
       var tobeUpdatedOrder = o;
+      var statusChanged = false;
+      if (o.status !== order.status) {
+        statusChanged = true;
+      }
       tobeUpdatedOrder.status = order.status;
       tobeUpdatedOrder.timeline = order.timeline;
       tobeUpdatedOrder.pilot_movement = order.pilot_movement;
@@ -185,9 +189,11 @@ function updateOrder(order) {
 
       _bluebird2.default.all(aPromises).then(function () {
         tobeUpdatedOrder.save().then(function (updatedOrder) {
-          _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
-          _send.message.contents.en = 'Order Update \n' + updatedOrder.title + '. \nStatus ' + updatedOrder.status;
-          (0, _send.sendNotification)(_send.message);
+          if (statusChanged) {
+            _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
+            _send.message.contents.en = 'Order Update \n' + updatedOrder.title + '. \nStatus ' + updatedOrder.status;
+            (0, _send.sendNotification)(_send.message);
+          }
           resolve(updatedOrder);
         }).catch(function (e) {
           return reject(e);
