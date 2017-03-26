@@ -89,6 +89,7 @@ function assignPending(){
       orders.forEach(order => {
         if(order.team != null && order.team != '' && order.team != "*" && order.team != "ALL"){
           Pilot.findOne()
+            .where('isAvailable', true)
             .where('teams').in([order.team])
             .where('isActive', false)
             .where('location').near({
@@ -119,6 +120,7 @@ function assignPending(){
             .catch(e => console.error(e));
         }else{
           Pilot.findOne()
+            .where('isAvailable', true)
             .where('isActive', false)
             .where('location').near({
               center: order.from_location,

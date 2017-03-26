@@ -25,16 +25,21 @@ function login(req, res, next) {
                 if(req.body.userRole === 'PILOT'){
                   Pilot.getByUserId(user._id.toString())
                       .then(pilot => {
-                          const token = jwt.sign({
+                          if (pilot.isAvailable) {
+                            const err = new APIError('Please logout from other devices to log in.', httpStatus.UNAUTHORIZED);
+                            return next(err);
+                          } else {
+                            const token = jwt.sign({
                               username: user.username
-                          }, config.jwtSecret);
-                          pilot.user.password = 'XXXXXXXXX';
-                          return res.json({
+                            }, config.jwtSecret);
+                            pilot.user.password = 'XXXXXXXXX';
+                            return res.json({
                               token,
                               username: user.username,
                               pilotId: pilot._id,
                               pilot: pilot
-                          });
+                            });
+                          }
                       })
                       .catch(e => {
                         const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED);
@@ -75,6 +80,9 @@ function login(req, res, next) {
                       return next(err);
                     });
                 }
+            } else {
+              const err = new APIError('Username or Password do not match with our records.', httpStatus.UNAUTHORIZED);
+              return next(err);
             }
         })
         .catch(e => {

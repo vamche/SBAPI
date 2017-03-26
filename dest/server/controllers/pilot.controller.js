@@ -60,9 +60,9 @@ function get(req, res) {
 
 function getUnAssignedPilotsByTeam(team, isActive) {
     if (team === 'ALL' || team === '*' || team === '' || team === null) {
-        return _pilot2.default.find().where('isActive', isActive);
+        return _pilot2.default.find().where('isAvailable', true).where('isActive', isActive);
     } else {
-        return _pilot2.default.find().where('isActive', isActive).where('teams').in([team]);
+        return _pilot2.default.find().where('isAvailable', true).where('isActive', isActive).where('teams').in([team]);
     }
 }
 
@@ -459,9 +459,9 @@ function updateAvailability(req, res, next) {
     pilot.battery = req.body.battery;
     pilot.save().then(function (savedPilot) {
         var timesheet = new _timesheet2.default({
-            isAvailable: req.body.isAvailable,
+            isAvailable: savedPilot.isAvailable,
             pilot: savedPilot._id.toString(),
-            location: req.body.location
+            location: savedPilot.location
         });
         timesheet.save().then(function (timesheet) {
             return res.json(timesheet);

@@ -30,9 +30,11 @@ function get(req, res) {
 function getUnAssignedPilotsByTeam(team, isActive){
   if(team === 'ALL' || team === '*' || team === '' || team === null){
     return Pilot.find()
+      .where('isAvailable', true)
       .where('isActive', isActive)
   }else {
     return Pilot.find()
+      .where('isAvailable', true)
       .where('isActive', isActive)
       .where('teams').in([team]);
   }
@@ -396,9 +398,9 @@ function updateAvailability(req, res, next){
   pilot.save()
     .then(savedPilot => {
       const timesheet = new Timesheet({
-        isAvailable: req.body.isAvailable,
+        isAvailable: savedPilot.isAvailable,
         pilot: savedPilot._id.toString(),
-        location: req.body.location
+        location: savedPilot.location
       });
       timesheet.save()
         .then(timesheet => res.json(timesheet))
