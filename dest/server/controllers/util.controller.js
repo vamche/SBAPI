@@ -107,14 +107,17 @@ function uploadImgAsync(img) {
 }
 
 function assignPending() {
-  console.info("Assign Pending...");
+  console.info("Assigning Pending Orders");
   _order2.default.getUnAssigned().then(function (orders) {
+    console.info('Number of pending orders ' + orders.length);
     orders.forEach(function (order) {
-      if (order.team != null && order.team != '' && order.team != "*" && order.team != "ALL") {
+      if (order.team !== null && order.team !== '' && order.team !== "*" && order.team !== "ALL") {
+        console.info('Team available ' + order.team.toString());
         _pilot2.default.findOne().where('isAvailable', true).where('teams').in([order.team]).where('isActive', false).where('location').near({
           center: order.from_location,
           maxDistance: maxDistance * 1000
         }).then(function (pilot) {
+          console.info('Pilot available and not active ' + pilot);
           if (pilot && pilot._id) {
             order.pilot = pilot._id;
             pilot.isActive = true;
@@ -132,10 +135,12 @@ function assignPending() {
           return console.error(e);
         });
       } else {
+        console.info('Team not available ');
         _pilot2.default.findOne().where('isAvailable', true).where('isActive', false).where('location').near({
           center: order.from_location,
           maxDistance: maxDistance * 1000
         }).then(function (pilot) {
+          console.info('Pilot available and not active ' + pilot._id.toString());
           if (pilot && pilot._id) {
             order.pilot = pilot._id;
             pilot.isActive = true;
