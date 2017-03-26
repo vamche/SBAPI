@@ -32,7 +32,7 @@ function get(req, res) {
 }
 
 function assign(order, pilotId){
-  if(order.team != null && order.team != '' && order.team != "*" && order.team != "ALL"){
+  if(order.team != null && order.team != '' && order.team != "*" && order.team != "ALL" && order.team != null){
     return pilotCtrl.getUnAssignedPilotsByTeam(order.team)
       .where('location').near({
         center: order.from_location,

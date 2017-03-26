@@ -24,13 +24,10 @@ const TeamSchema = new mongoose.Schema({
     type: [String],
     required: false
   },
-  geo_fence: {
-    type: {
-      type: String,
-      default: 'Polygon'
-    },
-    coordinates: [[Number]],
-    required: false
+  franchise: {
+    type: String, // mongoose.Schema.ObjectId,
+    ref: 'Franchise',
+    default: null
   },
   createdAt: {
     type: Date,

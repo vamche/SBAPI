@@ -62,7 +62,7 @@ function get(req, res) {
 }
 
 function assign(order, pilotId) {
-  if (order.team != null && order.team != '' && order.team != "*" && order.team != "ALL") {
+  if (order.team != null && order.team != '' && order.team != "*" && order.team != "ALL" && order.team != null) {
     return _pilot4.default.getUnAssignedPilotsByTeam(order.team).where('location').near({
       center: order.from_location,
       maxDistance: maxDistance * 1000
