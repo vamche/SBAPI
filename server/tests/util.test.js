@@ -43,7 +43,6 @@ describe('## User APIs', () => {
       "from_name": "po",
       "from_phone": "6088885568",
       "from_email": "pooii@ghh.vhh",
-      "team" : "magic",
       "from_address": "Powai, Mumbai, Maharashtra, India",
       "to_name": "po",
       "to_phone": "8963257410",
