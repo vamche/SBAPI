@@ -51,7 +51,7 @@ function login(req, res, next) {
       if (req.body.userRole === 'PILOT') {
         _pilot2.default.getByUserId(user._id.toString()).then(function (pilot) {
           if (pilot.isAvailable) {
-            var err = new _APIError2.default('Please logout from other devices to log in.', _httpStatus2.default.UNAUTHORIZED);
+            var err = new _APIError2.default('Please logout from other devices to log in.', _httpStatus2.default.UNAUTHORIZED, true);
             return next(err);
           } else {
             var token = _jsonwebtoken2.default.sign({
@@ -66,7 +66,7 @@ function login(req, res, next) {
             });
           }
         }).catch(function (e) {
-          var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED);
+          var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED, true);
           return next(err);
         });
       } else if (req.body.userRole === 'MANAGER') {
@@ -81,7 +81,7 @@ function login(req, res, next) {
             manager: manager
           });
         }).catch(function (e) {
-          var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED);
+          var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED, true);
           return next(err);
         });
       } else if (req.body.userRole === 'CUSTOMER') {
@@ -96,16 +96,16 @@ function login(req, res, next) {
             customer: customer
           });
         }).catch(function (e) {
-          var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED);
+          var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED, true);
           return next(err);
         });
       }
     } else {
-      var err = new _APIError2.default('Username or Password do not match with our records.', _httpStatus2.default.UNAUTHORIZED);
+      var err = new _APIError2.default('Username or Password do not match with our records.', _httpStatus2.default.UNAUTHORIZED, true);
       return next(err);
     }
   }).catch(function (e) {
-    var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED);
+    var err = new _APIError2.default('Authentication error', _httpStatus2.default.UNAUTHORIZED, true);
     return next(err);
   });
 }

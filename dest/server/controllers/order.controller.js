@@ -87,7 +87,7 @@ function create(req, res, next) {
     to_location: req.body.to_location,
     to_date_time: req.body.to_date_time,
     paymentType: req.body.paymentType,
-    status: req.body.status,
+    status: req.body.pilot ? 'ASSIGNED' : 'PENDING',
     tags: req.body.tags,
     team: req.body.team,
     createdBy: req.body.createdBy,
@@ -96,7 +96,7 @@ function create(req, res, next) {
 
   order.save().then(function (savedOrder) {
     if (savedOrder.pilot === null) {
-      return (0, _util.assign)(savedOrder, savedOrder.team);
+      return (0, _util.assign)(savedOrder);
     } else {
       return savedOrder;
     }

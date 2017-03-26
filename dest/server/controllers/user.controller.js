@@ -37,6 +37,7 @@ function get(req, res) {
  * @returns {User}
  */
 function create(req, res, next) {
+
   var user = new _user2.default({
     username: req.body.username,
     password: req.body.password,

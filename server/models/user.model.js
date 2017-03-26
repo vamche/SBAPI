@@ -40,6 +40,12 @@ const UserSchema = new mongoose.Schema({
       'The value of path {PATH} ({VALUE}) is not a valid email address'],
     required: false
   },
+  image: {
+    type: String, // mongoose.Schema.ObjectId,
+    required: false,
+    ref: 'Attachment',
+    default: null
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -70,6 +76,7 @@ UserSchema.statics = {
    */
   get(id) {
     return this.findById(id)
+      .populate('image')
       .exec()
       .then((user) => {
         if (user) {
@@ -83,6 +90,7 @@ UserSchema.statics = {
   getByUsername(username) {
       return this.findOne()
           .where('username', username)
+          .populate('image')
           .exec()
           .then((user) => {
               if (user) {
@@ -102,6 +110,7 @@ UserSchema.statics = {
    */
   list({ skip = 0, limit = 50 } = {}) {
     return this.find()
+      .populate('image')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)

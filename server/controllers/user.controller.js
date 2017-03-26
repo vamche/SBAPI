@@ -27,6 +27,7 @@ function get(req, res) {
  * @returns {User}
  */
 function create(req, res, next) {
+
   const user = new User({
     username: req.body.username,
     password: req.body.password,

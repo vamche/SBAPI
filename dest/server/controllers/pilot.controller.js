@@ -8,6 +8,10 @@ var _bluebird = require('bluebird');
 
 var _bluebird2 = _interopRequireDefault(_bluebird);
 
+var _moment = require('moment');
+
+var _moment2 = _interopRequireDefault(_moment);
+
 var _pilot = require('../models/pilot.model');
 
 var _pilot2 = _interopRequireDefault(_pilot);
@@ -24,10 +28,6 @@ var _timesheet = require('../models/timesheet.model');
 
 var _timesheet2 = _interopRequireDefault(_timesheet);
 
-var _moment = require('moment');
-
-var _moment2 = _interopRequireDefault(_moment);
-
 var _manager = require('../models/manager.model');
 
 var _manager2 = _interopRequireDefault(_manager);
@@ -35,6 +35,10 @@ var _manager2 = _interopRequireDefault(_manager);
 var _franchise = require('../models/franchise.model');
 
 var _franchise2 = _interopRequireDefault(_franchise);
+
+var _attachment = require('../models/attachment.model');
+
+var _attachment2 = _interopRequireDefault(_attachment);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -73,28 +77,72 @@ function getUnAssignedPilotsByTeam(team, isActive) {
  * @returns {Pilot}
  */
 function create(req, res, next) {
-    var user = new _user2.default({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        username: req.body.username,
-        password: req.body.password,
-        mobileNumber: req.body.mobileNumber,
-        emailAddress: req.body.emailAddress
-    });
 
-    user.save().then(function (savedUser) {
-        var customer = new _pilot2.default({
-            user: savedUser._id,
-            teams: req.body.teams
+    if (req.body.image) {
+        (function () {
+            var img = req.body.image;
+            uploadImgAsync(img.source).then(function (res) {
+
+                var attachment = new new _attachment2.default({
+                    source: result.url,
+                    isOrderRelated: false,
+                    type: img.type,
+                    extension: img.extension
+                })();
+
+                attachment.save().then(function (savedAttachment) {
+                    var user = new _user2.default({
+                        firstName: req.body.firstName,
+                        lastName: req.body.lastName,
+                        username: req.body.username,
+                        password: req.body.password,
+                        mobileNumber: req.body.mobileNumber,
+                        emailAddress: req.body.emailAddress,
+                        image: savedAttachment._id
+                    });
+
+                    user.save().then(function (savedUser) {
+                        var pilot = new _pilot2.default({
+                            user: savedUser._id,
+                            teams: req.body.teams
+                        });
+                        pilot.save().then(function (savedPilot) {
+                            res.json(savedPilot);
+                        }).catch(function (e) {
+                            return next(e);
+                        });
+                    }).catch(function (e) {
+                        return next(e);
+                    });
+                }).catch(function (e) {
+                    return next(e);
+                });
+            });
+        })();
+    } else {
+        var user = new _user2.default({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            username: req.body.username,
+            password: req.body.password,
+            mobileNumber: req.body.mobileNumber,
+            emailAddress: req.body.emailAddress
         });
-        customer.save().then(function (savedCustomer) {
-            res.json(savedCustomer);
+
+        user.save().then(function (savedUser) {
+            var pilot = new _pilot2.default({
+                user: savedUser._id,
+                teams: req.body.teams
+            });
+            pilot.save().then(function (savedPilot) {
+                res.json(savedPilot);
+            }).catch(function (e) {
+                return next(e);
+            });
         }).catch(function (e) {
             return next(e);
         });
-    }).catch(function (e) {
-        return next(e);
-    });
+    }
 }
 
 function createPilot(req, res, next) {

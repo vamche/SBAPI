@@ -15,12 +15,12 @@ const maxDistance = 1000; // 1000 KM
  * Load order and append to req.
  */
 function load(req, res, next, id) {
-    Order.get(id)
-        .then((order) => {
-            req.order = order; // eslint-disable-line no-param-reassign
-            return next();
-        })
-        .catch(e => next(e));
+  Order.get(id)
+    .then((order) => {
+      req.order = order; // eslint-disable-line no-param-reassign
+      return next();
+    })
+    .catch(e => next(e));
 }
 
 /**
@@ -28,45 +28,45 @@ function load(req, res, next, id) {
  * @returns {Order}
  */
 function get(req, res) {
-    return res.json(req.order);
+  return res.json(req.order);
 }
 
 function assign(order, pilotId){
-    if(order.team != null && order.team != '' && order.team != "*" && order.team != "ALL"){
-      return pilotCtrl.getUnAssignedPilotsByTeam(order.team)
-        .where('location').near({
-          center: order.from_location,
-          maxDistance: maxDistance * 1000
-        })
-        .then(pilots => {
-          if(pilots.length > 0){
-            let validPilots = pilots.filter(pilot => pilot._id.toString() != pilotId);
-            let pilot = validPilots[0];
-            pilot.isActive = true;
-            return pilot.save(pilot)
-              .then(pilot => {
-                order.pilot = pilot._id;
-                return order.save(order);
-              });
-          }else {
-            return order;
-          }
-        });
-    }else{
-      return order;
-    }
+  if(order.team != null && order.team != '' && order.team != "*" && order.team != "ALL"){
+    return pilotCtrl.getUnAssignedPilotsByTeam(order.team)
+      .where('location').near({
+        center: order.from_location,
+        maxDistance: maxDistance * 1000
+      })
+      .then(pilots => {
+        if(pilots.length > 0){
+          let validPilots = pilots.filter(pilot => pilot._id.toString() != pilotId);
+          let pilot = validPilots[0];
+          pilot.isActive = true;
+          return pilot.save(pilot)
+            .then(pilot => {
+              order.pilot = pilot._id;
+              return order.save(order);
+            });
+        }else {
+          return order;
+        }
+      });
+  }else{
+    return order;
+  }
 }
 
 function unAssign(orderId, pilotId){
-    return Order.get(orderId)
-        .then(order =>
-        {
-            order.pilot = null;
-            return order.save()
-                    .then(savedOrder => {
-                      assign(savedOrder, pilotId);
-                    });
+  return Order.get(orderId)
+    .then(order =>
+    {
+      order.pilot = null;
+      return order.save()
+        .then(savedOrder => {
+          assign(savedOrder, pilotId);
         });
+    });
 
 }
 
@@ -93,9 +93,9 @@ function assignPending(){
             .where('teams').in([order.team])
             .where('isActive', false)
             .where('location').near({
-                center: order.from_location,
-                maxDistance: maxDistance * 1000
-            })
+            center: order.from_location,
+            maxDistance: maxDistance * 1000
+          })
             .then(pilot => {
               if(pilot && pilot._id){
                 order.pilot = pilot._id;
@@ -123,9 +123,9 @@ function assignPending(){
             .where('isAvailable', true)
             .where('isActive', false)
             .where('location').near({
-              center: order.from_location,
-              maxDistance: maxDistance * 1000
-            })
+            center: order.from_location,
+            maxDistance: maxDistance * 1000
+          })
             .then(pilot => {
               if(pilot && pilot._id){
                 order.pilot = pilot._id;
@@ -163,8 +163,8 @@ function assignPending(){
 function calculateDistanceBetweenLatLongs(coordinates){
   const latLongs = coordinates.map(coordinate => {
     return { latitude : coordinate[1],
-             longitude : coordinate[0]
-           };
+      longitude : coordinate[0]
+    };
   });
   return geolib.getPathLength(latLongs);
 }
@@ -196,7 +196,7 @@ function calculateFinalCost(distance, timeInSeconds) {
  * @returns {number}
  */
 function calculateDuration(fromTime, toTime) {
-    return (moment(toTime).diff(moment(fromTime)))/1000;
+  return (moment(toTime).diff(moment(fromTime)))/1000;
 }
 
 

@@ -11,6 +11,10 @@ const AttachmentSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  isOrderRelated: {
+    type: Boolean,
+    default: true
+  },
   uploaded: {
     type: Boolean,
     required: true

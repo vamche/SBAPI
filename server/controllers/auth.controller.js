@@ -26,7 +26,7 @@ function login(req, res, next) {
                   Pilot.getByUserId(user._id.toString())
                       .then(pilot => {
                           if (pilot.isAvailable) {
-                            const err = new APIError('Please logout from other devices to log in.', httpStatus.UNAUTHORIZED);
+                            const err = new APIError('Please logout from other devices to log in.', httpStatus.UNAUTHORIZED, true);
                             return next(err);
                           } else {
                             const token = jwt.sign({
@@ -42,7 +42,7 @@ function login(req, res, next) {
                           }
                       })
                       .catch(e => {
-                        const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED);
+                        const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
                         return next(err);
                       });
                 }else if(req.body.userRole === 'MANAGER'){
@@ -59,7 +59,7 @@ function login(req, res, next) {
                       });
                     })
                     .catch(e => {
-                      const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED);
+                      const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
                       return next(err);
                     });
                 }else if(req.body.userRole === 'CUSTOMER'){
@@ -76,17 +76,17 @@ function login(req, res, next) {
                       });
                     })
                     .catch(e => {
-                      const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED);
+                      const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
                       return next(err);
                     });
                 }
             } else {
-              const err = new APIError('Username or Password do not match with our records.', httpStatus.UNAUTHORIZED);
+              const err = new APIError('Username or Password do not match with our records.', httpStatus.UNAUTHORIZED, true);
               return next(err);
             }
         })
         .catch(e => {
-            const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED);
+            const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
             return next(err);
         });
 }

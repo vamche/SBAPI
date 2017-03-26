@@ -1,11 +1,13 @@
 import BPromise from 'bluebird';
+import moment from 'moment';
+
 import Pilot from '../models/pilot.model';
 import User from '../models/user.model';
 import Order from '../models/order.model';
 import Timesheet from '../models/timesheet.model';
-import moment from 'moment';
 import Manager from '../models/manager.model';
 import Franchise from '../models/franchise.model';
+import Attachment from '../models/attachment.model';
 
 /**
  * Load pilot and append to req.
@@ -47,28 +49,72 @@ function getUnAssignedPilotsByTeam(team, isActive){
  * @returns {Pilot}
  */
 function create(req, res, next) {
-  const user = new User({
-    firstName : req.body.firstName,
-    lastName : req.body.lastName,
-    username : req.body.username,
-    password : req.body.password,
-    mobileNumber : req.body.mobileNumber,
-    emailAddress : req.body.emailAddress
-  });
 
-  user.save()
-    .then(savedUser => {
-      const customer = new Pilot({
-        user : savedUser._id,
-        teams : req.body.teams
+  if(req.body.image) {
+    const img = req.body.image;
+    uploadImgAsync(img.source)
+      .then(res => {
+
+        const attachment = new new Attachment({
+          source: result.url,
+          isOrderRelated: false,
+          type: img.type,
+          extension: img.extension
+        });
+
+        attachment.save()
+          .then(savedAttachment => {
+            const user = new User({
+              firstName : req.body.firstName,
+              lastName : req.body.lastName,
+              username : req.body.username,
+              password : req.body.password,
+              mobileNumber : req.body.mobileNumber,
+              emailAddress : req.body.emailAddress,
+              image : savedAttachment._id
+            });
+
+            user.save()
+              .then(savedUser => {
+                const pilot = new Pilot({
+                  user : savedUser._id,
+                  teams : req.body.teams
+                });
+                pilot.save()
+                  .then(savedPilot => {
+                    res.json(savedPilot);
+                  })
+                  .catch(e => next(e));
+              })
+              .catch(e => next(e));
+
+          })
+          .catch(e => next(e));
       });
-      customer.save()
-        .then(savedCustomer => {
-          res.json(savedCustomer);
-        })
-        .catch(e => next(e));
-    })
-    .catch(e => next(e));
+  } else {
+    const user = new User({
+      firstName : req.body.firstName,
+      lastName : req.body.lastName,
+      username : req.body.username,
+      password : req.body.password,
+      mobileNumber : req.body.mobileNumber,
+      emailAddress : req.body.emailAddress
+    });
+
+    user.save()
+      .then(savedUser => {
+        const pilot = new Pilot({
+          user : savedUser._id,
+          teams : req.body.teams
+        });
+        pilot.save()
+          .then(savedPilot => {
+            res.json(savedPilot);
+          })
+          .catch(e => next(e));
+      })
+      .catch(e => next(e));
+  }
 }
 
 

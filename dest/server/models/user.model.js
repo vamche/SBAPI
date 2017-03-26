@@ -58,6 +58,12 @@ var UserSchema = new _mongoose2.default.Schema({
     match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'The value of path {PATH} ({VALUE}) is not a valid email address'],
     required: false
   },
+  image: {
+    type: String, // mongoose.Schema.ObjectId,
+    required: false,
+    ref: 'Attachment',
+    default: null
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -86,7 +92,7 @@ UserSchema.statics = {
    * @returns {Promise<User, APIError>}
    */
   get: function get(id) {
-    return this.findById(id).exec().then(function (user) {
+    return this.findById(id).populate('image').exec().then(function (user) {
       if (user) {
         return user;
       }
@@ -95,7 +101,7 @@ UserSchema.statics = {
     });
   },
   getByUsername: function getByUsername(username) {
-    return this.findOne().where('username', username).exec().then(function (user) {
+    return this.findOne().where('username', username).populate('image').exec().then(function (user) {
       if (user) {
         return user;
       }
@@ -118,7 +124,7 @@ UserSchema.statics = {
         _ref$limit = _ref.limit,
         limit = _ref$limit === undefined ? 50 : _ref$limit;
 
-    return this.find().sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    return this.find().populate('image').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   }
 };
 

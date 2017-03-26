@@ -30,6 +30,10 @@ var AttachmentSchema = new _mongoose2.default.Schema({
     type: String,
     required: true
   },
+  isOrderRelated: {
+    type: Boolean,
+    default: true
+  },
   uploaded: {
     type: Boolean,
     required: true
