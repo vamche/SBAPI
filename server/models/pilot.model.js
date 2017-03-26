@@ -1,12 +1,18 @@
 import Promise from 'bluebird';
 import mongoose from 'mongoose';
 import httpStatus from 'http-status';
+import autoIncrement from 'mongoose-auto-increment';
+
 import APIError from '../helpers/APIError';
 
 /**
  * Pilot Schema
  */
 const PilotSchema = new mongoose.Schema({
+  id: {
+    type: Number,
+    default: 0
+  },
   user: {
     type: String,
     ref: 'User',
@@ -73,6 +79,15 @@ const PilotSchema = new mongoose.Schema({
 });
 
 PilotSchema.index({ location: '2dsphere' });
+
+autoIncrement.initialize(mongoose.connection);
+
+PilotSchema.plugin(autoIncrement.plugin, {
+  model: 'Pilot',
+  field: 'id',
+  startAt: 1000,
+  incrementBy: 1
+});
 
 
 /**

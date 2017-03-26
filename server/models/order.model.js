@@ -1,10 +1,10 @@
 import Promise from 'bluebird';
 import mongoose from 'mongoose';
 import httpStatus from 'http-status';
-import APIError from '../helpers/APIError';
-
 import moment from 'moment-timezone';
 import autoIncrement from 'mongoose-auto-increment';
+
+import APIError from '../helpers/APIError';
 
 /**
  * Job Schema

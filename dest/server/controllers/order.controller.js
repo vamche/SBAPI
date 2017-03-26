@@ -212,6 +212,7 @@ function updateOrders(req, res, next) {
   var promises = req.body.orders.map(function (order) {
     return updateOrder(order).then(function (updatedOrder) {
       updatedOrder.attachments = [];
+      updatedOrder.pilot = '';
       updatedOrders.push(updatedOrder);
     }).catch(function (e) {
       return next(e);

@@ -90,6 +90,7 @@ function assignPending(){
         if(order.team != null && order.team != '' && order.team != "*" && order.team != "ALL"){
           Pilot.findOne()
             .where('teams').in([order.team])
+            .where('isActive', false)
             .where('location').near({
                 center: order.from_location,
                 maxDistance: maxDistance * 1000
@@ -118,9 +119,10 @@ function assignPending(){
             .catch(e => console.error(e));
         }else{
           Pilot.findOne()
+            .where('isActive', false)
             .where('location').near({
-            center: order.from_location,
-            maxDistance: maxDistance * 1000
+              center: order.from_location,
+              maxDistance: maxDistance * 1000
             })
             .then(pilot => {
               if(pilot && pilot._id){

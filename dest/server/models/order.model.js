@@ -16,10 +16,6 @@ var _httpStatus = require('http-status');
 
 var _httpStatus2 = _interopRequireDefault(_httpStatus);
 
-var _APIError = require('../helpers/APIError');
-
-var _APIError2 = _interopRequireDefault(_APIError);
-
 var _momentTimezone = require('moment-timezone');
 
 var _momentTimezone2 = _interopRequireDefault(_momentTimezone);
@@ -27,6 +23,10 @@ var _momentTimezone2 = _interopRequireDefault(_momentTimezone);
 var _mongooseAutoIncrement = require('mongoose-auto-increment');
 
 var _mongooseAutoIncrement2 = _interopRequireDefault(_mongooseAutoIncrement);
+
+var _APIError = require('../helpers/APIError');
+
+var _APIError2 = _interopRequireDefault(_APIError);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 

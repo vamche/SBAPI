@@ -16,6 +16,10 @@ var _httpStatus = require('http-status');
 
 var _httpStatus2 = _interopRequireDefault(_httpStatus);
 
+var _mongooseAutoIncrement = require('mongoose-auto-increment');
+
+var _mongooseAutoIncrement2 = _interopRequireDefault(_mongooseAutoIncrement);
+
 var _APIError = require('../helpers/APIError');
 
 var _APIError2 = _interopRequireDefault(_APIError);
@@ -26,6 +30,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * Pilot Schema
  */
 var PilotSchema = new _mongoose2.default.Schema({
+  id: {
+    type: Number,
+    default: 0
+  },
   user: {
     type: String,
     ref: 'User',
@@ -92,6 +100,15 @@ var PilotSchema = new _mongoose2.default.Schema({
 });
 
 PilotSchema.index({ location: '2dsphere' });
+
+_mongooseAutoIncrement2.default.initialize(_mongoose2.default.connection);
+
+PilotSchema.plugin(_mongooseAutoIncrement2.default.plugin, {
+  model: 'Pilot',
+  field: 'id',
+  startAt: 1000,
+  incrementBy: 1
+});
 
 /**
  * Add your
