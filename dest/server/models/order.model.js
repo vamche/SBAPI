@@ -40,7 +40,7 @@ var OrderSchema = new _mongoose2.default.Schema({
   },
   title: {
     type: String,
-    required: true
+    required: false
   },
   description: {
     type: String,
