@@ -114,7 +114,7 @@ function assignPending() {
       if (order.team !== null && order.team !== '' && order.team !== "*" && order.team !== "ALL") {
         console.info('Team available ' + order.team.toString());
         _pilot2.default.findOne().where('isAvailable', true).where('teams').in([order.team]).where('isActive', false).where('location').near({
-          center: order.from_location,
+          center: order.to_location,
           maxDistance: maxDistance * 1000
         }).then(function (pilot) {
           console.info('Pilot available and not active ' + pilot);
@@ -138,7 +138,7 @@ function assignPending() {
       } else {
         console.info('Team not available ');
         _pilot2.default.findOne().where('isAvailable', true).where('isActive', false).where('location').near({
-          center: order.from_location,
+          center: order.to_location,
           maxDistance: maxDistance * 1000
         }).then(function (pilot) {
           console.info('Pilot available and not active ' + pilot);

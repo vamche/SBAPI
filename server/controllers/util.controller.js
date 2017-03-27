@@ -95,7 +95,7 @@ function assignPending(){
             .where('teams').in([order.team])
             .where('isActive', false)
             .where('location').near({
-            center: order.from_location,
+            center: order.to_location,
             maxDistance: maxDistance * 1000
           })
             .then(pilot => {
@@ -128,7 +128,7 @@ function assignPending(){
             .where('isAvailable', true)
             .where('isActive', false)
             .where('location').near({
-            center: order.from_location,
+            center: order.to_location,
             maxDistance: maxDistance * 1000
           })
             .then(pilot => {
