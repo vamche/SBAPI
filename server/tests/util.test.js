@@ -22,12 +22,12 @@ after((done) => {
 describe('## User APIs', () => {
 
     let pilot = {
-        emailAddress: 'kk1@gmail.com',
+        emailAddress: 'kk1234@gmail.com',
         password: '123',
         firstName: 'K',
         lastName: 'K',
-        username: 'KK',
-        mobileNumber: '1234567890',
+        username: 'KK1234',
+        mobileNumber: '1234567891',
         teams: ['magic'],
         location : {
             "type": "Point",

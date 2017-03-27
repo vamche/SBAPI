@@ -105,6 +105,7 @@ function create(req, res, next) {
     if (savedOrder.pilot && savedOrder.pilot != '') {
       _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
     }
+    (0, _send.sendSMS)('91' + savedOrder.to_phone, 'Your delivery is on its way.', 4);
     _express.io && _express.io.emit('ORDER_ADDED', savedOrder);
     (0, _send.sendNotification)(_send.message);
     res.json(savedOrder);
@@ -213,6 +214,7 @@ function updateOrders(req, res, next) {
     return updateOrder(order).then(function (updatedOrder) {
       updatedOrder.attachments = [];
       updatedOrder.pilot = '';
+      updatedOrder.team = '';
       updatedOrders.push(updatedOrder);
     }).catch(function (e) {
       return next(e);

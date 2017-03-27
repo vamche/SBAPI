@@ -1,5 +1,6 @@
 import BPromise from 'bluebird';
 import moment from 'moment';
+import axios from 'axios';
 
 import Pilot from '../models/pilot.model';
 import User from '../models/user.model';
@@ -8,6 +9,17 @@ import Timesheet from '../models/timesheet.model';
 import Manager from '../models/manager.model';
 import Franchise from '../models/franchise.model';
 import Attachment from '../models/attachment.model';
+
+function sendSMS(mobiles, message, route) {
+  const url = `https://control.msg91.com/api/sendhttp.php?authkey=113219ATt8BmevKtDK5742a5f9&mobiles=${mobiles}&message=${message}&sender=SSNBOY&route=${route}&country=0`;
+  return axios.get(url)
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
 
 /**
  * Load pilot and append to req.
@@ -82,6 +94,9 @@ function create(req, res, next) {
                 });
                 pilot.save()
                   .then(savedPilot => {
+                    sendSMS(`91${savedUser.mobileNumber}`,
+                      `Hi ${savedUser.firstName}, you have been added as a SB Pilot by Seasonboy. Download the app from play store. 
+                       Username: ${savedUser.username} & Password: ${savedUser.password}`, 4);
                     res.json(savedPilot);
                   })
                   .catch(e => next(e));
@@ -109,6 +124,9 @@ function create(req, res, next) {
         });
         pilot.save()
           .then(savedPilot => {
+            sendSMS(`91${savedUser.mobileNumber}`,
+              `Hi ${savedUser.firstName}, you have been added as a SB Pilot by Seasonboy. Download the app from play store. 
+               Username: ${savedUser.username} & Password: ${savedUser.password}`, 4);
             res.json(savedPilot);
           })
           .catch(e => next(e));

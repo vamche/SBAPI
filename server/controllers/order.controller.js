@@ -1,6 +1,6 @@
 import Order from '../models/order.model';
 import Attachment from '../models/attachment.model';
-import { sendNotification, message } from '../notifications/send';
+import { sendNotification, message, sendSMS } from '../notifications/send';
 import { assign, unAssign, uploadImgAsync,
   calculateDistanceBetweenLatLongs, calculateDuration, calculateFinalCost } from './util.controller';
 import BPromise from 'bluebird';
@@ -78,6 +78,7 @@ function create(req, res, next) {
           {'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'}
           ];
       }
+      sendSMS(`91${savedOrder.to_phone}`, `Your delivery is on its way.`, 4);
       io && io.emit('ORDER_ADDED', savedOrder);
       sendNotification(message);
       res.json(savedOrder)
@@ -180,6 +181,7 @@ function updateOrders(req, res, next) {
       .then(updatedOrder => {
         updatedOrder.attachments = [];
         updatedOrder.pilot = '';
+        updatedOrder.team = '';
         updatedOrders.push(updatedOrder);
       })
       .catch(e => next(e));

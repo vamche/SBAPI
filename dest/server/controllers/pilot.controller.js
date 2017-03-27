@@ -12,6 +12,10 @@ var _moment = require('moment');
 
 var _moment2 = _interopRequireDefault(_moment);
 
+var _axios = require('axios');
+
+var _axios2 = _interopRequireDefault(_axios);
+
 var _pilot = require('../models/pilot.model');
 
 var _pilot2 = _interopRequireDefault(_pilot);
@@ -41,6 +45,15 @@ var _attachment = require('../models/attachment.model');
 var _attachment2 = _interopRequireDefault(_attachment);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function sendSMS(mobiles, message, route) {
+    var url = 'https://control.msg91.com/api/sendhttp.php?authkey=113219ATt8BmevKtDK5742a5f9&mobiles=' + mobiles + '&message=' + message + '&sender=SSNBOY&route=' + route + '&country=0';
+    return _axios2.default.get(url).then(function (response) {
+        console.log(response);
+    }).catch(function (error) {
+        console.log(error);
+    });
+}
 
 /**
  * Load pilot and append to req.
@@ -107,6 +120,7 @@ function create(req, res, next) {
                             teams: req.body.teams
                         });
                         pilot.save().then(function (savedPilot) {
+                            sendSMS('91' + savedUser.mobileNumber, 'Hi ' + savedUser.firstName + ', you have been added as a SB Pilot by Seasonboy. Download the app from play store. \n                       Username: ' + savedUser.username + ' & Password: ' + savedUser.password, 4);
                             res.json(savedPilot);
                         }).catch(function (e) {
                             return next(e);
@@ -135,6 +149,7 @@ function create(req, res, next) {
                 teams: req.body.teams
             });
             pilot.save().then(function (savedPilot) {
+                sendSMS('91' + savedUser.mobileNumber, 'Hi ' + savedUser.firstName + ', you have been added as a SB Pilot by Seasonboy. Download the app from play store. \n               Username: ' + savedUser.username + ' & Password: ' + savedUser.password, 4);
                 res.json(savedPilot);
             }).catch(function (e) {
                 return next(e);
