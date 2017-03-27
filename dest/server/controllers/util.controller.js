@@ -119,6 +119,7 @@ function assignPending() {
         }).then(function (pilot) {
           console.info('Pilot available and not active ' + pilot);
           if (pilot && pilot._id) {
+            console.info('Pilot available and not null ' + pilot._id.toString());
             order.pilot = pilot._id;
             pilot.isActive = true;
             order.status = 'ASSIGNED';
@@ -140,8 +141,9 @@ function assignPending() {
           center: order.from_location,
           maxDistance: maxDistance * 1000
         }).then(function (pilot) {
-          console.info('Pilot available and not active ' + pilot._id.toString());
+          console.info('Pilot available and not active ' + pilot);
           if (pilot && pilot._id) {
+            console.info('Pilot available and not null ' + pilot._id.toString());
             order.pilot = pilot._id;
             pilot.isActive = true;
             order.status = 'ASSIGNED';
