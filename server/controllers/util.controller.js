@@ -133,10 +133,20 @@ function assignPending(){
               maxDistance: maxDistance * 1000
             })
             .then(pilots => {
-              let i = 0;
+              let pilot = null;
               if (pilots.length) {
-                pilot = pilots[0];
+                let pilotSelected = false;
+                let i = 0;
+                while(!pilotSelected) {
+                  pilot = pilots[i];
+                  if (pilotIDs.indexOf(pilot._id.toString()) < 0) {
+                    pilotSelected = true;
+                  } else {
+                    i++;
+                  }
+                }
               }
+
               console.info('Pilot available and not active ' + pilot);
               if(pilot && pilot._id && pilotIDs.indexOf(pilot._id.toString()) < 0){
                 pilotIDs.push(pilot._id.toString());

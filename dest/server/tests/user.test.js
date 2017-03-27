@@ -37,7 +37,7 @@ after(function (done) {
 
 describe('## User APIs', function () {
   var user = {
-    username: 'KK',
+    username: 'KK1234567890',
     mobileNumber: '1234567890'
   };
 
@@ -71,9 +71,9 @@ describe('## User APIs', function () {
 
   describe('# PUT /api/users/:userId', function () {
     it('should update user details', function (done) {
-      user.username = 'KK';
+      user.username = 'KK1234567890';
       (0, _supertestAsPromised2.default)(_index2.default).put('/api/users/' + user._id).send(user).expect(_httpStatus2.default.OK).then(function (res) {
-        (0, _chai.expect)(res.body.username).to.equal('KK');
+        (0, _chai.expect)(res.body.username).to.equal('KK1234567890');
         (0, _chai.expect)(res.body.mobileNumber).to.equal(user.mobileNumber);
         done();
       }).catch(done);
@@ -92,7 +92,7 @@ describe('## User APIs', function () {
   describe('# DELETE /api/users/', function () {
     it('should delete user', function (done) {
       (0, _supertestAsPromised2.default)(_index2.default).delete('/api/users/' + user._id).expect(_httpStatus2.default.OK).then(function (res) {
-        (0, _chai.expect)(res.body.username).to.equal('KK');
+        (0, _chai.expect)(res.body.username).to.equal('KK1234567890');
         (0, _chai.expect)(res.body.mobileNumber).to.equal(user.mobileNumber);
         done();
       }).catch(done);

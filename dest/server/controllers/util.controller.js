@@ -8,17 +8,17 @@ var _order = require('../models/order.model');
 
 var _order2 = _interopRequireDefault(_order);
 
-var _pilot2 = require('../models/pilot.model');
+var _pilot = require('../models/pilot.model');
 
-var _pilot3 = _interopRequireDefault(_pilot2);
+var _pilot2 = _interopRequireDefault(_pilot);
 
 var _order3 = require('../controllers/order.controller');
 
 var _order4 = _interopRequireDefault(_order3);
 
-var _pilot4 = require('../controllers/pilot.controller');
+var _pilot3 = require('../controllers/pilot.controller');
 
-var _pilot5 = _interopRequireDefault(_pilot4);
+var _pilot4 = _interopRequireDefault(_pilot3);
 
 var _cloudinary = require('cloudinary');
 
@@ -63,7 +63,7 @@ function get(req, res) {
 
 function assign(order, pilotId) {
   if (order.team != null && order.team != '' && order.team != "*" && order.team != "ALL" && order.team != null) {
-    return _pilot5.default.getUnAssignedPilotsByTeam(order.team).where('location').near({
+    return _pilot4.default.getUnAssignedPilotsByTeam(order.team).where('location').near({
       center: order.from_location,
       maxDistance: maxDistance * 1000
     }).then(function (pilots) {
@@ -71,9 +71,9 @@ function assign(order, pilotId) {
         var validPilots = pilots.filter(function (pilot) {
           return pilot._id.toString() != pilotId;
         });
-        var _pilot = validPilots[0];
-        _pilot.isActive = true;
-        return _pilot.save(_pilot).then(function (pilot) {
+        var pilot = validPilots[0];
+        pilot.isActive = true;
+        return pilot.save(pilot).then(function (pilot) {
           order.pilot = pilot._id;
           return order.save(order);
         });
@@ -114,7 +114,7 @@ function assignPending() {
     orders.forEach(function (order) {
       if (order.team !== null && order.team !== '' && order.team !== "*" && order.team !== "ALL") {
         console.info('Team available ' + order.team.toString());
-        _pilot3.default.findOne().where('isAvailable', true).where('teams').in([order.team]).where('isActive', false).where('location').near({
+        _pilot2.default.findOne().where('isAvailable', true).where('teams').in([order.team]).where('isActive', false).where('location').near({
           center: order.to_location,
           maxDistance: maxDistance * 1000
         }).then(function (pilot) {
@@ -138,14 +138,24 @@ function assignPending() {
         });
       } else {
         console.info('Team not available ');
-        _pilot3.default.find().where('isAvailable', true).where('isActive', false).where('location').near({
+        _pilot2.default.find().where('isAvailable', true).where('isActive', false).where('location').near({
           center: order.to_location,
           maxDistance: maxDistance * 1000
         }).then(function (pilots) {
-          var i = 0;
+          var pilot = null;
           if (pilots.length) {
-            pilot = pilots[0];
+            var pilotSelected = false;
+            var i = 0;
+            while (!pilotSelected) {
+              pilot = pilots[i];
+              if (pilotIDs.indexOf(pilot._id.toString()) < 0) {
+                pilotSelected = true;
+              } else {
+                i++;
+              }
+            }
           }
+
           console.info('Pilot available and not active ' + pilot);
           if (pilot && pilot._id && pilotIDs.indexOf(pilot._id.toString()) < 0) {
             pilotIDs.push(pilot._id.toString());
