@@ -35,10 +35,6 @@ var FranchiseSchema = new _mongoose2.default.Schema({
     type: String,
     required: false
   },
-  teams: {
-    type: [String], // [mongoose.Schema.ObjectId],
-    required: false
-  },
   location: {
     type: {
       type: String,
@@ -69,6 +65,7 @@ var FranchiseSchema = new _mongoose2.default.Schema({
 });
 
 FranchiseSchema.index({ location: '2dsphere' });
+FranchiseSchema.index({ geo_fence: '2dsphere' });
 
 /**
  * Add your

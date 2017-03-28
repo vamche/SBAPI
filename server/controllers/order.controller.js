@@ -8,6 +8,7 @@ import cloudinary from 'cloudinary';
 import Manager from '../models/manager.model';
 import Customer from '../models/customer.model';
 import Franchise from '../models/franchise.model';
+import Team from '../models/franchise.model';
 import { io } from '../../config/express';
 import mongoose from 'mongoose';
 
@@ -38,6 +39,7 @@ function get(req, res) {
  * @returns {Order}
  */
 function create(req, res, next) {
+
   const order = new Order({
     title: req.body.title,
     description: req.body.description,
@@ -253,7 +255,8 @@ function listByDate(req, res, next) {
               .then(orders => res.json(orders))
               .catch(e => next(e));
           }else if(manager.isFranchiseAdmin){
-            Franchise.get(manager.franchise)
+            Team.find()
+              .where()
               .then(franchise => {
                 const teams = manager.teams;
                 Order.listByTeamsAndDate({date, timeZone, teams, limit, skip})

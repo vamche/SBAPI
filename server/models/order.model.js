@@ -28,6 +28,11 @@ const OrderSchema = new mongoose.Schema({
     ref: 'Team',
     default: null
   },
+  franchise: {
+    type: String, // mongoose.Schema.ObjectId,
+    ref: 'Franchise',
+    default: null
+  },
   pilot: {
     type: String, // mongoose.Schema.ObjectId,
     required: false,
@@ -172,6 +177,10 @@ const OrderSchema = new mongoose.Schema({
   },
   paymentType: {
     type: String, // mongoose.Schema.ObjectId,
+    required: false
+  },
+  createdByUserRole: {
+    type: String,
     required: false
   },
   createdBy: {

@@ -52,6 +52,11 @@ var OrderSchema = new _mongoose2.default.Schema({
     ref: 'Team',
     default: null
   },
+  franchise: {
+    type: String, // mongoose.Schema.ObjectId,
+    ref: 'Franchise',
+    default: null
+  },
   pilot: {
     type: String, // mongoose.Schema.ObjectId,
     required: false,
@@ -194,6 +199,10 @@ var OrderSchema = new _mongoose2.default.Schema({
   },
   paymentType: {
     type: String, // mongoose.Schema.ObjectId,
+    required: false
+  },
+  createdByUserRole: {
+    type: String,
     required: false
   },
   createdBy: {

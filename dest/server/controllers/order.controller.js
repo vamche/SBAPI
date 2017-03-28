@@ -71,6 +71,7 @@ function get(req, res) {
  * @returns {Order}
  */
 function create(req, res, next) {
+
   var order = new _order2.default({
     title: req.body.title,
     description: req.body.description,
@@ -311,7 +312,7 @@ function listByDate(req, res, next) {
           return next(e);
         });
       } else if (manager.isFranchiseAdmin) {
-        _franchise2.default.get(manager.franchise).then(function (franchise) {
+        _franchise2.default.find().where().then(function (franchise) {
           var teams = manager.teams;
           _order2.default.listByTeamsAndDate({ date: date, timeZone: timeZone, teams: teams, limit: limit, skip: skip }).where('team').in(franchise.teams).then(function (orders) {
             return res.json(orders);
