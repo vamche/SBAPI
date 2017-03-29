@@ -31,7 +31,11 @@ const FranchiseSchema = new mongoose.Schema({
       type: String,
       default: 'Polygon'
     },
-    coordinates: [[Number]],
+    coordinates: {
+      type: Array,
+      default: [[78.4867, 17.3850]]
+    },
+
     required: false
   },
   registration_status: {

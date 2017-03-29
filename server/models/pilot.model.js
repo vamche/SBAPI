@@ -30,6 +30,10 @@ const PilotSchema = new mongoose.Schema({
     type: String, // mongoose.Schema.ObjectId,
     required: false
   },
+  isTeamSpecific: {
+    type: Boolean,
+    default: false
+  },
   isActive: {
     type: Boolean,
     required: false,

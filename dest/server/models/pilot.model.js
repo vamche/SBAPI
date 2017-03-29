@@ -51,6 +51,10 @@ var PilotSchema = new _mongoose2.default.Schema({
     type: String, // mongoose.Schema.ObjectId,
     required: false
   },
+  isTeamSpecific: {
+    type: Boolean,
+    default: false
+  },
   isActive: {
     type: Boolean,
     required: false,

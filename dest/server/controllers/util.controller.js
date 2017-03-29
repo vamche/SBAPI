@@ -107,7 +107,6 @@ function uploadImgAsync(img) {
 }
 
 function assignPending() {
-  console.info("Assigning Pending Orders");
   var pilotIDs = [];
   _order2.default.getUnAssigned().then(function (orders) {
     console.info('Number of pending orders ' + orders.length);
@@ -118,7 +117,6 @@ function assignPending() {
           center: order.to_location,
           maxDistance: maxDistance * 1000
         }).then(function (pilot) {
-          console.info('Pilot available and not active ' + pilot);
           if (pilot && pilot._id) {
             console.info('Pilot available and not null ' + pilot._id.toString());
             order.pilot = pilot._id;
@@ -137,7 +135,6 @@ function assignPending() {
           return console.error(e);
         });
       } else {
-        console.info('Team not available ');
         _pilot2.default.find().where('isAvailable', true).where('isActive', false).where('location').near({
           center: order.to_location,
           maxDistance: maxDistance * 1000
@@ -155,8 +152,6 @@ function assignPending() {
               }
             }
           }
-
-          console.info('Pilot available and not active ' + pilot);
           if (pilot && pilot._id && pilotIDs.indexOf(pilot._id.toString()) < 0) {
             pilotIDs.push(pilot._id.toString());
             console.info('Pilot available and not null ' + pilot._id.toString());

@@ -83,7 +83,6 @@ function uploadImgAsync(img) {
 }
 
 function assignPending(){
-  console.info("Assigning Pending Orders");
   const pilotIDs = [];
   Order.getUnAssigned()
     .then(orders => {
@@ -100,7 +99,6 @@ function assignPending(){
             maxDistance: maxDistance * 1000
           })
             .then(pilot => {
-              console.info('Pilot available and not active ' + pilot);
               if(pilot && pilot._id){
                 console.info('Pilot available and not null ' + pilot._id.toString());
                 order.pilot = pilot._id;
@@ -124,7 +122,6 @@ function assignPending(){
             })
             .catch(e => console.error(e));
         }else{
-          console.info('Team not available ');
           Pilot.find()
             .where('isAvailable', true)
             .where('isActive', false)
@@ -146,8 +143,6 @@ function assignPending(){
                   }
                 }
               }
-
-              console.info('Pilot available and not active ' + pilot);
               if(pilot && pilot._id && pilotIDs.indexOf(pilot._id.toString()) < 0){
                 pilotIDs.push(pilot._id.toString());
                 console.info('Pilot available and not null ' + pilot._id.toString());
