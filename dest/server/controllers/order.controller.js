@@ -72,6 +72,22 @@ function get(req, res) {
  */
 function create(req, res, next) {
 
+  if (req.body.createdByUserRole === 'MERCHANT') {
+    _franchise2.default.findFranchiseContainingLocation(req.body.from_location).then(function (results) {
+      if (results.length !== 0) {
+        createOrder(req, res, next, results[0]._id);
+      } else {
+        createOrder(req, res, next);
+      }
+    });
+  } else {
+    createOrder(req, res, next);
+  }
+}
+
+function createOrder(req, res, next) {
+  var franchise = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+
   var order = new _order2.default({
     title: req.body.title,
     description: req.body.description,
@@ -92,12 +108,14 @@ function create(req, res, next) {
     tags: req.body.tags,
     team: req.body.team,
     createdBy: req.body.createdBy,
+    createdByUserRole: req.body.createdByUserRole,
+    franchise: franchise,
     pilot: req.body.pilot ? new _mongoose2.default.Types.ObjectId(req.body.pilot) : null
   });
 
   order.save().then(function (savedOrder) {
     if (savedOrder.pilot === null) {
-      return (0, _util.assign)(savedOrder);
+      return (0, _util.assign)(savedOrder, null, franchise);
     } else {
       return savedOrder;
     }

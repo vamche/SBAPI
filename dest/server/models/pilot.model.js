@@ -69,6 +69,11 @@ var PilotSchema = new _mongoose2.default.Schema({
     type: String,
     required: false
   },
+  franchise: {
+    type: String, // mongoose.Schema.ObjectId,
+    ref: 'Franchise',
+    default: null
+  },
   battery: {
     type: Number,
     required: false

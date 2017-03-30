@@ -55,6 +55,11 @@ var CustomerSchema = new _mongoose2.default.Schema({
       default: [78.4867, 17.3850]
     }
   },
+  franchise: {
+    type: String, // mongoose.Schema.ObjectId,
+    ref: 'Franchise',
+    default: null
+  },
   registration_status: {
     type: String,
     required: false,

@@ -32,7 +32,8 @@ function get(req, res) {
 function create(req, res, next) {
   const team = new Team({
     name: req.body.name,
-    tags: req.body.tags
+    tags: req.body.tags,
+    franchise : req.body.franchise ? req.body.franchise : null
   });
 
   team.save()

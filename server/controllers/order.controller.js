@@ -40,6 +40,22 @@ function get(req, res) {
  */
 function create(req, res, next) {
 
+  if (req.body.createdByUserRole === 'MERCHANT') {
+    Franchise.findFranchiseContainingLocation(req.body.from_location)
+      .then(results => {
+        if (results.length !== 0) {
+          createOrder(req, res, next, results[0]._id);
+        }else {
+          createOrder(req, res, next);
+        }
+      })
+  }else {
+    createOrder(req, res, next)
+  }
+}
+
+
+function createOrder(req, res, next, franchise = null) {
   const order = new Order({
     title: req.body.title,
     description: req.body.description,
@@ -60,13 +76,15 @@ function create(req, res, next) {
     tags: req.body.tags,
     team: req.body.team,
     createdBy: req.body.createdBy,
+    createdByUserRole: req.body.createdByUserRole,
+    franchise: franchise,
     pilot: req.body.pilot ? (new mongoose.Types.ObjectId(req.body.pilot)) : null
   });
 
   order.save()
     .then(savedOrder => {
       if(savedOrder.pilot === null){
-        return assign(savedOrder);
+        return assign(savedOrder, null, franchise);
       }else{
         return savedOrder;
       }
@@ -78,7 +96,7 @@ function create(req, res, next) {
           {'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot.toString()},
           {'operator' : 'OR'},
           {'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'}
-          ];
+        ];
       }
       sendSMS(`91${savedOrder.to_phone}`, `Your delivery is on its way.`, 4);
       io && io.emit('ORDER_ADDED', savedOrder);
@@ -87,6 +105,7 @@ function create(req, res, next) {
     })
     .catch(e => next(e));
 }
+
 
 /**
  * Update existing order

@@ -75,11 +75,14 @@ function get(req, res) {
     return res.json(req.pilot);
 }
 
-function getUnAssignedPilotsByTeam(team, isActive) {
+function getUnAssignedPilotsByTeam(team) {
+    var isActive = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    var franchise = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
     if (team === 'ALL' || team === '*' || team === '' || team === null) {
-        return _pilot2.default.find().where('isAvailable', true).where('isActive', isActive);
+        return _pilot2.default.find().where('isAvailable', true).where('isActive', isActive).where('franchise', franchise);
     } else {
-        return _pilot2.default.find().where('isAvailable', true).where('isActive', isActive).where('teams').in([team]);
+        return _pilot2.default.find().where('isAvailable', true).where('isActive', isActive).where('franchise', franchise).where('teams').in([team]);
     }
 }
 
@@ -117,7 +120,8 @@ function create(req, res, next) {
                     user.save().then(function (savedUser) {
                         var pilot = new _pilot2.default({
                             user: savedUser._id,
-                            teams: req.body.teams
+                            teams: req.body.teams,
+                            franchise: req.body.franchise ? req.body.franchise : null
                         });
                         pilot.save().then(function (savedPilot) {
                             sendSMS('91' + savedUser.mobileNumber, 'Hi ' + savedUser.firstName + ', you have been added as a SB Pilot by Seasonboy. Download the app from play store. \n                       Username: ' + savedUser.username + ' & Password: ' + savedUser.password, 4);

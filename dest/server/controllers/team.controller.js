@@ -51,7 +51,8 @@ function get(req, res) {
 function create(req, res, next) {
   var team = new _team2.default({
     name: req.body.name,
-    tags: req.body.tags
+    tags: req.body.tags,
+    franchise: req.body.franchise ? req.body.franchise : null
   });
 
   team.save().then(function (savedTeam) {

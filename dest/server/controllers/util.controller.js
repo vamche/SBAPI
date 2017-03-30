@@ -61,9 +61,12 @@ function get(req, res) {
   return res.json(req.order);
 }
 
-function assign(order, pilotId) {
+function assign(order) {
+  var pilotId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+  var franchise = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
   if (order.team != null && order.team != '' && order.team != "*" && order.team != "ALL" && order.team != null) {
-    return _pilot4.default.getUnAssignedPilotsByTeam(order.team).where('location').near({
+    return _pilot4.default.getUnAssignedPilotsByTeam(order.team, false, franchise).where('location').near({
       center: order.from_location,
       maxDistance: maxDistance * 1000
     }).then(function (pilots) {
@@ -112,7 +115,7 @@ function assignPending() {
     console.info('Number of pending orders ' + orders.length);
     orders.forEach(function (order) {
       if (order.team !== null && order.team !== '' && order.team !== "*" && order.team !== "ALL") {
-        _pilot2.default.findOne().where('isAvailable', true).where('teams').in([order.team]).where('isActive', false).where('location').near({
+        _pilot2.default.findOne().where('isAvailable', true).where('teams').in([order.team]).where('franchise', order.franchise).where('isActive', false).where('location').near({
           center: order.to_location,
           maxDistance: maxDistance * 1000
         }).then(function (pilot) {
@@ -134,7 +137,7 @@ function assignPending() {
           return console.error(e);
         });
       } else {
-        _pilot2.default.find().where('isAvailable', true).where('isActive', false).where('location').near({
+        _pilot2.default.find().where('isAvailable', true).where('isActive', false).where('franchise', order.franchise).where('location').near({
           center: order.to_location,
           maxDistance: maxDistance * 1000
         }).then(function (pilots) {
