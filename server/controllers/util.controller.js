@@ -89,7 +89,6 @@ function assignPending(){
       console.info('Number of pending orders ' + orders.length);
       orders.forEach(order => {
         if(order.team !== null && order.team !== '' && order.team !== "*" && order.team !== "ALL"){
-          console.info('Team available ' + order.team.toString());
           Pilot.findOne()
             .where('isAvailable', true)
             .where('teams').in([order.team])

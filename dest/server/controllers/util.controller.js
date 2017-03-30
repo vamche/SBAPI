@@ -112,7 +112,6 @@ function assignPending() {
     console.info('Number of pending orders ' + orders.length);
     orders.forEach(function (order) {
       if (order.team !== null && order.team !== '' && order.team !== "*" && order.team !== "ALL") {
-        console.info('Team available ' + order.team.toString());
         _pilot2.default.findOne().where('isAvailable', true).where('teams').in([order.team]).where('isActive', false).where('location').near({
           center: order.to_location,
           maxDistance: maxDistance * 1000

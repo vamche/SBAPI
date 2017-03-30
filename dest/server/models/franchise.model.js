@@ -48,11 +48,11 @@ var FranchiseSchema = new _mongoose2.default.Schema({
   geo_fence: {
     type: {
       type: String,
-      default: 'Polygon'
+      default: 'MultiPolygon'
     },
     coordinates: {
-      type: Array,
-      default: [[78.4867, 17.3850]]
+      type: [[[[Number]]]],
+      default: [[[[78.4867, 17.3850]]]]
     },
 
     required: false
@@ -109,6 +109,15 @@ FranchiseSchema.statics = {
       var err = new _APIError2.default('No such franchise exists!', _httpStatus2.default.NOT_FOUND);
       return _bluebird2.default.reject(err);
     });
+  },
+  findFranchiseContainingLocation: function findFranchiseContainingLocation(loc) {
+    return this.find({
+      geo_fence: {
+        $nearSphere: {
+          $geometry: loc,
+          $maxDistance: 0
+        }
+      } }).exec();
   },
 
 

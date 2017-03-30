@@ -142,5 +142,13 @@ function getSalesByFranchise(req, res, next){
     .catch(e => next(e));
 }
 
+function findFranchiseContainingLocation(req, res, next) {
+
+  Franchise.findFranchiseContainingLocation(req.body.location)
+    .then(results => res.json(results))
+    .catch(e => next(e));
+
+}
+
 export default {
-  load, get, create, update, list, remove, getSales, getSalesByFranchise };
+  load, get, create, update, list, remove, getSales, getSalesByFranchise, findFranchiseContainingLocation };

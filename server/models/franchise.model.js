@@ -29,11 +29,13 @@ const FranchiseSchema = new mongoose.Schema({
   geo_fence: {
     type: {
       type: String,
-      default: 'Polygon'
+      default: 'MultiPolygon'
     },
     coordinates: {
-      type: Array,
-      default: [[78.4867, 17.3850]]
+      type: [
+        [[[Number]]]
+      ],
+      default: [[[[78.4867, 17.3850]]]]
     },
 
     required: false
@@ -100,6 +102,17 @@ FranchiseSchema.statics = {
         const err = new APIError('No such franchise exists!', httpStatus.NOT_FOUND);
         return Promise.reject(err);
       });
+  },
+
+  findFranchiseContainingLocation(loc) {
+    return this.find({
+      geo_fence: {
+        $nearSphere: {
+          $geometry: loc,
+          $maxDistance: 0
+         }
+      }})
+      .exec();
   },
 
   /**

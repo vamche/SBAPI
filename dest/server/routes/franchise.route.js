@@ -55,6 +55,8 @@ router.route('/sales/:franchiseId')
  * **/
 .post(_franchise2.default.getSalesByFranchise);
 
+router.route('/findFranchiseContainingLocation').post(_franchise2.default.findFranchiseContainingLocation);
+
 /** Load franchise when API with franchiseId route parameter is hit */
 router.param('franchiseId', _franchise2.default.load);
 

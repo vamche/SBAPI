@@ -183,7 +183,16 @@ function getSalesByFranchise(req, res, next) {
   });
 }
 
+function findFranchiseContainingLocation(req, res, next) {
+
+  _franchise2.default.findFranchiseContainingLocation(req.body.location).then(function (results) {
+    return res.json(results);
+  }).catch(function (e) {
+    return next(e);
+  });
+}
+
 exports.default = {
-  load: load, get: get, create: create, update: update, list: list, remove: remove, getSales: getSales, getSalesByFranchise: getSalesByFranchise };
+  load: load, get: get, create: create, update: update, list: list, remove: remove, getSales: getSales, getSalesByFranchise: getSalesByFranchise, findFranchiseContainingLocation: findFranchiseContainingLocation };
 module.exports = exports['default'];
 //# sourceMappingURL=franchise.controller.js.map
