@@ -34,7 +34,7 @@ var sendSMS = function sendSMS(mobiles, message, route) {
 
 var message = {
   app_id: "092a0af4-0df5-4e86-aebc-f42e4a8d383e",
-  headers: { 'en': 'Title' },
+  headings: { 'en': 'Title' },
   contents: { "en": "English Message From Node!" },
   included_segments: ["All"],
   filters: [{ 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }],
