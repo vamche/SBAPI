@@ -127,9 +127,7 @@ exports.default = {
 
   // POST /api/orders
   createOrder: {
-    body: {
-      title: _joi2.default.string().required()
-    }
+    body: {}
   },
 
   // UPDATE /api/orders/:orderId
