@@ -106,6 +106,7 @@ function assignPending(){
                 order.status = 'ASSIGNED';
                 order.save()
                   .then((updatedOrder) => {
+                    message.headers.en = updatedOrder.id;
                     message.data = updatedOrder;
                     message.contents.en = `Order Assigned \n${updatedOrder.title}. 
                                            \nPick at ${updatedOrder.from_address}`;
@@ -153,6 +154,7 @@ function assignPending(){
                 order.status = 'ASSIGNED';
                 order.save()
                   .then((updatedOrder) => {
+                    message.headers.en = updatedOrder.id;
                     message.data = updatedOrder;
                     message.contents.en = ` Order Assigned \n${updatedOrder.title}. 
                     \nPick at ${updatedOrder.from_address}`;

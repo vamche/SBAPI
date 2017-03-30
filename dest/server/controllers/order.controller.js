@@ -120,6 +120,7 @@ function createOrder(req, res, next) {
       return savedOrder;
     }
   }).then(function (savedOrder) {
+    _send.message.headers.en = savedOrder.id;
     _send.message.contents.en = 'New Order Placed \n' + order.title + '. \nPick at ' + order.from_address;
     if (savedOrder.pilot && savedOrder.pilot != '') {
       _send.message.data = savedOrder;
