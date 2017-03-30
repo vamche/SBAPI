@@ -106,7 +106,8 @@ function assignPending(){
                 order.status = 'ASSIGNED';
                 order.save()
                   .then((updatedOrder) => {
-                    message.contents.en = `Pending Order Assigned \n${updatedOrder.title}. 
+                    message.data = updatedOrder;
+                    message.contents.en = `Order Assigned \n${updatedOrder.title}. 
                                            \nPick at ${updatedOrder.from_address}`;
                     message.filters = [
                       {'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': updatedOrder.pilot.toString()},
@@ -152,7 +153,8 @@ function assignPending(){
                 order.status = 'ASSIGNED';
                 order.save()
                   .then((updatedOrder) => {
-                    message.contents.en = `Pending Order Assigned \n${updatedOrder.title}. 
+                    message.data = updatedOrder;
+                    message.contents.en = ` Order Assigned \n${updatedOrder.title}. 
                     \nPick at ${updatedOrder.from_address}`;
                     message.filters = [
                       {'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': updatedOrder.pilot.toString()},

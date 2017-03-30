@@ -125,7 +125,8 @@ function assignPending() {
             pilot.isActive = true;
             order.status = 'ASSIGNED';
             order.save().then(function (updatedOrder) {
-              _send.message.contents.en = 'Pending Order Assigned \n' + updatedOrder.title + '. \n                                           \nPick at ' + updatedOrder.from_address;
+              _send.message.data = updatedOrder;
+              _send.message.contents.en = 'Order Assigned \n' + updatedOrder.title + '. \n                                           \nPick at ' + updatedOrder.from_address;
               _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': updatedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
               _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
               (0, _send.sendNotification)(_send.message);
@@ -161,7 +162,8 @@ function assignPending() {
             pilot.isActive = true;
             order.status = 'ASSIGNED';
             order.save().then(function (updatedOrder) {
-              _send.message.contents.en = 'Pending Order Assigned \n' + updatedOrder.title + '. \n                    \nPick at ' + updatedOrder.from_address;
+              _send.message.data = updatedOrder;
+              _send.message.contents.en = ' Order Assigned \n' + updatedOrder.title + '. \n                    \nPick at ' + updatedOrder.from_address;
               _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': updatedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
               _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
               (0, _send.sendNotification)(_send.message);
