@@ -205,10 +205,18 @@ function update(req, res, next) {
  * @returns {Pilot[]}
  */
 function list(req, res, next) {
-  const { limit = 50, skip = 0 } = req.query;
-  Pilot.list({ limit, skip })
-    .then(pilots => res.json(pilots))
-    .catch(e => next(e));
+  const { limit = 1000, skip = 0 } = req.query;
+  const franchise = req.body.franchise;
+
+  if(req.body.franchise) {
+    Pilot.listByFranchise({ limit, skip, franchise})
+      .then(pilots => res.json(pilots))
+      .catch(e => next(e));
+  }else {
+    Pilot.list({ limit, skip })
+      .then(pilots => res.json(pilots))
+      .catch(e => next(e));
+  }
 }
 
 /**

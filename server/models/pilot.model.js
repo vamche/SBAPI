@@ -161,7 +161,17 @@ PilotSchema.statics = {
       .skip(skip)
       .limit(limit)
       .exec();
-  }
+  },
+
+  listByFranchise({ skip = 0, limit = 50, franchise } = {}) {
+    return this.find()
+      .where('franchise', franchise)
+      .populate('user')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+  },
 
 };
 

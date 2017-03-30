@@ -345,26 +345,42 @@ OrderSchema.statics = {
       path: 'pilot',
       populate: { path: 'user' } }).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
-  listByTeamsAndDate: function listByTeamsAndDate() {
+  listByFranchiseAndDate: function listByFranchiseAndDate() {
     var _ref6 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         date = _ref6.date,
         _ref6$timeZone = _ref6.timeZone,
         timeZone = _ref6$timeZone === undefined ? 'Europe/London' : _ref6$timeZone,
-        teams = _ref6.teams,
+        franchise = _ref6.franchise,
         _ref6$skip = _ref6.skip,
         skip = _ref6$skip === undefined ? 0 : _ref6$skip,
         _ref6$limit = _ref6.limit,
         limit = _ref6$limit === undefined ? 1000 : _ref6$limit;
 
     var diffInMinutes = (0, _momentTimezone2.default)().tz(timeZone).utcOffset();
+    return this.find().where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).where('franchise', franchise).populate('attachments').populate('team').populate({
+      path: 'pilot',
+      populate: { path: 'user' } }).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+  },
+  listByTeamsAndDate: function listByTeamsAndDate() {
+    var _ref7 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        date = _ref7.date,
+        _ref7$timeZone = _ref7.timeZone,
+        timeZone = _ref7$timeZone === undefined ? 'Europe/London' : _ref7$timeZone,
+        teams = _ref7.teams,
+        _ref7$skip = _ref7.skip,
+        skip = _ref7$skip === undefined ? 0 : _ref7$skip,
+        _ref7$limit = _ref7.limit,
+        limit = _ref7$limit === undefined ? 1000 : _ref7$limit;
+
+    var diffInMinutes = (0, _momentTimezone2.default)().tz(timeZone).utcOffset();
     return this.find().where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).where('team').in(teams).populate('attachments').populate('team').populate('pilot').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
   listByPilotDateRangeStatus: function listByPilotDateRangeStatus() {
-    var _ref7 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        pilot = _ref7.pilot,
-        fromDate = _ref7.fromDate,
-        toDate = _ref7.toDate,
-        status = _ref7.status;
+    var _ref8 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        pilot = _ref8.pilot,
+        fromDate = _ref8.fromDate,
+        toDate = _ref8.toDate,
+        status = _ref8.status;
 
     return this.find().where('pilot', pilot).where('status', status).where('createdAt').gte((0, _momentTimezone2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _momentTimezone2.default)(toDate, "YYYYMMDD").endOf('day')).populate('attachments').populate('pilot').populate('team').exec();
   },

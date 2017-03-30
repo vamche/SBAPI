@@ -174,6 +174,16 @@ PilotSchema.statics = {
         limit = _ref$limit === undefined ? 50 : _ref$limit;
 
     return this.find().populate('user').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+  },
+  listByFranchise: function listByFranchise() {
+    var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref2$skip = _ref2.skip,
+        skip = _ref2$skip === undefined ? 0 : _ref2$skip,
+        _ref2$limit = _ref2.limit,
+        limit = _ref2$limit === undefined ? 50 : _ref2$limit,
+        franchise = _ref2.franchise;
+
+    return this.find().where('franchise', franchise).populate('user').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   }
 };
 

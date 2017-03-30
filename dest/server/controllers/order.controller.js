@@ -28,9 +28,9 @@ var _manager = require('../models/manager.model');
 
 var _manager2 = _interopRequireDefault(_manager);
 
-var _customer = require('../models/customer.model');
+var _customer2 = require('../models/customer.model');
 
-var _customer2 = _interopRequireDefault(_customer);
+var _customer3 = _interopRequireDefault(_customer2);
 
 var _franchise = require('../models/franchise.model');
 
@@ -325,7 +325,14 @@ function listByDate(req, res, next) {
       timeZone = _req$body2.timeZone;
 
 
-  if (req.body.manager) {
+  if (req.body.franchise) {
+    var customer = req.body.customer;
+    _order2.default.listByFranchiseAndDate({ date: date, timeZone: timeZone, franchise: franchise, limit: limit, skip: skip }).then(function (orders) {
+      return res.json(orders);
+    }).catch(function (e) {
+      return next(e);
+    });
+  } else if (req.body.manager) {
     _manager2.default.get(req.body.manager).then(function (manager) {
       if (manager.isAdmin) {
         _order2.default.listByDate({ date: date, timeZone: timeZone, limit: limit, skip: skip }).then(function (orders) {
@@ -353,9 +360,9 @@ function listByDate(req, res, next) {
         });
       }
     });
-  }if (req.body.customer) {
-    var customer = req.body.customer;
-    _order2.default.listByCustomerAndDate({ date: date, timeZone: timeZone, customer: customer, limit: limit, skip: skip }).then(function (orders) {
+  } else if (req.body.customer) {
+    var _customer = req.body.customer;
+    _order2.default.listByCustomerAndDate({ date: date, timeZone: timeZone, customer: _customer, limit: limit, skip: skip }).then(function (orders) {
       return res.json(orders);
     }).catch(function (e) {
       return next(e);

@@ -86,6 +86,7 @@ function getSales(req, res, next){
   const { fromDate = moment().format('YYYYMMDD'), toDate = moment().format('YYYYMMDD') } = req.body;
   let sales = []; // Array of {_id: String, title: String, sales: String}
   let promises;
+  const franchise = req.body.franchise;
   Team.find()
           .then(teams => {
               promises = teams.map(team => {
@@ -93,6 +94,7 @@ function getSales(req, res, next){
                   let numberOfOrders = 0;
                   const p = Order.find()
                       .where('team', team._id.toString())
+                      .where('franchise', franchise)
                       .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
                       .then(orders => {
                           orders.forEach(order => {
@@ -119,22 +121,25 @@ function getSales(req, res, next){
 function getSalesByTeam(req, res, next){
     const { fromDate = moment().format('YYYYMMDD'), toDate = moment().format('YYYYMMDD') } = req.body;
     let sales; // {_id: String, title: String, sales: String}
-    Order.find()
+
+      Order.find()
         .where('team', req.team._id.toString())
         .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
         .then(orders => {
-            let total = 0;
-            orders.forEach(order => {
-                total = total + order.final_cost;
-            });
-            sales = {
-                '_id' : req.team._id,
-                'name' : req.team.name,
-                'sales' : total
-            };
-            res.json(sales);
+          let total = 0;
+          orders.forEach(order => {
+            total = total + order.final_cost;
+          });
+          sales = {
+            '_id' : req.team._id,
+            'name' : req.team.name,
+            'sales' : total
+          };
+          res.json(sales);
         })
         .catch(e => next(e));
+
+
 }
 
 export default { load, get, create, update, list, remove, getSales, getSalesByTeam };

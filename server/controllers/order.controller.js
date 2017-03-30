@@ -270,7 +270,12 @@ function listByDate(req, res, next) {
     const { limit = 500, skip = 0 } = req.query;
     const { date, timeZone } = req.body;
 
-    if(req.body.manager){
+    if (req.body.franchise) {
+      const customer = req.body.customer;
+      Order.listByFranchiseAndDate({date, timeZone, franchise, limit, skip})
+        .then(orders => res.json(orders))
+        .catch(e => next(e));
+    }else if(req.body.manager){
       Manager.get(req.body.manager)
         .then(manager => {
           if(manager.isAdmin){
@@ -295,7 +300,7 @@ function listByDate(req, res, next) {
               .catch(e => next(e));
           }
         });
-    }if(req.body.customer){
+    }else if(req.body.customer){
       const customer = req.body.customer;
       Order.listByCustomerAndDate({date, timeZone, customer, limit, skip})
         .then(orders => res.json(orders))
