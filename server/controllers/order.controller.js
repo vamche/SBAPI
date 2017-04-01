@@ -92,7 +92,7 @@ function createOrder(req, res, next, franchise = null) {
     .then((savedOrder) => {
       message.headings.en = savedOrder.id;
       message.contents.en = `New Order Placed \n${order.title}. \nPick at ${order.from_address}`;
-      if(savedOrder.pilot && savedOrder.pilot != ''){
+      if(savedOrder.pilot){
         message.data = savedOrder;
         message.filters = [
           {'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot.toString()},

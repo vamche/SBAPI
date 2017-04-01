@@ -67,7 +67,6 @@ ManagerSchema.statics = {
    */
   get(id) {
     return this.findById(id)
-      .where('franchise', franchise)
       .populate('user')
       .exec()
       .then((order) => {

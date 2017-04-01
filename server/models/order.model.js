@@ -334,7 +334,7 @@ OrderSchema.statics = {
       .exec();
   },
 
-  listByFranchiseAndDate({ date, timeZone = 'Europe/London', franchise, skip = 0, limit = 1000 } = {}) {
+  listByFranchiseAndDate({ date, timeZone = 'Europe/London', franchise = null, skip = 0, limit = 1000 } = {}) {
     const diffInMinutes = moment().tz(timeZone).utcOffset();
     return this.find()
       .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes'))

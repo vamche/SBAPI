@@ -122,7 +122,7 @@ function createOrder(req, res, next) {
   }).then(function (savedOrder) {
     _send.message.headings.en = savedOrder.id;
     _send.message.contents.en = 'New Order Placed \n' + order.title + '. \nPick at ' + order.from_address;
-    if (savedOrder.pilot && savedOrder.pilot != '') {
+    if (savedOrder.pilot) {
       _send.message.data = savedOrder;
       _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
     }
