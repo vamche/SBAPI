@@ -38,6 +38,10 @@ var OrderSchema = new _mongoose2.default.Schema({
     type: Number,
     default: 0
   },
+  value: {
+    type: Number,
+    default: 0
+  },
   title: {
     type: String,
     required: false

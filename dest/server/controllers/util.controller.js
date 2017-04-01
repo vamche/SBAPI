@@ -78,7 +78,7 @@ function assign(order) {
         pilot.isActive = true;
         return pilot.save(pilot).then(function (pilot) {
           order.pilot = pilot._id;
-          return order.save(order);
+          return order.save();
         });
       } else {
         return order;

@@ -114,6 +114,7 @@ function createOrder(req, res, next) {
     createdBy: req.body.createdBy,
     createdByUserRole: req.body.createdByUserRole,
     franchise: franchise,
+    value: req.body.value ? req.body.value : 0,
     pilot: req.body.pilot ? new _mongoose2.default.Types.ObjectId(req.body.pilot) : null
   });
 
