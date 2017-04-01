@@ -454,7 +454,7 @@ function stats(req, res, next) {
   var teams = [];
   var team = req.body.team;
   var getPilots = void 0;
-  var franchise = req.body.frnachise;
+  var franchise = req.body.franchise;
   if (franchise) {
     getPilots = _pilot2.default.find().where('franchise', franchise);
   } else if (team && team != '*' && team != 'ALL' && teams != '') {

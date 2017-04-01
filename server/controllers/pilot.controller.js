@@ -400,7 +400,7 @@ function stats(req, res, next){
     let teams = [];
     const team = req.body.team;
     let getPilots;
-    const franchise = req.body.frnachise;
+    const franchise = req.body.franchise;
     if(franchise) {
       getPilots = Pilot.find()
         .where('franchise', franchise);
