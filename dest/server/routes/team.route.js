@@ -24,6 +24,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var router = _express2.default.Router(); // eslint-disable-line new-cap
 
+router.route('/list')
+/** GET /api/teams - Get list of teams */
+.post(_team2.default.listByFranchise);
+
 router.route('/')
 /** GET /api/teams - Get list of teams */
 .get(_team2.default.list)

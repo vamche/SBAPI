@@ -5,6 +5,10 @@ import teamCtrl from '../controllers/team.controller';
 
 const router = express.Router(); // eslint-disable-line new-cap
 
+router.route('/list')
+/** GET /api/teams - Get list of teams */
+  .post(teamCtrl.listByFranchise)
+
 router.route('/')
   /** GET /api/teams - Get list of teams */
   .get(teamCtrl.list)

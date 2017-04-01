@@ -101,6 +101,21 @@ function list(req, res, next) {
   });
 }
 
+function listByFranchise(req, res, next) {
+  var _req$query2 = req.query,
+      _req$query2$limit = _req$query2.limit,
+      limit = _req$query2$limit === undefined ? 50 : _req$query2$limit,
+      _req$query2$skip = _req$query2.skip,
+      skip = _req$query2$skip === undefined ? 0 : _req$query2$skip;
+
+  var franchise = req.body.franchise;
+  _team2.default.list({ limit: limit, skip: skip, franchise: franchise }).then(function (teams) {
+    return res.json(teams);
+  }).catch(function (e) {
+    return next(e);
+  });
+}
+
 /**
  * Delete team.
  * @returns {Team}
@@ -179,6 +194,6 @@ function getSalesByTeam(req, res, next) {
   });
 }
 
-exports.default = { load: load, get: get, create: create, update: update, list: list, remove: remove, getSales: getSales, getSalesByTeam: getSalesByTeam };
+exports.default = { load: load, get: get, create: create, update: update, list: list, remove: remove, getSales: getSales, getSalesByTeam: getSalesByTeam, listByFranchise: listByFranchise };
 module.exports = exports['default'];
 //# sourceMappingURL=team.controller.js.map

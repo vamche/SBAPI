@@ -71,6 +71,14 @@ function list(req, res, next) {
     .catch(e => next(e));
 }
 
+function listByFranchise(req, res, next) {
+  const { limit = 50, skip = 0 } = req.query;
+  const franchise = req.body.franchise;
+  Team.list({ limit, skip, franchise })
+    .then(teams => res.json(teams))
+    .catch(e => next(e));
+}
+
 /**
  * Delete team.
  * @returns {Team}
@@ -143,4 +151,4 @@ function getSalesByTeam(req, res, next){
 
 }
 
-export default { load, get, create, update, list, remove, getSales, getSalesByTeam };
+export default { load, get, create, update, list, remove, getSales, getSalesByTeam, listByFranchise };
