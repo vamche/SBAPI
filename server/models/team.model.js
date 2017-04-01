@@ -77,8 +77,9 @@ TeamSchema.statics = {
    * @param {number} limit - Limit number of teams to be returned.
    * @returns {Promise<Team[]>}
    */
-  list({ skip = 0, limit = 50 } = {}) {
+  list({ skip = 0, limit = 50, franchise = null } = {}) {
     return this.find()
+      .where('franchise', franchise)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
