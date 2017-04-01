@@ -93,7 +93,8 @@ function list(req, res, next) {
       _req$query$skip = _req$query.skip,
       skip = _req$query$skip === undefined ? 0 : _req$query$skip;
 
-  _team2.default.list({ limit: limit, skip: skip }).then(function (teams) {
+  var franchise = req.body.franchise;
+  _team2.default.list({ limit: limit, skip: skip, franchise: franchise }).then(function (teams) {
     return res.json(teams);
   }).catch(function (e) {
     return next(e);

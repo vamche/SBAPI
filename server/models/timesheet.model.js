@@ -68,8 +68,9 @@ TimesheetSchema.statics = {
      * @param {number} limit - Limit number of timesheets to be returned.
      * @returns {Promise<Timesheet[]>}
      */
-    list({ skip = 0, limit = 50 } = {}) {
+    list({ skip = 0, limit = 50, franchise = null } = {}) {
         return this.find()
+            .where('franchise', franchise)
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)

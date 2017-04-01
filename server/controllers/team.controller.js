@@ -65,7 +65,8 @@ function update(req, res, next) {
  */
 function list(req, res, next) {
   const { limit = 50, skip = 0 } = req.query;
-  Team.list({ limit, skip })
+  const franchise = req.body.franchise;
+  Team.list({ limit, skip, franchise })
     .then(teams => res.json(teams))
     .catch(e => next(e));
 }
