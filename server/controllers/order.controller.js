@@ -92,7 +92,7 @@ function createOrder(req, res, next, franchise = null) {
       }
     })
     .then((savedOrder) => {
-      message.headings.en = +savedOrder.id;
+      message.headings.en = savedOrder.id + "";
       message.contents.en = `New Order Placed \n${order.title}. \nPick at ${order.from_address}`;
       if(savedOrder.pilot){
         message.data = savedOrder;
@@ -188,7 +188,7 @@ function updateOrder(order){
                       io && io.emit('ORDER_UPDATED', updatedOrder );
                       message.filters = [{'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'}];
                       message.contents.en = `Order Update \n${updatedOrder.title}. \nStatus ${updatedOrder.status}`;
-                      message.headings.en = +updatedOrder.id;
+                      message.headings.en = updatedOrder.id + "";
                       sendNotification(message);
                     }
                     if(updatedOrder.pilot) {
