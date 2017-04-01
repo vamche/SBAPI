@@ -6,6 +6,7 @@ import { assign, unAssign, uploadImgAsync,
 import BPromise from 'bluebird';
 import cloudinary from 'cloudinary';
 import Manager from '../models/manager.model';
+import Pilot from '../models/pilot.model';
 import Customer from '../models/customer.model';
 import Franchise from '../models/franchise.model';
 import Team from '../models/franchise.model';
@@ -189,7 +190,18 @@ function updateOrder(order){
                       message.headings.en = +updatedOrder.id;
                       sendNotification(message);
                     }
-                    resolve(updatedOrder);
+                    if(updatedOrder.pilot) {
+                      Pilot.get(updatedOrder.pilot)
+                        .then(pilot => {
+                          pilot.isActive = false;
+                          pilot.save()
+                            .then(() => {
+                              resolve(updatedOrder);
+                            })
+                            .catch(e => reject(e));
+                        })
+                        .catch(e => reject(e));
+                    }
                   })
                   .catch(e => reject(e));
             })

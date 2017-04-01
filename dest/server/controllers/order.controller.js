@@ -28,6 +28,10 @@ var _manager = require('../models/manager.model');
 
 var _manager2 = _interopRequireDefault(_manager);
 
+var _pilot = require('../models/pilot.model');
+
+var _pilot2 = _interopRequireDefault(_pilot);
+
 var _customer2 = require('../models/customer.model');
 
 var _customer3 = _interopRequireDefault(_customer2);
@@ -218,7 +222,18 @@ function updateOrder(order) {
             _send.message.headings.en = +updatedOrder.id;
             (0, _send.sendNotification)(_send.message);
           }
-          resolve(updatedOrder);
+          if (updatedOrder.pilot) {
+            _pilot2.default.get(updatedOrder.pilot).then(function (pilot) {
+              pilot.isActive = false;
+              pilot.save().then(function () {
+                resolve(updatedOrder);
+              }).catch(function (e) {
+                return reject(e);
+              });
+            }).catch(function (e) {
+              return reject(e);
+            });
+          }
         }).catch(function (e) {
           return reject(e);
         });
