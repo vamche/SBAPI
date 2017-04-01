@@ -120,7 +120,7 @@ function createOrder(req, res, next) {
       return savedOrder;
     }
   }).then(function (savedOrder) {
-    _send.message.headings.en = savedOrder.id;
+    _send.message.headings.en = +savedOrder.id;
     _send.message.contents.en = 'New Order Placed \n' + order.title + '. \nPick at ' + order.from_address;
     if (savedOrder.pilot) {
       _send.message.data = savedOrder;
@@ -215,7 +215,7 @@ function updateOrder(order) {
             _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
             _send.message.filters = [{ 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
             _send.message.contents.en = 'Order Update \n' + updatedOrder.title + '. \nStatus ' + updatedOrder.status;
-            _send.message.headings.en = updatedOrder.id;
+            _send.message.headings.en = +updatedOrder.id;
             (0, _send.sendNotification)(_send.message);
           }
           resolve(updatedOrder);
