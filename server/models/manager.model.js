@@ -63,8 +63,9 @@ ManagerSchema.statics = {
    * @param {ObjectId} id - The objectId of Manager.
    * @returns {Promise<User, APIError>}
    */
-  get(id) {
+  get(id, franchise) {
     return this.findById(id)
+      .where('franchise', franchise)
       .populate('user')
       .exec()
       .then((order) => {

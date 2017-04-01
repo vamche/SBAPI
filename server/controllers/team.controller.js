@@ -88,13 +88,13 @@ function getSales(req, res, next){
   let promises;
   const franchise = req.body.franchise;
   Team.find()
-          .then(teams => {
+    .where('franchise', franchise)
+    .then(teams => {
               promises = teams.map(team => {
                   let total = 0;
                   let numberOfOrders = 0;
                   const p = Order.find()
                       .where('team', team._id.toString())
-                      .where('franchise', franchise)
                       .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
                       .then(orders => {
                           orders.forEach(order => {

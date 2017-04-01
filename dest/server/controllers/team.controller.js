@@ -123,11 +123,11 @@ function getSales(req, res, next) {
   var sales = []; // Array of {_id: String, title: String, sales: String}
   var promises = void 0;
   var franchise = req.body.franchise;
-  _team2.default.find().then(function (teams) {
+  _team2.default.find().where('franchise', franchise).then(function (teams) {
     promises = teams.map(function (team) {
       var total = 0;
       var numberOfOrders = 0;
-      var p = _order2.default.find().where('team', team._id.toString()).where('franchise', franchise).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day')).then(function (orders) {
+      var p = _order2.default.find().where('team', team._id.toString()).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day')).then(function (orders) {
         orders.forEach(function (order) {
           total += order.final_cost;
           numberOfOrders++;

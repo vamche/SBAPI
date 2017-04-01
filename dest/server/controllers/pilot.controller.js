@@ -491,10 +491,11 @@ function listByManager(req, res, next) {
       skip = _req$query2$skip === undefined ? 0 : _req$query2$skip;
   var _req$body5 = req.body,
       team = _req$body5.team,
-      manager = _req$body5.manager;
+      manager = _req$body5.manager,
+      franchise = _req$body5.franchise;
 
   if (!team || team === '' || team === '*' || team === 'ALL') {
-    _manager2.default.get(req.body.manager).then(function (manager) {
+    _manager2.default.get(manager, franchise).then(function (manager) {
       if (manager.isAdmin) {
         _pilot2.default.list({ limit: limit, skip: skip }).then(function (pilots) {
           return res.json(pilots);
