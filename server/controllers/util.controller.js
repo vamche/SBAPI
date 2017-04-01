@@ -46,7 +46,7 @@ function assign(order, pilotId = '', franchise = null){
           return pilot.save(pilot)
             .then(pilot => {
               order.pilot = pilot._id;
-              return order.save(order);
+              return order.save();
             });
         }else {
           return order;

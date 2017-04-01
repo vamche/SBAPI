@@ -14,6 +14,10 @@ const OrderSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  value: {
+    type: Number,
+    default: 0
+  },
   title: {
     type: String,
     required: false
