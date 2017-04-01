@@ -495,7 +495,7 @@ function listByManager(req, res, next) {
       franchise = _req$body5.franchise;
 
   if (!team || team === '' || team === '*' || team === 'ALL') {
-    _manager2.default.get(manager, franchise).then(function (manager) {
+    _manager2.default.get(manager).then(function (manager) {
       if (manager.isAdmin) {
         _pilot2.default.list({ limit: limit, skip: skip }).then(function (pilots) {
           return res.json(pilots);
@@ -503,17 +503,13 @@ function listByManager(req, res, next) {
           return next(e);
         });
       } else if (manager.isFranchiseAdmin) {
-        _franchise2.default.get(manager.franchise).then(function (franchise) {
-          _pilot2.default.list({ limit: limit, skip: skip }).where('teams').in(franchise.teams).then(function (pilots) {
-            return res.json(pilots);
-          }).catch(function (e) {
-            return next(e);
-          });
+        _pilot2.default.listByFranchise({ limit: limit, skip: skip, franchise: franchise }).then(function (pilots) {
+          return res.json(pilots);
         }).catch(function (e) {
           return next(e);
         });
       } else {
-        _pilot2.default.list({ limit: limit, skip: skip }).where('teams').in(manager.teams).then(function (pilots) {
+        _pilot2.default.find().where('teams').in(manager.teams).then(function (pilots) {
           return res.json(pilots);
         }).catch(function (e) {
           return next(e);

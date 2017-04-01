@@ -47,6 +47,8 @@ var ManagerSchema = new _mongoose2.default.Schema({
   },
   franchise: {
     type: String,
+    ref: 'Franchise',
+    default: null,
     required: false
   },
   registration_status: {
@@ -81,7 +83,7 @@ ManagerSchema.statics = {
    * @param {ObjectId} id - The objectId of Manager.
    * @returns {Promise<User, APIError>}
    */
-  get: function get(id, franchise) {
+  get: function get(id) {
     return this.findById(id).where('franchise', franchise).populate('user').exec().then(function (order) {
       if (order) {
         return order;

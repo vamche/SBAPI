@@ -436,23 +436,18 @@ function listByManager(req, res, next) {
   const { limit = 500, skip = 0 } = req.query;
   const { team, manager, franchise } = req.body;
   if(!team || team === '' || team === '*' || team === 'ALL'){
-    Manager.get(manager, franchise)
+    Manager.get(manager)
       .then(manager => {
         if(manager.isAdmin){
           Pilot.list({ limit, skip })
             .then(pilots => res.json(pilots))
             .catch(e => next(e));
         }else if(manager.isFranchiseAdmin) {
-          Franchise.get(manager.franchise)
-            .then(franchise => {
-              Pilot.list({ limit, skip })
-                .where('teams').in(franchise.teams)
-                .then(pilots => res.json(pilots))
-                .catch(e => next(e));
-            })
+          Pilot.listByFranchise({ limit, skip, franchise})
+            .then(pilots => res.json(pilots))
             .catch(e => next(e));
         }else {
-          Pilot.list({ limit, skip })
+          Pilot.find()
             .where('teams').in(manager.teams)
             .then(pilots => res.json(pilots))
             .catch(e => next(e));
