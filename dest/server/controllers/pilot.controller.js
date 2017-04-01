@@ -281,10 +281,11 @@ function getSales(req, res, next) {
 
   var sales = []; // Array of {_id: String, title: String, sales: String}
   var promises = void 0;
+  var franchise = req.body.franchise;
   _pilot2.default.find().then(function (pilots) {
     promises = pilots.map(function (pilot) {
       var total = 0;
-      var p = _order2.default.find().where('pilot', pilot._id.toString()).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day')).then(function (orders) {
+      var p = _order2.default.find().where('pilot', pilot._id.toString()).where('franchise', franchise).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day')).then(function (orders) {
         orders.forEach(function (order) {
           total = total + order.final_cost;
         });
@@ -453,7 +454,10 @@ function stats(req, res, next) {
   var teams = [];
   var team = req.body.team;
   var getPilots = void 0;
-  if (team && team != '*' && team != 'ALL' && teams != '') {
+  var franchise = req.body.frnachise;
+  if (franchise) {
+    getPilots = _pilot2.default.find().where('franchise', franchise);
+  } else if (team && team != '*' && team != 'ALL' && teams != '') {
     teams = [team];
     getPilots = _pilot2.default.find().where('teams').in(teams);
   } else {

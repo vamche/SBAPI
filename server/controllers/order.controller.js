@@ -269,8 +269,9 @@ function listByPilotAndDate(req, res, next) {
 function listByDate(req, res, next) {
     const { limit = 500, skip = 0 } = req.query;
     const { date, timeZone } = req.body;
+    const franchise = req.body.franchise;
 
-    if (req.body.franchise) {
+    if (franchise) {
       const customer = req.body.customer;
       Order.listByFranchiseAndDate({date, timeZone, franchise, limit, skip})
         .then(orders => res.json(orders))

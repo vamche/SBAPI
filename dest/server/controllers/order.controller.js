@@ -324,8 +324,9 @@ function listByDate(req, res, next) {
       date = _req$body2.date,
       timeZone = _req$body2.timeZone;
 
+  var franchise = req.body.franchise;
 
-  if (req.body.franchise) {
+  if (franchise) {
     var customer = req.body.customer;
     _order2.default.listByFranchiseAndDate({ date: date, timeZone: timeZone, franchise: franchise, limit: limit, skip: skip }).then(function (orders) {
       return res.json(orders);

@@ -234,12 +234,14 @@ function getSales(req, res, next){
     const { fromDate = moment().format('YYYYMMDD'), toDate = moment().format('YYYYMMDD') } = req.body;
     let sales = []; // Array of {_id: String, title: String, sales: String}
     let promises;
+    const franchise = req.body.franchise;
     Pilot.find()
         .then(pilots => {
             promises = pilots.map(pilot => {
                 let total = 0;
                 const p = Order.find()
                     .where('pilot', pilot._id.toString())
+                    .where('franchise', franchise)
                     .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
                     .then(orders => {
                         orders.forEach(order => {
@@ -398,7 +400,11 @@ function stats(req, res, next){
     let teams = [];
     const team = req.body.team;
     let getPilots;
-    if (team && team != '*' && team != 'ALL' && teams != '') {
+    const franchise = req.body.frnachise;
+    if(franchise) {
+      getPilots = Pilot.find()
+        .where('franchise', franchise);
+    } else if (team && team != '*' && team != 'ALL' && teams != '') {
       teams = [team];
       getPilots = Pilot.find()
         .where('teams').in(teams);
