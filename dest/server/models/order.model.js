@@ -329,7 +329,7 @@ OrderSchema.statics = {
         limit = _ref4$limit === undefined ? 1000 : _ref4$limit;
 
     var diffInMinutes = (0, _momentTimezone2.default)().tz(timeZone).utcOffset();
-    return this.find().where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).populate('attachments').populate('team').populate({
+    return this.find().where('franchise', null).where('createdAt').gte((0, _momentTimezone2.default)(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _momentTimezone2.default)(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).populate('attachments').populate('team').populate({
       path: 'pilot',
       populate: { path: 'user' } }).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },

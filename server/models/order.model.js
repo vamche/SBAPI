@@ -308,6 +308,7 @@ OrderSchema.statics = {
   listByDate({ date, timeZone = 'Europe/London', skip = 0, limit = 1000 } = {}) {
     const diffInMinutes = moment().tz(timeZone).utcOffset();
         return this.find()
+            .where('franchise' , null)
             .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes'))
                               .lte(moment(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes'))
             .populate('attachments')
