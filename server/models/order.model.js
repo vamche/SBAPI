@@ -181,7 +181,8 @@ const OrderSchema = new mongoose.Schema({
   },
   paymentType: {
     type: String, // mongoose.Schema.ObjectId,
-    required: false
+    required: false,
+    default: 'PREPAID'
   },
   createdByUserRole: {
     type: String,

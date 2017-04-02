@@ -203,7 +203,8 @@ var OrderSchema = new _mongoose2.default.Schema({
   },
   paymentType: {
     type: String, // mongoose.Schema.ObjectId,
-    required: false
+    required: false,
+    default: 'PREPAID'
   },
   createdByUserRole: {
     type: String,
