@@ -192,6 +192,20 @@ function calculateDistanceBetweenLatLongs(coordinates){
   return geolib.getPathLength(latLongs);
 }
 
+
+/**
+ * Returns distance in meters
+ * @param coordinates
+ * @returns {*}
+ */
+function calculateDistancePickedToDelivery(order){
+  order.timeline.forEach(status => {
+      if(status.indexOf('STARTED') > -1) {
+        const lonLat = status[2];
+      }
+  });
+}
+
 /**
  * Final Cost in INR
  * @param distance

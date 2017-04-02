@@ -435,11 +435,12 @@ function stats(req, res, next){
 function listByManager(req, res, next) {
   const { limit = 500, skip = 0 } = req.query;
   const { team, manager, franchise } = req.body;
+
   if(!team || team === '' || team === '*' || team === 'ALL'){
     Manager.get(manager)
       .then(manager => {
         if(manager.isAdmin){
-          Pilot.list({ limit, skip })
+          Pilot.list({ limit, skip, franchise })
             .then(pilots => res.json(pilots))
             .catch(e => next(e));
         }else if(manager.isFranchiseAdmin) {
@@ -448,6 +449,7 @@ function listByManager(req, res, next) {
             .catch(e => next(e));
         }else {
           Pilot.find()
+            .where('franchise', franchise)
             .where('teams').in(manager.teams)
             .then(pilots => res.json(pilots))
             .catch(e => next(e));

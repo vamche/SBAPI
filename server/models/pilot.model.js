@@ -154,8 +154,9 @@ PilotSchema.statics = {
    * @param {number} limit - Limit number of pilots to be returned.
    * @returns {Promise<Pilot[]>}
    */
-  list({ skip = 0, limit = 50 } = {}) {
+  list({ skip = 0, limit = 50, franchise = null } = {}) {
     return this.find()
+      .where('franchise', franchise)
       .populate('user')
       .sort({ createdAt: -1 })
       .skip(skip)

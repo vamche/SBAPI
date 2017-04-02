@@ -495,10 +495,11 @@ function listByManager(req, res, next) {
       manager = _req$body5.manager,
       franchise = _req$body5.franchise;
 
+
   if (!team || team === '' || team === '*' || team === 'ALL') {
     _manager2.default.get(manager).then(function (manager) {
       if (manager.isAdmin) {
-        _pilot2.default.list({ limit: limit, skip: skip }).then(function (pilots) {
+        _pilot2.default.list({ limit: limit, skip: skip, franchise: franchise }).then(function (pilots) {
           return res.json(pilots);
         }).catch(function (e) {
           return next(e);
@@ -510,7 +511,7 @@ function listByManager(req, res, next) {
           return next(e);
         });
       } else {
-        _pilot2.default.find().where('teams').in(manager.teams).then(function (pilots) {
+        _pilot2.default.find().where('franchise', franchise).where('teams').in(manager.teams).then(function (pilots) {
           return res.json(pilots);
         }).catch(function (e) {
           return next(e);

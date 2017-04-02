@@ -196,6 +196,19 @@ function calculateDistanceBetweenLatLongs(coordinates) {
 }
 
 /**
+ * Returns distance in meters
+ * @param coordinates
+ * @returns {*}
+ */
+function calculateDistancePickedToDelivery(order) {
+  order.timeline.forEach(function (status) {
+    if (status.indexOf('STARTED') > -1) {
+      var lonLat = status[2];
+    }
+  });
+}
+
+/**
  * Final Cost in INR
  * @param distance
  * @param timeInSeconds

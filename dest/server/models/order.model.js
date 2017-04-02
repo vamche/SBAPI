@@ -193,6 +193,10 @@ var OrderSchema = new _mongoose2.default.Schema({
     type: Number,
     default: 0
   },
+  distance_picked_to_delivery_in_meters: {
+    type: Number,
+    default: 0
+  },
   time_in_seconds: {
     type: Number,
     default: 0

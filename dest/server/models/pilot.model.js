@@ -171,9 +171,11 @@ PilotSchema.statics = {
         _ref$skip = _ref.skip,
         skip = _ref$skip === undefined ? 0 : _ref$skip,
         _ref$limit = _ref.limit,
-        limit = _ref$limit === undefined ? 50 : _ref$limit;
+        limit = _ref$limit === undefined ? 50 : _ref$limit,
+        _ref$franchise = _ref.franchise,
+        franchise = _ref$franchise === undefined ? null : _ref$franchise;
 
-    return this.find().populate('user').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+    return this.find().where('franchise', franchise).populate('user').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   },
   listByFranchise: function listByFranchise() {
     var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
