@@ -210,6 +210,7 @@ function calculateFinalCost(distance, timeInSeconds) {
   var tax = 15;
   if (distance < minDistance) {
     finalCost = baseFare;
+    finalCost += finalCost * (tax / 100);
   } else {
     finalCost = baseFare + (distance - minDistance) / 1000 * perKM; //+ ((timeInSeconds/3600)*perHour);
     finalCost += finalCost * (tax / 100);
