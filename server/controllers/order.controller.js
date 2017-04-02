@@ -153,7 +153,7 @@ function updateOrder(order){
           if(order.status === 'COMPLETED') {
             const distance = calculateDistanceBetweenLatLongs(order.pilot_movement.coordinates);
             const duration = calculateDuration(order.pilot_start_date_time, order.pilot_completed_date_time);
-            const pickUpToDeliveryDistance = calculateDistancePickedToDelivery(order);
+            const pickUpToDeliveryDistance = calculateDistancePickedToDelivery(order.timeline, order.pilot_movement);
             tobeUpdatedOrder.distance_in_meters = +distance.toFixed(2);
             tobeUpdatedOrder.distance_picked_to_delivery_in_meters = +pickUpToDeliveryDistance.toFixed(2);
             tobeUpdatedOrder.time_in_seconds = duration;

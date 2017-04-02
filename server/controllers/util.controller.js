@@ -199,11 +199,13 @@ function calculateDistanceBetweenLatLongs(coordinates){
  * @param coordinates
  * @returns {*}
  */
-function calculateDistancePickedToDelivery(order){
-  order.timeline.forEach(status => {
+function calculateDistancePickedToDelivery(timeline, orderPilotMovement){
+
+  for(i=0; i < timeline.length; i++ ){
+    const status = timeline[i];
     if(status.indexOf('PICKED') > -1) {
       const lonLats = status[2].split(',');
-      const pilot_movement = order.pilot_movement.coordinates;
+      const pilot_movement = orderPilotMovement.coordinates;
       if(pilot_movement.length > 0){
         let hash = {};
         for(var i = 0 ; i < pilot_movement.length; i += 1) {
@@ -212,9 +214,8 @@ function calculateDistancePickedToDelivery(order){
         console.log('out' + lonLats);
         if(hash.hasOwnProperty(lonLats)) {
           console.log('in' + lonLats);
-          const pickedToDeliveryCoordinates = pilot_movement.slice(hash[lonLats], pilot_movement.length);
-          console.log('len' + pickedToDeliveryCoordinates.length);
-          return calculateDistanceBetweenLatLongs(pickedToDeliveryCoordinates);
+          const d = calculateDistanceBetweenLatLongs(pilot_movement.slice(hash[lonLats], pilot_movement.length));
+          return d;
         } else {
           return calculateDistanceBetweenLatLongs(pilot_movement);
         }
@@ -222,9 +223,12 @@ function calculateDistancePickedToDelivery(order){
         return 0;
       }
     }
-    return 0;
-  });
+  }
+
+
 }
+
+
 
 /**
  * Final Cost in INR
@@ -263,4 +267,5 @@ function calculateDuration(fromTime, toTime) {
 
 
 export default { assign, unAssign, uploadImgAsync, assignPending,
-  calculateDistanceBetweenLatLongs, calculateDuration, calculateFinalCost, calculateDistancePickedToDelivery };
+  calculateDistanceBetweenLatLongs, calculateDuration, calculateFinalCost,
+  calculateDistancePickedToDelivery };

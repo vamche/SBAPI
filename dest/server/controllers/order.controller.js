@@ -179,7 +179,7 @@ function updateOrder(order) {
       if (order.status === 'COMPLETED') {
         var distance = (0, _util.calculateDistanceBetweenLatLongs)(order.pilot_movement.coordinates);
         var duration = (0, _util.calculateDuration)(order.pilot_start_date_time, order.pilot_completed_date_time);
-        var pickUpToDeliveryDistance = (0, _util.calculateDistancePickedToDelivery)(order);
+        var pickUpToDeliveryDistance = (0, _util.calculateDistancePickedToDelivery)(order.timeline, order.pilot_movement);
         tobeUpdatedOrder.distance_in_meters = +distance.toFixed(2);
         tobeUpdatedOrder.distance_picked_to_delivery_in_meters = +pickUpToDeliveryDistance.toFixed(2);
         tobeUpdatedOrder.time_in_seconds = duration;

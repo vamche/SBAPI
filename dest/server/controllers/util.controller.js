@@ -201,11 +201,13 @@ function calculateDistanceBetweenLatLongs(coordinates) {
  * @param coordinates
  * @returns {*}
  */
-function calculateDistancePickedToDelivery(order) {
-  order.timeline.forEach(function (status) {
+function calculateDistancePickedToDelivery(timeline, orderPilotMovement) {
+
+  for (i = 0; i < timeline.length; i++) {
+    var status = timeline[i];
     if (status.indexOf('PICKED') > -1) {
       var lonLats = status[2].split(',');
-      var pilot_movement = order.pilot_movement.coordinates;
+      var pilot_movement = orderPilotMovement.coordinates;
       if (pilot_movement.length > 0) {
         var hash = {};
         for (var i = 0; i < pilot_movement.length; i += 1) {
@@ -214,9 +216,8 @@ function calculateDistancePickedToDelivery(order) {
         console.log('out' + lonLats);
         if (hash.hasOwnProperty(lonLats)) {
           console.log('in' + lonLats);
-          var pickedToDeliveryCoordinates = pilot_movement.slice(hash[lonLats], pilot_movement.length);
-          console.log('len' + pickedToDeliveryCoordinates.length);
-          return calculateDistanceBetweenLatLongs(pickedToDeliveryCoordinates);
+          var d = calculateDistanceBetweenLatLongs(pilot_movement.slice(hash[lonLats], pilot_movement.length));
+          return d;
         } else {
           return calculateDistanceBetweenLatLongs(pilot_movement);
         }
@@ -224,8 +225,7 @@ function calculateDistancePickedToDelivery(order) {
         return 0;
       }
     }
-    return 0;
-  });
+  }
 }
 
 /**
@@ -262,6 +262,7 @@ function calculateDuration(fromTime, toTime) {
 }
 
 exports.default = { assign: assign, unAssign: unAssign, uploadImgAsync: uploadImgAsync, assignPending: assignPending,
-  calculateDistanceBetweenLatLongs: calculateDistanceBetweenLatLongs, calculateDuration: calculateDuration, calculateFinalCost: calculateFinalCost, calculateDistancePickedToDelivery: calculateDistancePickedToDelivery };
+  calculateDistanceBetweenLatLongs: calculateDistanceBetweenLatLongs, calculateDuration: calculateDuration, calculateFinalCost: calculateFinalCost,
+  calculateDistancePickedToDelivery: calculateDistancePickedToDelivery };
 module.exports = exports['default'];
 //# sourceMappingURL=util.controller.js.map
