@@ -460,9 +460,9 @@ function stats(req, res, next) {
     getPilots = _pilot2.default.find().where('franchise', franchise);
   } else if (team && team != '*' && team != 'ALL' && teams != '') {
     teams = [team];
-    getPilots = _pilot2.default.find().where('teams').in(teams);
+    getPilots = _pilot2.default.find().where('franchise', franchise).where('teams').in(teams);
   } else {
-    getPilots = _pilot2.default.find();
+    getPilots = _pilot2.default.find().where('franchise', franchise);
   }
   getPilots.then(function (pilots) {
     var stats = {

@@ -192,6 +192,7 @@ function calculateDistanceBetweenLatLongs(coordinates) {
       longitude: coordinate[0]
     };
   });
+  console.log('d ' + _geolib2.default.getPathLength(latLongs));
   return _geolib2.default.getPathLength(latLongs);
 }
 
@@ -204,15 +205,17 @@ function calculateDistancePickedToDelivery(order) {
   order.timeline.forEach(function (status) {
     if (status.indexOf('PICKED') > -1) {
       var lonLats = status[2].split(',');
-      console.log(lonLats);
       var pilot_movement = order.pilot_movement.coordinates;
       if (pilot_movement.length > 0) {
         var hash = {};
         for (var i = 0; i < pilot_movement.length; i += 1) {
           hash[pilot_movement[i]] = i;
         }
+        console.log('out' + lonLats);
         if (hash.hasOwnProperty(lonLats)) {
+          console.log('in' + lonLats);
           var pickedToDeliveryCoordinates = pilot_movement.slice(hash[lonLats], pilot_movement.length);
+          console.log('len' + pickedToDeliveryCoordinates.length);
           return calculateDistanceBetweenLatLongs(pickedToDeliveryCoordinates);
         } else {
           return calculateDistanceBetweenLatLongs(pilot_movement);
@@ -221,6 +224,7 @@ function calculateDistancePickedToDelivery(order) {
         return 0;
       }
     }
+    return 0;
   });
 }
 

@@ -407,9 +407,10 @@ function stats(req, res, next){
     } else if (team && team != '*' && team != 'ALL' && teams != '') {
       teams = [team];
       getPilots = Pilot.find()
+        .where('franchise', franchise)
         .where('teams').in(teams);
     }else {
-      getPilots = Pilot.find();
+      getPilots = Pilot.find().where('franchise', franchise);
     }
       getPilots
       .then(pilots => {
