@@ -127,9 +127,11 @@ function createOrder(req, res, next) {
   }).then(function (savedOrder) {
     _send.message.headings.en = savedOrder.id + "";
     _send.message.contents.en = 'New Order Placed \n' + order.title + '. \nPick at ' + order.from_address;
+    _send.message.data = savedOrder;
     if (savedOrder.pilot) {
-      _send.message.data = savedOrder;
       _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
+    } else {
+      _send.message.filters = [{ 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
     }
     //sendSMS(`91${savedOrder.to_phone}`, `Your delivery is on its way.`, 4);
     _express.io && _express.io.emit('ORDER_ADDED', savedOrder);
