@@ -79,7 +79,7 @@ function createOrder(req, res, next, franchise = null) {
     team: req.body.team,
     createdBy: req.body.createdBy,
     createdByUserRole: req.body.createdByUserRole,
-    franchise: franchise,
+    franchise: franchise ? franchise : req.body.franchise,
     value: req.body.value ? req.body.value : 0,
     pilot: req.body.pilot ? (new mongoose.Types.ObjectId(req.body.pilot)) : null
   });
