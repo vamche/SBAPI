@@ -2,7 +2,8 @@ import Order from '../models/order.model';
 import Attachment from '../models/attachment.model';
 import { sendNotification, message, sendSMS } from '../notifications/send';
 import { assign, unAssign, uploadImgAsync,
-  calculateDistanceBetweenLatLongs, calculateDuration, calculateFinalCost } from './util.controller';
+  calculateDistanceBetweenLatLongs, calculateDuration,
+  calculateFinalCost, calculateDistancePickedToDelivery } from './util.controller';
 import BPromise from 'bluebird';
 import cloudinary from 'cloudinary';
 import Manager from '../models/manager.model';
@@ -152,9 +153,11 @@ function updateOrder(order){
           if(order.status === 'COMPLETED') {
             const distance = calculateDistanceBetweenLatLongs(order.pilot_movement.coordinates);
             const duration = calculateDuration(order.pilot_start_date_time, order.pilot_completed_date_time);
+            const pickUpToDeliveryDistance = calculateDistancePickedToDelivery(order);
             tobeUpdatedOrder.distance_in_meters = +distance.toFixed(2);
+            tobeUpdatedOrder.distance_picked_to_delivery_in_meters = +pickUpToDeliveryDistance.toFixed(2);
             tobeUpdatedOrder.time_in_seconds = duration;
-            tobeUpdatedOrder.final_cost = +calculateFinalCost(distance, duration).toFixed(2);
+            tobeUpdatedOrder.final_cost = +calculateFinalCost(pickUpToDeliveryDistance, duration).toFixed(2);
           }
 
           let attachmentsTobeUploaded = order.attachments.filter(a => !a.uploaded);

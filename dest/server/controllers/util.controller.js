@@ -202,8 +202,24 @@ function calculateDistanceBetweenLatLongs(coordinates) {
  */
 function calculateDistancePickedToDelivery(order) {
   order.timeline.forEach(function (status) {
-    if (status.indexOf('STARTED') > -1) {
-      var lonLat = status[2];
+    if (status.indexOf('PICKED') > -1) {
+      var lonLats = status[2].split(',');
+      console.log(lonLats);
+      var pilot_movement = order.pilot_movement.coordinates;
+      if (pilot_movement.length > 0) {
+        var hash = {};
+        for (var i = 0; i < pilot_movement.length; i += 1) {
+          hash[pilot_movement[i]] = i;
+        }
+        if (hash.hasOwnProperty(lonLats)) {
+          var pickedToDeliveryCoordinates = pilot_movement.slice(hash[lonLats], pilot_movement.length);
+          return calculateDistanceBetweenLatLongs(pickedToDeliveryCoordinates);
+        } else {
+          return calculateDistanceBetweenLatLongs(pilot_movement);
+        }
+      } else {
+        return 0;
+      }
     }
   });
 }
@@ -242,6 +258,6 @@ function calculateDuration(fromTime, toTime) {
 }
 
 exports.default = { assign: assign, unAssign: unAssign, uploadImgAsync: uploadImgAsync, assignPending: assignPending,
-  calculateDistanceBetweenLatLongs: calculateDistanceBetweenLatLongs, calculateDuration: calculateDuration, calculateFinalCost: calculateFinalCost };
+  calculateDistanceBetweenLatLongs: calculateDistanceBetweenLatLongs, calculateDuration: calculateDuration, calculateFinalCost: calculateFinalCost, calculateDistancePickedToDelivery: calculateDistancePickedToDelivery };
 module.exports = exports['default'];
 //# sourceMappingURL=util.controller.js.map
