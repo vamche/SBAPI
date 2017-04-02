@@ -102,7 +102,7 @@ function createOrder(req, res, next, franchise = null) {
           {'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'}
         ];
       }
-      sendSMS(`91${savedOrder.to_phone}`, `Your delivery is on its way.`, 4);
+      //sendSMS(`91${savedOrder.to_phone}`, `Your delivery is on its way.`, 4);
       io && io.emit('ORDER_ADDED', savedOrder);
       sendNotification(message);
       res.json(savedOrder)
@@ -195,6 +195,9 @@ function updateOrder(order){
                       Pilot.get(updatedOrder.pilot)
                         .then(pilot => {
                           pilot.isActive = false;
+                          if(statusChanged && updatedOrder === 'STARTED') {
+                            sendSMS(`91${updatedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${pilot.user.firstName} (${pilot.user.mobileNumber}) will deliver it in short time.`, 4);
+                          }
                           pilot.save()
                             .then(() => {
                               resolve(updatedOrder);

@@ -131,7 +131,7 @@ function createOrder(req, res, next) {
       _send.message.data = savedOrder;
       _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
     }
-    (0, _send.sendSMS)('91' + savedOrder.to_phone, 'Your delivery is on its way.', 4);
+    //sendSMS(`91${savedOrder.to_phone}`, `Your delivery is on its way.`, 4);
     _express.io && _express.io.emit('ORDER_ADDED', savedOrder);
     (0, _send.sendNotification)(_send.message);
     res.json(savedOrder);
@@ -226,6 +226,9 @@ function updateOrder(order) {
           if (updatedOrder.pilot) {
             _pilot2.default.get(updatedOrder.pilot).then(function (pilot) {
               pilot.isActive = false;
+              if (statusChanged && updatedOrder === 'STARTED') {
+                (0, _send.sendSMS)('91' + updatedOrder.to_phone, 'Hurray! Your delivery is on its way. Our member ' + pilot.user.firstName + ' (' + pilot.user.mobileNumber + ') will deliver it in short time.', 4);
+              }
               pilot.save().then(function () {
                 resolve(updatedOrder);
               }).catch(function (e) {

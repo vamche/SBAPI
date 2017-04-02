@@ -128,8 +128,7 @@ function create(req, res, next) {
         pilot.save()
           .then(savedPilot => {
             sendSMS(`91${savedUser.mobileNumber}`,
-              `Hi ${savedUser.firstName}, you have been added as a SB Pilot by Seasonboy. Download the app from play store. 
-               Username: ${savedUser.username} & Password: ${savedUser.password}`, 4);
+              `Hi ${savedUser.firstName}, you have been added as a SB Pilot by Seasonboy. Download the app from play store. Username: ${savedUser.username}  Password: ${savedUser.password}`, 4);
             res.json(savedPilot);
           })
           .catch(e => next(e));

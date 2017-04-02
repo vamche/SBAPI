@@ -202,15 +202,17 @@ function calculateDistanceBetweenLatLongs(coordinates) {
  * @returns {number}
  */
 function calculateFinalCost(distance, timeInSeconds) {
-  var minDistance = 4000;
-  var baseFare = 50;
+  var minDistance = 4500;
+  var baseFare = 45;
   var finalCost = 0;
   var perKM = 10;
   var perHour = 10;
+  var tax = 15;
   if (distance < minDistance) {
     finalCost = baseFare;
   } else {
-    finalCost = baseFare + (distance - minDistance) / 1000 * perKM + timeInSeconds / 3600 * perHour;
+    finalCost = baseFare + (distance - minDistance) / 1000 * perKM; //+ ((timeInSeconds/3600)*perHour);
+    finalCost += finalCost * (tax / 100);
   }
   return finalCost;
 }

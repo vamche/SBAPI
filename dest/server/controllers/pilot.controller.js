@@ -153,7 +153,7 @@ function create(req, res, next) {
         teams: req.body.teams
       });
       pilot.save().then(function (savedPilot) {
-        sendSMS('91' + savedUser.mobileNumber, 'Hi ' + savedUser.firstName + ', you have been added as a SB Pilot by Seasonboy. Download the app from play store. \n               Username: ' + savedUser.username + ' & Password: ' + savedUser.password, 4);
+        sendSMS('91' + savedUser.mobileNumber, 'Hi ' + savedUser.firstName + ', you have been added as a SB Pilot by Seasonboy. Download the app from play store. Username: ' + savedUser.username + '  Password: ' + savedUser.password, 4);
         res.json(savedPilot);
       }).catch(function (e) {
         return next(e);
