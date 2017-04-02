@@ -93,7 +93,7 @@ function createOrder(req, res, next, franchise = null) {
     })
     .then((savedOrder) => {
       message.headings.en = savedOrder.id + "";
-      message.contents.en = `New Order Placed \n${order.title}. \nPick at ${order.from_address}`;
+      message.contents.en = `New Order Placed. \nPick at ${order.from_address}`;
       message.data = savedOrder;
       if(savedOrder.pilot){
         message.filters = [

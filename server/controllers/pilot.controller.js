@@ -123,7 +123,8 @@ function create(req, res, next) {
       .then(savedUser => {
         const pilot = new Pilot({
           user : savedUser._id,
-          teams : req.body.teams
+          teams : req.body.teams,
+          franchise : req.body.franchise ? req.body.franchise : null
         });
         pilot.save()
           .then(savedPilot => {

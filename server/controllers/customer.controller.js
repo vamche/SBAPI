@@ -47,6 +47,7 @@ function create(req, res, next) {
         isMerchant : req.body.isMerchant,
         teams : req.body.teams,
         location : req.body.location,
+        address : req.body.address,
         name : req.body.name,
         franchise : req.body.franchise ? req.body.franchise : null
       });

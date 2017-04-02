@@ -150,7 +150,8 @@ function create(req, res, next) {
     user.save().then(function (savedUser) {
       var pilot = new _pilot2.default({
         user: savedUser._id,
-        teams: req.body.teams
+        teams: req.body.teams,
+        franchise: req.body.franchise ? req.body.franchise : null
       });
       pilot.save().then(function (savedPilot) {
         sendSMS('91' + savedUser.mobileNumber, 'Hi ' + savedUser.firstName + ', you have been added as a SB Pilot by Seasonboy. Download the app from play store. Username: ' + savedUser.username + '  Password: ' + savedUser.password, 4);
