@@ -76,7 +76,7 @@ function get(req, res) {
  */
 function create(req, res, next) {
 
-  if (req.body.createdByUserRole === 'MERCHANT') {
+  if (req.body.createdByUserRole === 'CUSTOMER') {
     _franchise2.default.findFranchiseContainingLocation(req.body.from_location).then(function (results) {
       if (results.length !== 0) {
         createOrder(req, res, next, results[0]._id);
