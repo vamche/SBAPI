@@ -132,7 +132,7 @@ function assignPending() {
               _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
               (0, _send.sendNotification)(_send.message);
               console.info("Order Assigned :: " + updatedOrder.title + " :: " + updatedOrder.pilot.toString());
-              sendSMS('91' + updatedOrder.to_phone, 'Hurray! Your delivery is on its way. Our member ' + pilot.user.firstName + ' (' + pilot.user.mobileNumber + ') will deliver it in short time.', 4);
+              (0, _send.sendSMS)('91' + updatedOrder.to_phone, 'Hurray! Your delivery is on its way. Our member ' + pilot.user.firstName + ' (' + pilot.user.mobileNumber + ') will deliver it in short time.', 4);
               pilot.save();
             });
           }
@@ -171,7 +171,7 @@ function assignPending() {
               _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
               (0, _send.sendNotification)(_send.message);
               console.info("Order Assigned :: " + updatedOrder.title + " :: " + updatedOrder.pilot.toString());
-              sendSMS('91' + updatedOrder.to_phone, 'Hurray! Your delivery is on its way. Our member ' + pilot.user.firstName + ' (' + pilot.user.mobileNumber + ') will deliver it in short time.', 4);
+              (0, _send.sendSMS)('91' + updatedOrder.to_phone, 'Hurray! Your delivery is on its way. Our member ' + pilot.user.firstName + ' (' + pilot.user.mobileNumber + ') will deliver it in short time.', 4);
               pilot.save();
             });
           }

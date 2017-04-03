@@ -5,7 +5,7 @@ import pilotCtrl from '../controllers/pilot.controller';
 import cloudinary from 'cloudinary';
 import geolib from 'geolib';
 import moment from 'moment';
-import { sendNotification, message } from '../notifications/send';
+import { sendNotification, message, sendSMS } from '../notifications/send';
 import { io } from '../../config/express';
 
 const maxDistance = 1000; // 1000 KM
