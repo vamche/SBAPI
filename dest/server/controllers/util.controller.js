@@ -118,7 +118,7 @@ function assignPending() {
         _pilot2.default.findOne().where('isAvailable', true).where('teams').in([order.team]).where('franchise', order.franchise).where('isActive', false).where('location').near({
           center: order.to_location,
           maxDistance: maxDistance * 1000
-        }).then(function (pilot) {
+        }).populate('user').then(function (pilot) {
           if (pilot && pilot._id) {
             console.info('Pilot available and not null ' + pilot._id.toString());
             order.pilot = pilot._id;
@@ -132,6 +132,7 @@ function assignPending() {
               _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
               (0, _send.sendNotification)(_send.message);
               console.info("Order Assigned :: " + updatedOrder.title + " :: " + updatedOrder.pilot.toString());
+              sendSMS('91' + updatedOrder.to_phone, 'Hurray! Your delivery is on its way. Our member ' + pilot.user.firstName + ' (' + pilot.user.mobileNumber + ') will deliver it in short time.', 4);
               pilot.save();
             });
           }
@@ -142,7 +143,7 @@ function assignPending() {
         _pilot2.default.find().where('isAvailable', true).where('isActive', false).where('franchise', order.franchise).where('location').near({
           center: order.to_location,
           maxDistance: maxDistance * 1000
-        }).then(function (pilots) {
+        }).populate('user').then(function (pilots) {
           var pilot = null;
           if (pilots.length) {
             var pilotSelected = false;
@@ -170,6 +171,7 @@ function assignPending() {
               _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
               (0, _send.sendNotification)(_send.message);
               console.info("Order Assigned :: " + updatedOrder.title + " :: " + updatedOrder.pilot.toString());
+              sendSMS('91' + updatedOrder.to_phone, 'Hurray! Your delivery is on its way. Our member ' + pilot.user.firstName + ' (' + pilot.user.mobileNumber + ') will deliver it in short time.', 4);
               pilot.save();
             });
           }

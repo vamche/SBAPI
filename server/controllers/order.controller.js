@@ -102,15 +102,34 @@ function createOrder(req, res, next, franchise = null) {
           {'operator' : 'OR'},
           {'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'}
         ];
+
+        Pilot.get(savedOrder.pilot)
+          .then(p => {
+
+            p.isActive = true;
+            p.save()
+             .then(savedPilot => {
+               sendSMS(`91${savedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${savedPilot.user.firstName} (${savedPilot.user.mobileNumber}) will deliver it in short time.`, 4);
+
+               io && io.emit('ORDER_ADDED', savedOrder);
+               sendNotification(message);
+               res.json(savedOrder);
+
+             });
+
+
+          })
+          .catch(e => next(e));
+
       } else {
         message.filters = [
           {'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'}
         ];
+        io && io.emit('ORDER_ADDED', savedOrder);
+        sendNotification(message);
+        res.json(savedOrder)
       }
-      //sendSMS(`91${savedOrder.to_phone}`, `Your delivery is on its way.`, 4);
-      io && io.emit('ORDER_ADDED', savedOrder);
-      sendNotification(message);
-      res.json(savedOrder)
+
     })
     .catch(e => next(e));
 }
@@ -398,7 +417,36 @@ function reject(req, res, next){
     .then(savedOrder => {
       return assign(savedOrder, pilot);
     })
-    .then(order => res.json(order))
+    .then(savedOrder => {
+      message.headings.en = savedOrder.id + "";
+      message.contents.en = `New Order Assigned. \nPick at ${order.from_address}`;
+      message.data = savedOrder;
+      if(savedOrder.pilot){
+        message.filters = [
+          {'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot.toString()},
+          {'operator' : 'OR'},
+          {'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'}
+        ];
+
+        Pilot.get(savedOrder.pilot)
+          .then(p => {
+
+            p.isActive = true;
+            p.save()
+              .then(savedPilot => {
+                sendSMS(`91${savedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${savedPilot.user.firstName} (${savedPilot.user.mobileNumber}) will deliver it in short time.`, 4);
+
+                io && io.emit('ORDER_UPDATED', savedOrder);
+                sendNotification(message);
+                res.json(savedOrder);
+
+              });
+
+
+          })
+          .catch(e => next(e));
+      }
+    })
     .catch(e => next(e));
 }
 

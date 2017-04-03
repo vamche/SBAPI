@@ -130,13 +130,26 @@ function createOrder(req, res, next) {
     _send.message.data = savedOrder;
     if (savedOrder.pilot) {
       _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
+
+      _pilot2.default.get(savedOrder.pilot).then(function (p) {
+
+        p.isActive = true;
+        p.save().then(function (savedPilot) {
+          (0, _send.sendSMS)('91' + savedOrder.to_phone, 'Hurray! Your delivery is on its way. Our member ' + savedPilot.user.firstName + ' (' + savedPilot.user.mobileNumber + ') will deliver it in short time.', 4);
+
+          _express.io && _express.io.emit('ORDER_ADDED', savedOrder);
+          (0, _send.sendNotification)(_send.message);
+          res.json(savedOrder);
+        });
+      }).catch(function (e) {
+        return next(e);
+      });
     } else {
       _send.message.filters = [{ 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
+      _express.io && _express.io.emit('ORDER_ADDED', savedOrder);
+      (0, _send.sendNotification)(_send.message);
+      res.json(savedOrder);
     }
-    //sendSMS(`91${savedOrder.to_phone}`, `Your delivery is on its way.`, 4);
-    _express.io && _express.io.emit('ORDER_ADDED', savedOrder);
-    (0, _send.sendNotification)(_send.message);
-    res.json(savedOrder);
   }).catch(function (e) {
     return next(e);
   });
@@ -468,8 +481,27 @@ function reject(req, res, next) {
   order.pilot = null;
   order.save().then(function (savedOrder) {
     return (0, _util.assign)(savedOrder, pilot);
-  }).then(function (order) {
-    return res.json(order);
+  }).then(function (savedOrder) {
+    _send.message.headings.en = savedOrder.id + "";
+    _send.message.contents.en = 'New Order Assigned. \nPick at ' + order.from_address;
+    _send.message.data = savedOrder;
+    if (savedOrder.pilot) {
+      _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
+
+      _pilot2.default.get(savedOrder.pilot).then(function (p) {
+
+        p.isActive = true;
+        p.save().then(function (savedPilot) {
+          (0, _send.sendSMS)('91' + savedOrder.to_phone, 'Hurray! Your delivery is on its way. Our member ' + savedPilot.user.firstName + ' (' + savedPilot.user.mobileNumber + ') will deliver it in short time.', 4);
+
+          _express.io && _express.io.emit('ORDER_UPDATED', savedOrder);
+          (0, _send.sendNotification)(_send.message);
+          res.json(savedOrder);
+        });
+      }).catch(function (e) {
+        return next(e);
+      });
+    }
   }).catch(function (e) {
     return next(e);
   });

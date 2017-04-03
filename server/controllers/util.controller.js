@@ -98,6 +98,7 @@ function assignPending(){
             center: order.to_location,
             maxDistance: maxDistance * 1000
           })
+            .populate('user')
             .then(pilot => {
               if(pilot && pilot._id){
                 console.info('Pilot available and not null ' + pilot._id.toString());
@@ -118,6 +119,7 @@ function assignPending(){
                     io && io.emit('ORDER_UPDATED', updatedOrder);
                     sendNotification(message);
                     console.info("Order Assigned :: " + updatedOrder.title + " :: " + updatedOrder.pilot.toString());
+                    sendSMS(`91${updatedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${pilot.user.firstName} (${pilot.user.mobileNumber}) will deliver it in short time.`, 4);
                     pilot.save();
                   });
               }
@@ -132,6 +134,7 @@ function assignPending(){
               center: order.to_location,
               maxDistance: maxDistance * 1000
             })
+            .populate('user')
             .then(pilots => {
               let pilot = null;
               if (pilots.length) {
@@ -166,6 +169,7 @@ function assignPending(){
                     io && io.emit('ORDER_UPDATED', updatedOrder);
                     sendNotification(message);
                     console.info("Order Assigned :: " + updatedOrder.title + " :: " + updatedOrder.pilot.toString());
+                    sendSMS(`91${updatedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${pilot.user.firstName} (${pilot.user.mobileNumber}) will deliver it in short time.`, 4);
                     pilot.save();
                   });
               }
