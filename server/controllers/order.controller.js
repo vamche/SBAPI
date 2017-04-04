@@ -220,9 +220,11 @@ function updateOrder(order){
                     if(updatedOrder.pilot) {
                       Pilot.get(updatedOrder.pilot)
                         .then(pilot => {
-                          pilot.isActive = false;
-                          if(statusChanged && updatedOrder === 'STARTED') {
-                            sendSMS(`91${updatedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${pilot.user.firstName} (${pilot.user.mobileNumber}) will deliver it in short time.`, 4);
+                          if (updatedOrder.status === 'COMPLETED') {
+                            pilot.isActive = false;
+                          }
+                          if(statusChanged && updatedOrder.status === 'STARTED') {
+                            //sendSMS(`91${updatedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${pilot.user.firstName} (${pilot.user.mobileNumber}) will deliver it in short time.`, 4);
                           }
                           pilot.save()
                             .then(() => {

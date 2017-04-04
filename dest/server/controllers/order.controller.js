@@ -242,9 +242,11 @@ function updateOrder(order) {
           }
           if (updatedOrder.pilot) {
             _pilot2.default.get(updatedOrder.pilot).then(function (pilot) {
-              pilot.isActive = false;
-              if (statusChanged && updatedOrder === 'STARTED') {
-                (0, _send.sendSMS)('91' + updatedOrder.to_phone, 'Hurray! Your delivery is on its way. Our member ' + pilot.user.firstName + ' (' + pilot.user.mobileNumber + ') will deliver it in short time.', 4);
+              if (updatedOrder.status === 'COMPLETED') {
+                pilot.isActive = false;
+              }
+              if (statusChanged && updatedOrder.status === 'STARTED') {
+                //sendSMS(`91${updatedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${pilot.user.firstName} (${pilot.user.mobileNumber}) will deliver it in short time.`, 4);
               }
               pilot.save().then(function () {
                 resolve(updatedOrder);
