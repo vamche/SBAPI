@@ -477,7 +477,7 @@ function updateAvailability(req, res, next){
   pilot.save()
     .then(savedPilot => {
       const timesheet = new Timesheet({
-        isAvailable: savedPilot.isAvailable,
+        isAvailable: pilot.isAvailable,
         pilot: savedPilot._id.toString(),
         location: savedPilot.location
       });
