@@ -539,7 +539,7 @@ function updateAvailability(req, res, next) {
   pilot.battery = req.body.battery;
   pilot.save().then(function (savedPilot) {
     var timesheet = new _timesheet2.default({
-      isAvailable: pilot.isAvailable,
+      isAvailable: savedPilot.isAvailable,
       pilot: savedPilot._id.toString(),
       location: savedPilot.location
     });
