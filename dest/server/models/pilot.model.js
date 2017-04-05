@@ -62,7 +62,8 @@ var PilotSchema = new _mongoose2.default.Schema({
   },
   isAvailable: {
     type: Boolean,
-    required: false
+    required: false,
+    default: false
   },
   // TO DO : IDK!
   status: {

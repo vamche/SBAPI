@@ -41,7 +41,8 @@ const PilotSchema = new mongoose.Schema({
   },
   isAvailable: {
     type: Boolean,
-    required: false
+    required: false,
+    default: false
   },
   // TO DO : IDK!
   status: {
