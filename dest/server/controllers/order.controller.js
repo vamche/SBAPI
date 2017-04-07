@@ -498,7 +498,23 @@ function reject(req, res, next) {
 
           _express.io && _express.io.emit('ORDER_UPDATED', savedOrder);
           (0, _send.sendNotification)(_send.message);
-          res.json(savedOrder);
+          _pilot2.default.get(pilot).then(function (oldPilot) {
+            oldPilot.isActive = false;
+            oldPilot.save().then(function () {
+              return res.json(savedOrder);
+            });
+          }).catch(function (e) {
+            return next(e);
+          });
+        });
+      }).catch(function (e) {
+        return next(e);
+      });
+    } else {
+      _pilot2.default.get(pilot).then(function (oldPilot) {
+        oldPilot.isActive = false;
+        oldPilot.save().then(function () {
+          return res.json(savedOrder);
         });
       }).catch(function (e) {
         return next(e);

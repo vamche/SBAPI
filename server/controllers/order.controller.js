@@ -440,11 +440,22 @@ function reject(req, res, next){
 
                 io && io.emit('ORDER_UPDATED', savedOrder);
                 sendNotification(message);
-                res.json(savedOrder);
-
+                Pilot.get(pilot)
+                  .then(oldPilot => {
+                    oldPilot.isActive = false;
+                    oldPilot.save()
+                      .then(() => res.json(savedOrder));
+                  })
+                  .catch(e => next(e));
               });
-
-
+          })
+          .catch(e => next(e));
+      } else {
+        Pilot.get(pilot)
+          .then(oldPilot => {
+            oldPilot.isActive = false;
+            oldPilot.save()
+              .then(() => res.json(savedOrder));
           })
           .catch(e => next(e));
       }
