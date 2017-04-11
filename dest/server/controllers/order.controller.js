@@ -163,32 +163,36 @@ function createOrder(req, res, next) {
  */
 function update(req, res, next) {
   var order = req.order;
-  order.pilot = req.body.pilot ? new _mongoose2.default.Types.ObjectId(req.body.pilot) : null;
-  order.team = req.body.team ? new _mongoose2.default.Types.ObjectId(req.body.team) : null;
+  order.pilot = req.body.pilot ? req.body.pilot : null;
+  order.team = req.body.team ? req.body.team : null;
   order.save().then(function (savedOrder) {
-    _pilot2.default.get(savedOrder.pilot.toString()).then(function (newpilot) {
-      newpilot.isActive = true;
-      newpilot.save().then(function (updatedNewPilot) {
+    if (savedOrder.pilot) {
+      _pilot2.default.get(savedOrder.pilot).then(function (newpilot) {
+        newpilot.isActive = true;
+        newpilot.save().then(function (updatedNewPilot) {
 
-        var oldPilotId = req.order.pilot;
-        if (oldPilotId) {
-          _pilot2.default.get(oldPilotId).then(function (oldPilot) {
-            oldPilot.isActive = false;
-            oldPilot.save().then(function (updatedOldPilot) {
-              return res.json(savedOrder);
-            }).catch(function (e) {
-              return next(e);
+          var oldPilotId = req.order.pilot;
+          if (oldPilotId && oldPilotId !== savedOrder.pilot) {
+            _pilot2.default.get(oldPilotId).then(function (oldPilot) {
+              oldPilot.isActive = false;
+              oldPilot.save().then(function (updatedOldPilot) {
+                return res.json(savedOrder);
+              }).catch(function (e) {
+                return next(e);
+              });
             });
-          });
-        } else {
-          res.json(savedOrder);
-        }
+          } else {
+            res.json(savedOrder);
+          }
+        }).catch(function (e) {
+          return next(e);
+        });
       }).catch(function (e) {
         return next(e);
       });
-    }).catch(function (e) {
-      return next(e);
-    });
+    } else {
+      res.json(savedOrder);
+    }
   }).catch(function (e) {
     return next(e);
   });

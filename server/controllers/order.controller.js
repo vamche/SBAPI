@@ -143,33 +143,38 @@ function createOrder(req, res, next, franchise = null) {
  */
 function update(req, res, next) {
   const order = req.order;
-  order.pilot = req.body.pilot ? new mongoose.Types.ObjectId(req.body.pilot) : null;
-  order.team = req.body.team ? new mongoose.Types.ObjectId(req.body.team) : null;
+  order.pilot = req.body.pilot ? (req.body.pilot) : null;
+  order.team = req.body.team ? (req.body.team) : null;
   order.save()
     .then(savedOrder => {
-      Pilot.get(savedOrder.pilot.toString())
-        .then(newpilot => {
-          newpilot.isActive = true;
-          newpilot.save()
-            .then(updatedNewPilot => {
+      if(savedOrder.pilot) {
+        Pilot.get(savedOrder.pilot)
+          .then(newpilot => {
+            newpilot.isActive = true;
+            newpilot.save()
+              .then(updatedNewPilot => {
 
-              const oldPilotId = req.order.pilot;
-              if(oldPilotId) {
-                Pilot.get(oldPilotId)
-                  .then(oldPilot => {
-                    oldPilot.isActive = false;
-                    oldPilot.save()
-                      .then(updatedOldPilot => res.json(savedOrder))
-                      .catch(e => next(e));
-                  })
+                const oldPilotId = req.order.pilot;
+                if(oldPilotId && oldPilotId !== savedOrder.pilot) {
+                  Pilot.get(oldPilotId)
+                    .then(oldPilot => {
+                      oldPilot.isActive = false;
+                      oldPilot.save()
+                        .then(updatedOldPilot => res.json(savedOrder))
+                        .catch(e => next(e));
+                    })
 
-              }else {
-                res.json(savedOrder);
-              }
-            })
-            .catch(e => next(e));
-        })
-        .catch(e => next(e));
+                } else {
+                  res.json(savedOrder);
+                }
+              })
+              .catch(e => next(e));
+          })
+          .catch(e => next(e));
+      } else {
+        res.json(savedOrder);
+      }
+
     })
     .catch(e => next(e));
 }
