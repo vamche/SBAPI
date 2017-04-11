@@ -143,11 +143,34 @@ function createOrder(req, res, next, franchise = null) {
  */
 function update(req, res, next) {
   const order = req.order;
-  order.pilot = order.pilot;
-  order.status = req.body.status;
-  order.pilot_movement = req.body.pilot_movement;
+  order.pilot = req.body.pilot ? new mongoose.Types.ObjectId(req.body.pilot) : null;
+  order.team = req.body.team ? new mongoose.Types.ObjectId(req.body.team) : null;
   order.save()
-    .then(savedOrder => res.json(savedOrder))
+    .then(savedOrder => {
+      Pilot.get(savedOrder.pilot.toString())
+        .then(newpilot => {
+          newpilot.isActive = true;
+          newpilot.save()
+            .then(updatedNewPilot => {
+
+              const oldPilotId = req.order.pilot;
+              if(oldPilotId) {
+                Pilot.get(oldPilotId)
+                  .then(oldPilot => {
+                    oldPilot.isActive = false;
+                    oldPilot.save()
+                      .then(updatedOldPilot => res.json(savedOrder))
+                      .catch(e => next(e));
+                  })
+
+              }else {
+                res.json(savedOrder);
+              }
+            })
+            .catch(e => next(e));
+        })
+        .catch(e => next(e));
+    })
     .catch(e => next(e));
 }
 
@@ -380,7 +403,23 @@ function listByTeam(req, res, next){
 function remove(req, res, next) {
   const order = req.order;
   order.remove()
-    .then(deletedOrder => res.json(deletedOrder))
+    .then(deletedOrder => {
+      const pilot = req.order.pilot;
+      if (pilot) {
+        Pilot.get(pilot)
+          .then(oldPilot => {
+            oldPilot.isActive = false;
+            oldPilot.save()
+              .then(updatedOldPilot => res.json(deletedOrder))
+              .catch(e => next(e));
+          })
+          .catch(e => next(e));
+
+      } else {
+        res.json(deletedOrder);
+      }
+
+    })
     .catch(e => next(e));
 }
 

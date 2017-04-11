@@ -163,11 +163,32 @@ function createOrder(req, res, next) {
  */
 function update(req, res, next) {
   var order = req.order;
-  order.pilot = order.pilot;
-  order.status = req.body.status;
-  order.pilot_movement = req.body.pilot_movement;
+  order.pilot = req.body.pilot ? new _mongoose2.default.Types.ObjectId(req.body.pilot) : null;
+  order.team = req.body.team ? new _mongoose2.default.Types.ObjectId(req.body.team) : null;
   order.save().then(function (savedOrder) {
-    return res.json(savedOrder);
+    _pilot2.default.get(savedOrder.pilot.toString()).then(function (newpilot) {
+      newpilot.isActive = true;
+      newpilot.save().then(function (updatedNewPilot) {
+
+        var oldPilotId = req.order.pilot;
+        if (oldPilotId) {
+          _pilot2.default.get(oldPilotId).then(function (oldPilot) {
+            oldPilot.isActive = false;
+            oldPilot.save().then(function (updatedOldPilot) {
+              return res.json(savedOrder);
+            }).catch(function (e) {
+              return next(e);
+            });
+          });
+        } else {
+          res.json(savedOrder);
+        }
+      }).catch(function (e) {
+        return next(e);
+      });
+    }).catch(function (e) {
+      return next(e);
+    });
   }).catch(function (e) {
     return next(e);
   });
@@ -445,7 +466,21 @@ function listByTeam(req, res, next) {
 function remove(req, res, next) {
   var order = req.order;
   order.remove().then(function (deletedOrder) {
-    return res.json(deletedOrder);
+    var pilot = req.order.pilot;
+    if (pilot) {
+      _pilot2.default.get(pilot).then(function (oldPilot) {
+        oldPilot.isActive = false;
+        oldPilot.save().then(function (updatedOldPilot) {
+          return res.json(deletedOrder);
+        }).catch(function (e) {
+          return next(e);
+        });
+      }).catch(function (e) {
+        return next(e);
+      });
+    } else {
+      res.json(deletedOrder);
+    }
   }).catch(function (e) {
     return next(e);
   });
