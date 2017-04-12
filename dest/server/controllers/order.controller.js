@@ -170,13 +170,20 @@ function update(req, res, next) {
       _pilot2.default.get(savedOrder.pilot).then(function (newpilot) {
         newpilot.isActive = true;
         newpilot.save().then(function (updatedNewPilot) {
-
           var oldPilotId = req.order.pilot;
           if (oldPilotId && oldPilotId !== savedOrder.pilot) {
             _pilot2.default.get(oldPilotId).then(function (oldPilot) {
               oldPilot.isActive = false;
               oldPilot.save().then(function (updatedOldPilot) {
-                return res.json(savedOrder);
+                _send.message.headings.en = savedOrder.id + "";
+                _send.message.contents.en = 'New Order Placed. \nPick at ' + order.from_address;
+                _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
+                (0, _send.sendSMS)('91' + savedOrder.to_phone, 'Hurray! Your delivery is on its way. Our member ' + newpilot.user.firstName + ' (' + newpilot.user.mobileNumber + ') will deliver it in short time.', 4);
+
+                _express.io && _express.io.emit('ORDER_UPDATED', savedOrder);
+                (0, _send.sendNotification)(_send.message);
+
+                res.json(savedOrder);
               }).catch(function (e) {
                 return next(e);
               });
@@ -266,18 +273,20 @@ function updateOrder(order) {
             (0, _send.sendNotification)(_send.message);
           }
           if (updatedOrder.pilot) {
-            _pilot2.default.get(updatedOrder.pilot).then(function (pilot) {
+            _pilot2.default.get(updatedOrder.pilot._id.toString()).then(function (pilot) {
               if (updatedOrder.status === 'COMPLETED') {
                 pilot.isActive = false;
+                pilot.save().then(function () {
+                  resolve(updatedOrder);
+                }).catch(function (e) {
+                  return reject(e);
+                });
+              } else {
+                resolve(updatedOrder);
               }
               if (statusChanged && updatedOrder.status === 'STARTED') {
                 //sendSMS(`91${updatedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${pilot.user.firstName} (${pilot.user.mobileNumber}) will deliver it in short time.`, 4);
               }
-              pilot.save().then(function () {
-                resolve(updatedOrder);
-              }).catch(function (e) {
-                return reject(e);
-              });
             }).catch(function (e) {
               return reject(e);
             });
