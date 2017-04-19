@@ -38,7 +38,7 @@ var _express = require('../../config/express');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var maxDistance = 1000; // 1000 KM
+var maxDistance = 3; // 3 KM
 
 
 /**
@@ -110,7 +110,6 @@ function uploadImgAsync(img) {
 }
 
 function assignPending() {
-  var pilotIDs = [];
   _order2.default.getUnAssigned().then(function (orders) {
     console.info('Number of pending orders ' + orders.length);
     orders.forEach(function (order) {
@@ -140,25 +139,11 @@ function assignPending() {
           return console.error(e);
         });
       } else {
-        _pilot2.default.find().where('isAvailable', true).where('isActive', false).where('franchise', order.franchise).where('location').near({
+        _pilot2.default.findOne().where('isAvailable', true).where('isActive', false).where('franchise', order.franchise).where('location').near({
           center: order.to_location,
           maxDistance: maxDistance * 1000
-        }).populate('user').then(function (pilots) {
-          var pilot = null;
-          if (pilots.length) {
-            var pilotSelected = false;
-            var i = 0;
-            while (!pilotSelected) {
-              pilot = pilots[i];
-              if (pilotIDs.indexOf(pilot._id.toString()) < 0) {
-                pilotSelected = true;
-              } else {
-                i++;
-              }
-            }
-          }
-          if (pilot && pilot._id && pilotIDs.indexOf(pilot._id.toString()) < 0) {
-            pilotIDs.push(pilot._id.toString());
+        }).populate('user').then(function (pilot) {
+          if (pilot && pilot._id && !pilot.isActive) {
             console.info('Pilot available and not null ' + pilot._id.toString());
             order.pilot = pilot._id;
             pilot.isActive = true;

@@ -161,7 +161,7 @@ function update(req, res, next) {
                       oldPilot.save()
                         .then(updatedOldPilot => {
                           message.headings.en = savedOrder.id + "";
-                          message.contents.en = `New Order Placed. \nPick at ${order.from_address}`;
+                          message.contents.en = `New Order Placed. \nPick at ${savedOrder.from_address}`;
                           message.filters = [
                             {'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot},
                             {'operator' : 'OR'},
@@ -480,7 +480,7 @@ function reject(req, res, next){
     })
     .then(savedOrder => {
       message.headings.en = savedOrder.id + "";
-      message.contents.en = `New Order Assigned. \nPick at ${order.from_address}`;
+      message.contents.en = `New Order Assigned. \nPick at ${savedOrder.from_address}`;
       message.data = savedOrder;
       if(savedOrder.pilot){
         message.filters = [

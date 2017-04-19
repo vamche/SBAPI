@@ -176,7 +176,7 @@ function update(req, res, next) {
               oldPilot.isActive = false;
               oldPilot.save().then(function (updatedOldPilot) {
                 _send.message.headings.en = savedOrder.id + "";
-                _send.message.contents.en = 'New Order Placed. \nPick at ' + order.from_address;
+                _send.message.contents.en = 'New Order Placed. \nPick at ' + savedOrder.from_address;
                 _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
                 (0, _send.sendSMS)('91' + savedOrder.to_phone, 'Hurray! Your delivery is on its way. Our member ' + newpilot.user.firstName + ' (' + newpilot.user.mobileNumber + ') will deliver it in short time.', 4);
 
@@ -533,7 +533,7 @@ function reject(req, res, next) {
     return (0, _util.assign)(savedOrder, pilot);
   }).then(function (savedOrder) {
     _send.message.headings.en = savedOrder.id + "";
-    _send.message.contents.en = 'New Order Assigned. \nPick at ' + order.from_address;
+    _send.message.contents.en = 'New Order Assigned. \nPick at ' + savedOrder.from_address;
     _send.message.data = savedOrder;
     if (savedOrder.pilot) {
       _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];

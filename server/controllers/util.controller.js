@@ -8,7 +8,7 @@ import moment from 'moment';
 import { sendNotification, message, sendSMS } from '../notifications/send';
 import { io } from '../../config/express';
 
-const maxDistance = 1000; // 1000 KM
+const maxDistance = 3; // 3 KM
 
 
 /**
@@ -83,7 +83,6 @@ function uploadImgAsync(img) {
 }
 
 function assignPending(){
-  const pilotIDs = [];
   Order.getUnAssigned()
     .then(orders => {
       console.info('Number of pending orders ' + orders.length);
@@ -126,7 +125,7 @@ function assignPending(){
             })
             .catch(e => console.error(e));
         }else{
-          Pilot.find()
+          Pilot.findOne()
             .where('isAvailable', true)
             .where('isActive', false)
             .where('franchise', order.franchise)
@@ -135,22 +134,8 @@ function assignPending(){
               maxDistance: maxDistance * 1000
             })
             .populate('user')
-            .then(pilots => {
-              let pilot = null;
-              if (pilots.length) {
-                let pilotSelected = false;
-                let i = 0;
-                while(!pilotSelected) {
-                  pilot = pilots[i];
-                  if (pilotIDs.indexOf(pilot._id.toString()) < 0) {
-                    pilotSelected = true;
-                  } else {
-                    i++;
-                  }
-                }
-              }
-              if(pilot && pilot._id && pilotIDs.indexOf(pilot._id.toString()) < 0){
-                pilotIDs.push(pilot._id.toString());
+            .then(pilot => {
+              if(pilot && pilot._id && !pilot.isActive){
                 console.info('Pilot available and not null ' + pilot._id.toString());
                 order.pilot = pilot._id;
                 pilot.isActive = true;
