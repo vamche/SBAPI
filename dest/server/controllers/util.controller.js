@@ -115,7 +115,7 @@ function assignPending() {
     orders.forEach(function (order) {
       if (order.team !== null && order.team !== '' && order.team !== "*" && order.team !== "ALL") {
         _pilot2.default.findOne().where('isAvailable', true).where('teams').in([order.team]).where('franchise', order.franchise).where('isActive', false).where('location').near({
-          center: order.to_location,
+          center: order.from_location,
           maxDistance: maxDistance * 1000
         }).populate('user').then(function (pilot) {
           if (pilot && pilot._id) {
@@ -140,7 +140,7 @@ function assignPending() {
         });
       } else {
         _pilot2.default.findOne().where('isAvailable', true).where('isActive', false).where('franchise', order.franchise).where('location').near({
-          center: order.to_location,
+          center: order.from_location,
           maxDistance: maxDistance * 1000
         }).populate('user').then(function (pilot) {
           if (pilot && pilot._id && !pilot.isActive) {

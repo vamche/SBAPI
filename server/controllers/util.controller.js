@@ -94,7 +94,7 @@ function assignPending(){
             .where('franchise', order.franchise)
             .where('isActive', false)
             .where('location').near({
-            center: order.to_location,
+            center: order.from_location,
             maxDistance: maxDistance * 1000
           })
             .populate('user')
@@ -130,7 +130,7 @@ function assignPending(){
             .where('isActive', false)
             .where('franchise', order.franchise)
             .where('location').near({
-              center: order.to_location,
+              center: order.from_location,
               maxDistance: maxDistance * 1000
             })
             .populate('user')
