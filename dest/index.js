@@ -61,7 +61,7 @@ var assignPendingOrders = _nodeSchedule2.default.scheduleJob('*/30 * * * * *', f
   (0, _util3.assignPending)();
 });
 
-var alertPendingOrders = _nodeSchedule2.default.scheduleJob('*/10 * * * * *', function () {
+var alertPendingOrders = _nodeSchedule2.default.scheduleJob('*/30 * * * *', function () {
   (0, _util3.alertPending)();
 });
 

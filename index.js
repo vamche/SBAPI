@@ -37,7 +37,7 @@ let assignPendingOrders = schedule.scheduleJob('*/30 * * * * *', () => {
   assignPending();
 });
 
-let alertPendingOrders = schedule.scheduleJob('*/10 * * * * *', () => {
+let alertPendingOrders = schedule.scheduleJob('*/30 * * * *', () => {
   alertPending();
 });
 
