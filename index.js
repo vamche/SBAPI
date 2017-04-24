@@ -4,7 +4,7 @@ import util from 'util';
 import config from './config/env';
 import { app, server, io }  from './config/express';
 import schedule from 'node-schedule';
-import { assignPending } from './server/controllers/util.controller';
+import { assignPending, alertPending } from './server/controllers/util.controller';
 
 const debug = require('debug')('express-mongoose-es6-rest-api:index');
 
@@ -33,8 +33,12 @@ cloudinary.config({
   api_secret: config.cloudinary_api_secret
 });
 
-let assign = schedule.scheduleJob('*/30 * * * * *', () => {
+let assignPendingOrders = schedule.scheduleJob('*/30 * * * * *', () => {
   assignPending();
+});
+
+let alertPendingOrders = schedule.scheduleJob('*/10 * * * * *', () => {
+  alertPending();
 });
 
 

@@ -57,8 +57,12 @@ _cloudinary2.default.config({
   api_secret: _env2.default.cloudinary_api_secret
 });
 
-var assign = _nodeSchedule2.default.scheduleJob('*/30 * * * * *', function () {
+var assignPendingOrders = _nodeSchedule2.default.scheduleJob('*/30 * * * * *', function () {
   (0, _util3.assignPending)();
+});
+
+var alertPendingOrders = _nodeSchedule2.default.scheduleJob('*/10 * * * * *', function () {
+  (0, _util3.alertPending)();
 });
 
 // module.parent check is required to support mocha watch

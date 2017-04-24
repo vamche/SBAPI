@@ -472,8 +472,8 @@ function listByTeam(req, res, next){
 function updateAvailability(req, res, next){
   const pilot = req.pilot;
   pilot.isAvailable = req.body.isAvailable;
-  pilot.location = req.body.location;
-  pilot.battery = req.body.battery;
+  pilot.location = req.body.location ? req.body.location : pilot.location;
+  pilot.battery = req.body.battery ? req.body.battery : pilot.battery;
   pilot.save()
     .then(savedPilot => {
       const timesheet = new Timesheet({
@@ -530,7 +530,18 @@ function getActivity(req, res, next) {
 }
 
 
+function getReport(req, res, next) {
+  const pilot = req.pilot;
+  const { fromDate, toDate, timeZone } = req.body;
+
+  // Get Orders - for Kilometers
+  // Get TimeStamps - for Attendance
+
+
+}
+
+
 export default {
   load, get, create, update, list, remove, updateLocation, updateTeams,
     getUnAssignedPilotsByTeam, createPilot, getSales, getSalesByPilot, getTimesheets, getTimesheetsByPilot,
-    stats, listByTeam, updateAvailability, listByManager, getActivity};
+    stats, listByTeam, updateAvailability, listByManager, getActivity, getReport};

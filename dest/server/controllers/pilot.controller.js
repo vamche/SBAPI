@@ -535,8 +535,8 @@ function listByTeam(req, res, next) {
 function updateAvailability(req, res, next) {
   var pilot = req.pilot;
   pilot.isAvailable = req.body.isAvailable;
-  pilot.location = req.body.location;
-  pilot.battery = req.body.battery;
+  pilot.location = req.body.location ? req.body.location : pilot.location;
+  pilot.battery = req.body.battery ? req.body.battery : pilot.battery;
   pilot.save().then(function (savedPilot) {
     var timesheet = new _timesheet2.default({
       isAvailable: savedPilot.isAvailable,
@@ -598,9 +598,21 @@ function getActivity(req, res, next) {
   });
 }
 
+function getReport(req, res, next) {
+  var pilot = req.pilot;
+  var _req$body7 = req.body,
+      fromDate = _req$body7.fromDate,
+      toDate = _req$body7.toDate,
+      timeZone = _req$body7.timeZone;
+
+  // Get Orders - for Kilometers
+  // Get TimeStamps - for Attendance
+
+}
+
 exports.default = {
   load: load, get: get, create: create, update: update, list: list, remove: remove, updateLocation: updateLocation, updateTeams: updateTeams,
   getUnAssignedPilotsByTeam: getUnAssignedPilotsByTeam, createPilot: createPilot, getSales: getSales, getSalesByPilot: getSalesByPilot, getTimesheets: getTimesheets, getTimesheetsByPilot: getTimesheetsByPilot,
-  stats: stats, listByTeam: listByTeam, updateAvailability: updateAvailability, listByManager: listByManager, getActivity: getActivity };
+  stats: stats, listByTeam: listByTeam, updateAvailability: updateAvailability, listByManager: listByManager, getActivity: getActivity, getReport: getReport };
 module.exports = exports['default'];
 //# sourceMappingURL=pilot.controller.js.map

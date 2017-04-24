@@ -40,7 +40,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var maxDistance = 3; // 3 KM
 
-
 /**
  * Load order and append to req.
  */
@@ -248,7 +247,36 @@ function calculateDuration(fromTime, toTime) {
   return (0, _moment2.default)(toTime).diff((0, _moment2.default)(fromTime)) / 1000;
 }
 
-exports.default = { assign: assign, unAssign: unAssign, uploadImgAsync: uploadImgAsync, assignPending: assignPending,
+function alertPending() {
+
+  _order2.default.find().where('status').ne('COMPLETED')
+  // .populate({
+  //   path: 'pilot',
+  //   populate: { path: 'user' }})
+  .sort({ createdAt: -1 }).then(function (orders) {
+    orders.forEach(function (order) {
+      if (order.pilot) {
+        var msg = Object.assign({}, _send.message);
+        var diffInMinutes = (0, _moment2.default)().tz('Asia/Kolkata').utcOffset();
+        var orderCreatedDate = (0, _moment2.default)(order.createdAt).subtract(diffInMinutes).format('DD-MM-YYYY');
+        var currentDate = (0, _moment2.default)().subtract(diffInMinutes).format('DD-MM-YYYY');
+        if (orderCreatedDate !== currentDate) {
+          msg.headings.en = order.id + "";
+          msg.data = order;
+          msg.contents.en = 'Order number ' + order.id + ' dated ' + orderCreatedDate + ' is not completed yet. Please complete it.';
+          msg.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': order.pilot.toString() }];
+          delete msg.template_id;
+          console.log('Order Pending ', msg.contents.en);
+          (0, _send.sendNotification)(msg);
+        }
+      }
+    });
+  }).catch(function (e) {
+    return console.log(e);
+  });
+}
+
+exports.default = { assign: assign, unAssign: unAssign, uploadImgAsync: uploadImgAsync, assignPending: assignPending, alertPending: alertPending,
   calculateDistanceBetweenLatLongs: calculateDistanceBetweenLatLongs, calculateDuration: calculateDuration, calculateFinalCost: calculateFinalCost,
   calculateDistancePickedToDelivery: calculateDistancePickedToDelivery };
 module.exports = exports['default'];

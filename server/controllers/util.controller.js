@@ -10,7 +10,6 @@ import { io } from '../../config/express';
 
 const maxDistance = 3; // 3 KM
 
-
 /**
  * Load order and append to req.
  */
@@ -253,8 +252,42 @@ function calculateDuration(fromTime, toTime) {
 }
 
 
+function alertPending() {
+
+  Order.find()
+    .where('status').ne('COMPLETED')
+    // .populate({
+    //   path: 'pilot',
+    //   populate: { path: 'user' }})
+    .sort({ createdAt: -1 })
+    .then(orders  => {
+      orders.forEach(order => {
+        if (order.pilot) {
+          const msg = Object.assign({}, message);
+          const diffInMinutes = moment().tz('Asia/Kolkata').utcOffset();
+          const orderCreatedDate = moment(order.createdAt).subtract(diffInMinutes).format('DD-MM-YYYY');
+          const currentDate = moment().subtract(diffInMinutes).format('DD-MM-YYYY');
+          if (orderCreatedDate !== currentDate) {
+            msg.headings.en = order.id + "";
+            msg.data = order;
+            msg.contents.en = `Order number ${order.id} dated ${orderCreatedDate} is not completed yet. Please complete it.`;
+            msg.filters = [
+              {'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': order.pilot.toString()}
+            ];
+            delete msg.template_id;
+            console.log('Order Pending ', msg.contents.en);
+            sendNotification(msg);
+          }
+        }
+      })
+    })
+    .catch(e => console.log(e));
+
+}
 
 
-export default { assign, unAssign, uploadImgAsync, assignPending,
+
+
+export default { assign, unAssign, uploadImgAsync, assignPending, alertPending,
   calculateDistanceBetweenLatLongs, calculateDuration, calculateFinalCost,
   calculateDistancePickedToDelivery };
