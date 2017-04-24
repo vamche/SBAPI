@@ -17,7 +17,7 @@ var sendNotification = function sendNotification(data) {
   _axios2.default.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencodeapplication/json; charset=utf-8';
 
   return _axios2.default.post('/notifications', data).then(function (response) {
-    console.log(response);
+    console.log('Succecss Sending Notification!');
   }).catch(function (error) {
     console.log(error);
   });
@@ -26,7 +26,7 @@ var sendNotification = function sendNotification(data) {
 var sendSMS = function sendSMS(mobiles, message, route) {
   var url = 'https://control.msg91.com/api/sendhttp.php?authkey=113219ATt8BmevKtDK5742a5f9&mobiles=' + mobiles + '&message=' + message + '&sender=SSNBOY&route=' + route + '&country=0';
   return _axios2.default.get(url).then(function (response) {
-    console.log(response);
+    console.log('Succecss Sending SMS!');
   }).catch(function (error) {
     console.log(error);
   });

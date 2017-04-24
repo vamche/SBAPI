@@ -8,7 +8,7 @@ const sendNotification = function (data) {
 
   return axios.post('/notifications', data)
          .then((response) => {
-           console.log(response);
+           console.log('Succecss Sending Notification!');
          })
          .catch((error) => {
            console.log(error);
@@ -19,7 +19,7 @@ const sendSMS = function (mobiles, message, route) {
   const url = `https://control.msg91.com/api/sendhttp.php?authkey=113219ATt8BmevKtDK5742a5f9&mobiles=${mobiles}&message=${message}&sender=SSNBOY&route=${route}&country=0`;
   return axios.get(url)
     .then((response) => {
-      console.log(response);
+      console.log('Succecss Sending SMS!');
     })
     .catch((error) => {
       console.log(error);
