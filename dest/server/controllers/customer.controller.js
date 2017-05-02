@@ -219,6 +219,7 @@ function listOfCustomersWithUserDetails(req, res, next) {
 
 function getSales(req, res, next) {
   var _req$body = req.body,
+      franchise = _req$body.franchise,
       _req$body$fromDate = _req$body.fromDate,
       fromDate = _req$body$fromDate === undefined ? (0, _moment2.default)().format('YYYYMMDD') : _req$body$fromDate,
       _req$body$toDate = _req$body.toDate,
@@ -226,17 +227,20 @@ function getSales(req, res, next) {
 
   var sales = []; // Array of {_id: String, title: String, sales: String}
   var promises = void 0;
-  _customer2.default.find().then(function (customers) {
+  _customer2.default.find().where('franchise', franchise).then(function (customers) {
     promises = customers.map(function (customer) {
-      var total = 0;
-      var p = _order2.default.find().where('createdBy', customer._id.toString()).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day')).then(function (orders) {
+      var totalSales = 0;
+      var totalDistance = 0;
+      var p = _order2.default.find().where('franchise', franchise).where('createdBy', customer._id.toString()).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day')).then(function (orders) {
         orders.forEach(function (order) {
-          total = total + order.final_cost;
+          totalSales = totalSales + order.final_cost;
+          totalDistance = totalDistance + order.distance_in_meters;
         });
         sales.push({
           '_id': customer._id,
           'name': customer.name,
-          'sales': total
+          'sales': totalSales,
+          'distance': totalDistance
         });
       }).catch(function (e) {
         return next(e);

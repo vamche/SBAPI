@@ -181,24 +181,30 @@ function listOfCustomersWithUserDetails(req, res, next) {
 
 
 function getSales(req, res, next){
-    const { fromDate = moment().format('YYYYMMDD'), toDate = moment().format('YYYYMMDD') } = req.body;
+    const { franchise ,fromDate = moment().format('YYYYMMDD'), toDate = moment().format('YYYYMMDD') } = req.body;
     let sales = []; // Array of {_id: String, title: String, sales: String}
     let promises;
     Customer.find()
+        .where('franchise', franchise)
         .then(customers => {
             promises = customers.map(customer => {
-                let total = 0;
+                let totalSales = 0;
+                let totalDistance = 0;
                 const p = Order.find()
+                    .where('franchise', franchise)
                     .where('createdBy', customer._id.toString())
                     .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
                     .then(orders => {
                         orders.forEach(order => {
-                            total = total + order.final_cost;
+                          totalSales = totalSales + order.final_cost;
+                          totalDistance = totalDistance + order.distance_in_meters;
+
                         });
                         sales.push({
-                            '_id' : customer._id,
-                            'name' : customer.name,
-                            'sales' : total
+                            '_id': customer._id,
+                            'name': customer.name,
+                            'sales': totalSales,
+                            'distance': totalDistance
                         });
                     })
                     .catch(e => next(e));
