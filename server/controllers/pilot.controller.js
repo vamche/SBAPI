@@ -10,8 +10,6 @@ import Manager from '../models/manager.model';
 import Franchise from '../models/franchise.model';
 import Attachment from '../models/attachment.model';
 
-import { createPdfBinary } from './util.controller';
-
 function sendSMS(mobiles, message, route) {
   const url = `https://control.msg91.com/api/sendhttp.php?authkey=113219ATt8BmevKtDK5742a5f9&mobiles=${mobiles}&message=${message}&sender=SSNBOY&route=${route}&country=0`;
   return axios.get(url)
@@ -553,31 +551,31 @@ function getReport1(req, res, next) {
 }
 
 function getReport(req, res, next) {
- var docDefinition = {
-     	info: {
-      		title: 'awesome Document',
-      		author: 'john doe',
-      		subject: 'subject of document',
-      		keywords: 'keywords for document',
-       	},
-    	content: [
-      		'First paragraph',
-    		'Second paragraph, this time a little bit longer',
-    		{ text: 'Third paragraph, slightly bigger font size', fontSize: 20 },
-    		{ text: 'Another paragraph using a named style', style: 'header' },
-    		{ text: ['playing with ', 'inlines' ] },
-    		{ text: ['and ', { text: 'restyling ', bold: true }, 'them'] },
-    	],
-	styles: {
-  		header: { fontSize: 30, bold: true }
-  	}
- };
-  createPdfBinary(docDefinition, function(binary) {
-    res.contentType('application/pdf');
-    res.send(binary);
-  }, function(error) {
-    res.send('ERROR:' + error);
-  });
+ // var docDefinition = {
+ //     	info: {
+ //      		title: 'awesome Document',
+ //      		author: 'john doe',
+ //      		subject: 'subject of document',
+ //      		keywords: 'keywords for document',
+ //       	},
+ //    	content: [
+ //      		'First paragraph',
+ //    		'Second paragraph, this time a little bit longer',
+ //    		{ text: 'Third paragraph, slightly bigger font size', fontSize: 20 },
+ //    		{ text: 'Another paragraph using a named style', style: 'header' },
+ //    		{ text: ['playing with ', 'inlines' ] },
+ //    		{ text: ['and ', { text: 'restyling ', bold: true }, 'them'] },
+ //    	],
+	// styles: {
+ //  		header: { fontSize: 30, bold: true }
+ //  	}
+ // };
+ //  createPdfBinary(docDefinition, function(binary) {
+ //    res.contentType('application/pdf');
+ //    res.send(binary);
+ //  }, function(error) {
+ //    res.send('ERROR:' + error);
+ //  });
 }
 
 export default {

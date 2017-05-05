@@ -44,8 +44,6 @@ var _attachment = require('../models/attachment.model');
 
 var _attachment2 = _interopRequireDefault(_attachment);
 
-var _util = require('./util.controller');
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function sendSMS(mobiles, message, route) {
@@ -619,24 +617,31 @@ function getReport1(req, res, next) {
 }
 
 function getReport(req, res, next) {
-  var docDefinition = {
-    info: {
-      title: 'awesome Document',
-      author: 'john doe',
-      subject: 'subject of document',
-      keywords: 'keywords for document'
-    },
-    content: ['First paragraph', 'Second paragraph, this time a little bit longer', { text: 'Third paragraph, slightly bigger font size', fontSize: 20 }, { text: 'Another paragraph using a named style', style: 'header' }, { text: ['playing with ', 'inlines'] }, { text: ['and ', { text: 'restyling ', bold: true }, 'them'] }],
-    styles: {
-      header: { fontSize: 30, bold: true }
-    }
-  };
-  (0, _util.createPdfBinary)(docDefinition, function (binary) {
-    res.contentType('application/pdf');
-    res.send(binary);
-  }, function (error) {
-    res.send('ERROR:' + error);
-  });
+  // var docDefinition = {
+  //     	info: {
+  //      		title: 'awesome Document',
+  //      		author: 'john doe',
+  //      		subject: 'subject of document',
+  //      		keywords: 'keywords for document',
+  //       	},
+  //    	content: [
+  //      		'First paragraph',
+  //    		'Second paragraph, this time a little bit longer',
+  //    		{ text: 'Third paragraph, slightly bigger font size', fontSize: 20 },
+  //    		{ text: 'Another paragraph using a named style', style: 'header' },
+  //    		{ text: ['playing with ', 'inlines' ] },
+  //    		{ text: ['and ', { text: 'restyling ', bold: true }, 'them'] },
+  //    	],
+  // styles: {
+  //  		header: { fontSize: 30, bold: true }
+  //  	}
+  // };
+  //  createPdfBinary(docDefinition, function(binary) {
+  //    res.contentType('application/pdf');
+  //    res.send(binary);
+  //  }, function(error) {
+  //    res.send('ERROR:' + error);
+  //  });
 }
 
 exports.default = {
