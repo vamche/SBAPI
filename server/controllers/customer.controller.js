@@ -181,7 +181,10 @@ function listOfCustomersWithUserDetails(req, res, next) {
 
 
 function getSales(req, res, next){
-    const { franchise ,fromDate = moment().format('YYYYMMDD'), toDate = moment().format('YYYYMMDD') } = req.body;
+    const { franchise ,fromDate = moment().format('YYYYMMDD'),
+      toDate = moment().format('YYYYMMDD'), timeZone = 'Europe/London' } = req.body;
+    const diffInMinutes = moment().tz(timeZone).utcOffset();
+
     let sales = []; // Array of {_id: String, title: String, sales: String}
     let promises;
     Customer.find()
@@ -193,7 +196,8 @@ function getSales(req, res, next){
                 const p = Order.find()
                     .where('franchise', franchise)
                     .where('createdBy', customer._id.toString())
-                    .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day')).lte(moment(toDate, "YYYYMMDD").endOf('day'))
+                    .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes'))
+                      .lte(moment(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes'))
                     .then(orders => {
                         orders.forEach(order => {
                           totalSales = totalSales + order.final_cost;

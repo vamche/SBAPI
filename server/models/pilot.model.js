@@ -13,6 +13,11 @@ const PilotSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  imei: {
+    type: String,
+    required: false,
+    default: null
+  },
   user: {
     type: String,
     ref: 'User',

@@ -34,6 +34,11 @@ var PilotSchema = new _mongoose2.default.Schema({
     type: Number,
     default: 0
   },
+  imei: {
+    type: String,
+    required: false,
+    default: null
+  },
   user: {
     type: String,
     ref: 'User',

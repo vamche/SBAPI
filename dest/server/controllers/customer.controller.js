@@ -223,7 +223,11 @@ function getSales(req, res, next) {
       _req$body$fromDate = _req$body.fromDate,
       fromDate = _req$body$fromDate === undefined ? (0, _moment2.default)().format('YYYYMMDD') : _req$body$fromDate,
       _req$body$toDate = _req$body.toDate,
-      toDate = _req$body$toDate === undefined ? (0, _moment2.default)().format('YYYYMMDD') : _req$body$toDate;
+      toDate = _req$body$toDate === undefined ? (0, _moment2.default)().format('YYYYMMDD') : _req$body$toDate,
+      _req$body$timeZone = _req$body.timeZone,
+      timeZone = _req$body$timeZone === undefined ? 'Europe/London' : _req$body$timeZone;
+
+  var diffInMinutes = (0, _moment2.default)().tz(timeZone).utcOffset();
 
   var sales = []; // Array of {_id: String, title: String, sales: String}
   var promises = void 0;
@@ -231,7 +235,7 @@ function getSales(req, res, next) {
     promises = customers.map(function (customer) {
       var totalSales = 0;
       var totalDistance = 0;
-      var p = _order2.default.find().where('franchise', franchise).where('createdBy', customer._id.toString()).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day')).then(function (orders) {
+      var p = _order2.default.find().where('franchise', franchise).where('createdBy', customer._id.toString()).where('createdAt').gte((0, _moment2.default)(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _moment2.default)(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).then(function (orders) {
         orders.forEach(function (order) {
           totalSales = totalSales + order.final_cost;
           totalDistance = totalDistance + order.distance_in_meters;

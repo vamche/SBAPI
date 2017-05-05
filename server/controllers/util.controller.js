@@ -8,6 +8,9 @@ import moment from 'moment';
 import { sendNotification, message, sendSMS } from '../notifications/send';
 import { io } from '../../config/express';
 
+import pdfMakePrinter from 'pdfmake/src/printer';
+
+
 const maxDistance = 3; // 3 KM
 
 /**
@@ -286,8 +289,37 @@ function alertPending() {
 }
 
 
+function createPdfBinary(pdfDoc, callback) {
+
+  var fonts = {
+    Roboto: {
+      normal: './fonts/Roboto-Regular.ttf',
+      bold: './fonts/Roboto-Medium.ttf',
+      italics: './fonts/Roboto-Italic.ttf',
+      bolditalics: './fonts/Roboto-Italic.ttf'
+    }
+  };
+
+  var printer = new pdfMakePrinter(fonts);
+
+  var doc = printer.createPdfKitDocument(pdfDoc);
+
+  var chunks = [];
+  var result;
+
+  doc.on('data', function (chunk) {
+    chunks.push(chunk);
+  });
+  doc.on('end', function () {
+    result = Buffer.concat(chunks);
+    callback('data:application/pdf;base64,' + result.toString('base64'));
+  });
+  doc.end();
+}
+
+
 
 
 export default { assign, unAssign, uploadImgAsync, assignPending, alertPending,
   calculateDistanceBetweenLatLongs, calculateDuration, calculateFinalCost,
-  calculateDistancePickedToDelivery };
+  calculateDistancePickedToDelivery, createPdfBinary };

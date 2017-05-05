@@ -10,6 +10,8 @@ import Manager from '../models/manager.model';
 import Franchise from '../models/franchise.model';
 import Attachment from '../models/attachment.model';
 
+import { createPdfBinary } from './util.controller';
+
 function sendSMS(mobiles, message, route) {
   const url = `https://control.msg91.com/api/sendhttp.php?authkey=113219ATt8BmevKtDK5742a5f9&mobiles=${mobiles}&message=${message}&sender=SSNBOY&route=${route}&country=0`;
   return axios.get(url)
@@ -530,16 +532,53 @@ function getActivity(req, res, next) {
 }
 
 
-function getReport(req, res, next) {
+function getReport1(req, res, next) {
   const pilot = req.pilot;
-  const { fromDate, toDate, timeZone } = req.body;
+  const { franchise ,fromDate = moment().format('YYYYMMDD'),
+    toDate = moment().format('YYYYMMDD'), timeZone = 'Europe/London' } = req.body;
+  const diffInMinutes = moment().tz(timeZone).utcOffset();
 
-  // Get Orders - for Kilometers
-  // Get TimeStamps - for Attendance
+  Order.find()
+    .where('pilot', pilot._id.toString())
+    .where('franchise', franchise)
+    .where('createdBy', customer._id.toString())
+    .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes'))
+    .lte(moment(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes'))
+    .then(orders => {
 
+
+    })
+    .catch(e => next(e));
 
 }
 
+function getReport(req, res, next) {
+ var docDefinition = {
+     	info: {
+      		title: 'awesome Document',
+      		author: 'john doe',
+      		subject: 'subject of document',
+      		keywords: 'keywords for document',
+       	},
+    	content: [
+      		'First paragraph',
+    		'Second paragraph, this time a little bit longer',
+    		{ text: 'Third paragraph, slightly bigger font size', fontSize: 20 },
+    		{ text: 'Another paragraph using a named style', style: 'header' },
+    		{ text: ['playing with ', 'inlines' ] },
+    		{ text: ['and ', { text: 'restyling ', bold: true }, 'them'] },
+    	],
+	styles: {
+  		header: { fontSize: 30, bold: true }
+  	}
+ };
+  createPdfBinary(docDefinition, function(binary) {
+    res.contentType('application/pdf');
+    res.send(binary);
+  }, function(error) {
+    res.send('ERROR:' + error);
+  });
+}
 
 export default {
   load, get, create, update, list, remove, updateLocation, updateTeams,

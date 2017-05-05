@@ -44,6 +44,8 @@ var _attachment = require('../models/attachment.model');
 
 var _attachment2 = _interopRequireDefault(_attachment);
 
+var _util = require('./util.controller');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function sendSMS(mobiles, message, route) {
@@ -598,16 +600,43 @@ function getActivity(req, res, next) {
   });
 }
 
-function getReport(req, res, next) {
+function getReport1(req, res, next) {
   var pilot = req.pilot;
   var _req$body7 = req.body,
-      fromDate = _req$body7.fromDate,
-      toDate = _req$body7.toDate,
-      timeZone = _req$body7.timeZone;
+      franchise = _req$body7.franchise,
+      _req$body7$fromDate = _req$body7.fromDate,
+      fromDate = _req$body7$fromDate === undefined ? (0, _moment2.default)().format('YYYYMMDD') : _req$body7$fromDate,
+      _req$body7$toDate = _req$body7.toDate,
+      toDate = _req$body7$toDate === undefined ? (0, _moment2.default)().format('YYYYMMDD') : _req$body7$toDate,
+      _req$body7$timeZone = _req$body7.timeZone,
+      timeZone = _req$body7$timeZone === undefined ? 'Europe/London' : _req$body7$timeZone;
 
-  // Get Orders - for Kilometers
-  // Get TimeStamps - for Attendance
+  var diffInMinutes = (0, _moment2.default)().tz(timeZone).utcOffset();
 
+  _order2.default.find().where('pilot', pilot._id.toString()).where('franchise', franchise).where('createdBy', customer._id.toString()).where('createdAt').gte((0, _moment2.default)(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _moment2.default)(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).then(function (orders) {}).catch(function (e) {
+    return next(e);
+  });
+}
+
+function getReport(req, res, next) {
+  var docDefinition = {
+    info: {
+      title: 'awesome Document',
+      author: 'john doe',
+      subject: 'subject of document',
+      keywords: 'keywords for document'
+    },
+    content: ['First paragraph', 'Second paragraph, this time a little bit longer', { text: 'Third paragraph, slightly bigger font size', fontSize: 20 }, { text: 'Another paragraph using a named style', style: 'header' }, { text: ['playing with ', 'inlines'] }, { text: ['and ', { text: 'restyling ', bold: true }, 'them'] }],
+    styles: {
+      header: { fontSize: 30, bold: true }
+    }
+  };
+  (0, _util.createPdfBinary)(docDefinition, function (binary) {
+    res.contentType('application/pdf');
+    res.send(binary);
+  }, function (error) {
+    res.send('ERROR:' + error);
+  });
 }
 
 exports.default = {

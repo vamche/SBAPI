@@ -99,7 +99,7 @@ var OrderSchema = new _mongoose2.default.Schema({
   },
   to_name: {
     type: String,
-    required: true
+    required: false
   },
   to_phone: {
     type: String,

@@ -91,6 +91,8 @@ router.route('/updateAvailability/:pilotId').post(_pilot2.default.updateAvailabi
 
 router.route('/activity/:pilotId').post(_pilot2.default.getActivity);
 
+router.route('/report/:pilotId').get(_pilot2.default.getReport);
+
 /** Load pilot when API with pilotId route parameter is hit */
 router.param('pilotId', _pilot2.default.load);
 

@@ -80,6 +80,10 @@ router.route('/updateAvailability/:pilotId')
 router.route('/activity/:pilotId')
   .post(pilotCtrl.getActivity)
 
+router.route('/report/:pilotId')
+  .get(pilotCtrl.getReport)
+
+
 /** Load pilot when API with pilotId route parameter is hit */
 router.param('pilotId', pilotCtrl.load);
 
