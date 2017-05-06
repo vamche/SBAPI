@@ -639,12 +639,13 @@ function getReport(req, res, next) {
     content: [
       { text: 'Season Boy', style: 'header'},
       'Franchise:' + (pilot.franchise ? pilot.franchise.name : ''),
-      '\n \n',
-      'Pilot: ' + pilot.user.firstName + ' ' + pilot.user.lastName,
+      '\n',
+       pilot.user.firstName + ' ' + pilot.user.lastName,
       'Mobile: ' + pilot.user.mobileNumber,
+      '\n',
       'From date: ' +  moment(fromDate, "YYYYMMDD").format('MMMM Do YYYY') ,
       'To date: ' +  moment(toDate, "YYYYMMDD").format('MMMM Do YYYY'),
-      '\n \n \n'
+      '\n \n'
     ],
     styles: {
       header: { fontSize: 20, bold: true }

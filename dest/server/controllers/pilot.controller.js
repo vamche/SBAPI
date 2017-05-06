@@ -701,7 +701,7 @@ function getReport(req, res, next) {
     info: {
       title: 'Pilot Report'
     },
-    content: [{ text: 'Season Boy', style: 'header' }, 'Franchise:' + (pilot.franchise ? pilot.franchise.name : ''), '\n \n', 'Pilot: ' + pilot.user.firstName + ' ' + pilot.user.lastName, 'Mobile: ' + pilot.user.mobileNumber, 'From date: ' + (0, _moment2.default)(fromDate, "YYYYMMDD").format('MMMM Do YYYY'), 'To date: ' + (0, _moment2.default)(toDate, "YYYYMMDD").format('MMMM Do YYYY'), '\n \n \n'],
+    content: [{ text: 'Season Boy', style: 'header' }, 'Franchise:' + (pilot.franchise ? pilot.franchise.name : ''), '\n', pilot.user.firstName + ' ' + pilot.user.lastName, 'Mobile: ' + pilot.user.mobileNumber, '\n', 'From date: ' + (0, _moment2.default)(fromDate, "YYYYMMDD").format('MMMM Do YYYY'), 'To date: ' + (0, _moment2.default)(toDate, "YYYYMMDD").format('MMMM Do YYYY'), '\n \n'],
     styles: {
       header: { fontSize: 20, bold: true }
     }
