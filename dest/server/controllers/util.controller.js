@@ -36,10 +36,6 @@ var _send = require('../notifications/send');
 
 var _express = require('../../config/express');
 
-var _printer = require('pdfmake/src/printer');
-
-var _printer2 = _interopRequireDefault(_printer);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var maxDistance = 3; // 3 KM
@@ -280,36 +276,8 @@ function alertPending() {
   });
 }
 
-function createPdfBinary(pdfDoc, callback) {
-
-  var fonts = {
-    Roboto: {
-      normal: './fonts/Roboto-Regular.ttf',
-      bold: './fonts/Roboto-Medium.ttf',
-      italics: './fonts/Roboto-Italic.ttf',
-      bolditalics: './fonts/Roboto-Italic.ttf'
-    }
-  };
-
-  var printer = new _printer2.default(fonts);
-
-  var doc = printer.createPdfKitDocument(pdfDoc);
-
-  var chunks = [];
-  var result;
-
-  doc.on('data', function (chunk) {
-    chunks.push(chunk);
-  });
-  doc.on('end', function () {
-    result = Buffer.concat(chunks);
-    callback('data:application/pdf;base64,' + result.toString('base64'));
-  });
-  doc.end();
-}
-
 exports.default = { assign: assign, unAssign: unAssign, uploadImgAsync: uploadImgAsync, assignPending: assignPending, alertPending: alertPending,
   calculateDistanceBetweenLatLongs: calculateDistanceBetweenLatLongs, calculateDuration: calculateDuration, calculateFinalCost: calculateFinalCost,
-  calculateDistancePickedToDelivery: calculateDistancePickedToDelivery, createPdfBinary: createPdfBinary };
+  calculateDistancePickedToDelivery: calculateDistancePickedToDelivery };
 module.exports = exports['default'];
 //# sourceMappingURL=util.controller.js.map

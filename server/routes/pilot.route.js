@@ -81,7 +81,7 @@ router.route('/activity/:pilotId')
   .post(pilotCtrl.getActivity)
 
 router.route('/report/:pilotId')
-  .get(pilotCtrl.getReport)
+  .post(pilotCtrl.getReport)
 
 
 /** Load pilot when API with pilotId route parameter is hit */

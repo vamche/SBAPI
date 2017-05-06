@@ -44,7 +44,13 @@ var _attachment = require('../models/attachment.model');
 
 var _attachment2 = _interopRequireDefault(_attachment);
 
+var _printer = require('pdfmake/src/printer');
+
+var _printer2 = _interopRequireDefault(_printer);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var fs = require('fs');
 
 function sendSMS(mobiles, message, route) {
   var url = 'https://control.msg91.com/api/sendhttp.php?authkey=113219ATt8BmevKtDK5742a5f9&mobiles=' + mobiles + '&message=' + message + '&sender=SSNBOY&route=' + route + '&country=0';
@@ -616,32 +622,131 @@ function getReport1(req, res, next) {
   });
 }
 
+function createPdfBinary(pdfDoc, callback) {
+
+  var fonts = {
+    Roboto: {
+      normal: './fonts/Roboto-Regular.ttf',
+      bold: './fonts/Roboto-Medium.ttf',
+      italics: './fonts/Roboto-Italic.ttf',
+      bolditalics: './fonts/Roboto-Italic.ttf'
+    }
+  };
+
+  var printer = new _printer2.default(fonts);
+
+  var doc = printer.createPdfKitDocument(pdfDoc, { autoPrint: true });
+
+  var chunks = [];
+  var result;
+
+  doc.on('data', function (chunk) {
+    chunks.push(chunk);
+  });
+  doc.on('end', function () {
+    result = Buffer.concat(chunks);
+    callback('data:application/pdf;base64,' + result.toString('base64'));
+  });
+  doc.end();
+}
+
+function getReport2(req, res, next) {
+  var docDefinition = {
+    info: {
+      title: 'awesome Document',
+      author: 'john doe',
+      subject: 'subject of document',
+      keywords: 'keywords for document'
+    },
+    content: ['First paragraph', 'Second paragraph, this time a little bit longer', { text: 'Third paragraph, slightly bigger font size', fontSize: 20 }, { text: 'Another paragraph using a named style', style: 'header' }, { text: ['playing with ', 'inlines'] }, { text: ['and ', { text: 'restyling ', bold: true }, 'them'] }],
+    styles: {
+      header: { fontSize: 30, bold: true }
+    }
+  };
+  createPdfBinary(docDefinition, function (binary) {
+    res.contentType('application/pdf');
+    //res.header('Content-Disposition', 'attachment; filename=' + 'report.pdf');
+    res.send(binary);
+  }, function (error) {
+    res.send('ERROR:' + error);
+  });
+}
+
 function getReport(req, res, next) {
-  // var docDefinition = {
-  //     	info: {
-  //      		title: 'awesome Document',
-  //      		author: 'john doe',
-  //      		subject: 'subject of document',
-  //      		keywords: 'keywords for document',
-  //       	},
-  //    	content: [
-  //      		'First paragraph',
-  //    		'Second paragraph, this time a little bit longer',
-  //    		{ text: 'Third paragraph, slightly bigger font size', fontSize: 20 },
-  //    		{ text: 'Another paragraph using a named style', style: 'header' },
-  //    		{ text: ['playing with ', 'inlines' ] },
-  //    		{ text: ['and ', { text: 'restyling ', bold: true }, 'them'] },
-  //    	],
-  // styles: {
-  //  		header: { fontSize: 30, bold: true }
-  //  	}
-  // };
-  //  createPdfBinary(docDefinition, function(binary) {
-  //    res.contentType('application/pdf');
-  //    res.send(binary);
-  //  }, function(error) {
-  //    res.send('ERROR:' + error);
-  //  });
+
+  var pilot = req.pilot;
+  var _req$body8 = req.body,
+      franchise = _req$body8.franchise,
+      _req$body8$fromDate = _req$body8.fromDate,
+      fromDate = _req$body8$fromDate === undefined ? (0, _moment2.default)().format('YYYYMMDD') : _req$body8$fromDate,
+      _req$body8$toDate = _req$body8.toDate,
+      toDate = _req$body8$toDate === undefined ? (0, _moment2.default)().format('YYYYMMDD') : _req$body8$toDate,
+      _req$body8$timeZone = _req$body8.timeZone,
+      timeZone = _req$body8$timeZone === undefined ? 'Europe/London' : _req$body8$timeZone;
+
+  var diffInMinutes = (0, _moment2.default)().tz(timeZone).utcOffset();
+
+  var fonts = {
+    Roboto: {
+      normal: 'fonts/Roboto-Regular.ttf',
+      bold: 'fonts/Roboto-Medium.ttf',
+      italics: 'fonts/Roboto-Italic.ttf',
+      bolditalics: 'fonts/Roboto-MediumItalic.ttf'
+    }
+  };
+
+  var printer = new _printer2.default(fonts);
+
+  var docDefinition = {
+    info: {
+      title: 'Pilot Report'
+    },
+    content: [{ text: 'Season Boy', style: 'header' }, 'Franchise:' + (pilot.franchise ? pilot.franchise.name : ''), '\n \n', 'Pilot: ' + pilot.user.firstName + ' ' + pilot.user.lastName, 'Mobile: ' + pilot.user.mobileNumber, 'From date: ' + (0, _moment2.default)(fromDate, "YYYYMMDD").format('MMMM Do YYYY'), 'To date: ' + (0, _moment2.default)(toDate, "YYYYMMDD").format('MMMM Do YYYY'), '\n \n \n'],
+    styles: {
+      header: { fontSize: 20, bold: true }
+    }
+  };
+
+  _order2.default.find().where('pilot', pilot._id.toString()).where('franchise', franchise).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).then(function (orders) {
+
+    var orderRows = [];
+    var totalDistance = 0;
+    var totalTime = 0;
+
+    for (var i = 0; i < orders.length; i++) {
+      var order = orders[i];
+
+      totalDistance += order.distance_in_meters;
+      totalTime += order.time_in_seconds;
+
+      orderRows.push([order.id ? order.id : 'NA', order.status ? order.status : '', order.distance_in_meters / 1000 + ' Kms', order.time_in_seconds / 3600 + ' hrs']);
+    }
+
+    var ordersContent = {
+      style: 'tableExample',
+      table: {
+        widths: [100, '*', 200, '*'],
+        body: [['Order id', 'Status', 'Kms Travelled', 'Duration']]
+      }
+    };
+
+    ordersContent.table.body = ordersContent.table.body.concat(orderRows);
+    docDefinition['content'].push(ordersContent);
+
+    docDefinition['content'].push('\nTotal Kms: ' + totalDistance / 1000 + ' Kms');
+    docDefinition['content'].push('\nNumber of orders: ' + orders.length);
+
+    var fileName = 'reports/' + 'Pilot' + 'Report' + '.pdf';
+
+    var pdfDoc = printer.createPdfKitDocument(docDefinition);
+    pdfDoc.pipe(fs.createWriteStream(fileName)).on('finish', function () {
+      res.download(fileName);
+    });
+
+    pdfDoc.end();
+  }).catch(function (e) {
+    return next(e);
+  });
 }
 
 exports.default = {
