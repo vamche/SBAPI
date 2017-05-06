@@ -196,8 +196,8 @@ function getSales(req, res, next){
                 const p = Order.find()
                     .where('franchise', franchise)
                     .where('createdBy', customer._id.toString())
-                    .where('createdAt').gte(moment(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes'))
-                      .lte(moment(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes'))
+                    .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes'))
+                      .lte(moment(toDate, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes'))
                     .then(orders => {
                         orders.forEach(order => {
                           totalSales = totalSales + order.final_cost;

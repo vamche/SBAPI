@@ -235,7 +235,7 @@ function getSales(req, res, next) {
     promises = customers.map(function (customer) {
       var totalSales = 0;
       var totalDistance = 0;
-      var p = _order2.default.find().where('franchise', franchise).where('createdBy', customer._id.toString()).where('createdAt').gte((0, _moment2.default)(date, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _moment2.default)(date, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).then(function (orders) {
+      var p = _order2.default.find().where('franchise', franchise).where('createdBy', customer._id.toString()).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).then(function (orders) {
         orders.forEach(function (order) {
           totalSales = totalSales + order.final_cost;
           totalDistance = totalDistance + order.distance_in_meters;
