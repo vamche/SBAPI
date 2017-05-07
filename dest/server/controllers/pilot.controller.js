@@ -719,7 +719,7 @@ function getReport(req, res, next) {
       totalDistance += order.distance_in_meters;
       totalTime += order.time_in_seconds;
 
-      orderRows.push([order.id ? order.id : 'NA', order.status ? order.status : '', order.distance_in_meters / 1000 + ' Kms', order.time_in_seconds / 3600 + ' hrs']);
+      orderRows.push([order.id ? order.id : 'NA', order.status ? order.status : '', (order.distance_in_meters / 1000).toFixed(2) + ' Kms', (order.time_in_seconds / 3600).toFixed(2) + ' hrs']);
     }
 
     var ordersContent = {
@@ -733,10 +733,10 @@ function getReport(req, res, next) {
     ordersContent.table.body = ordersContent.table.body.concat(orderRows);
     docDefinition['content'].push(ordersContent);
 
-    docDefinition['content'].push('\nTotal Kms: ' + totalDistance / 1000 + ' Kms');
+    docDefinition['content'].push('\nTotal Kms: ' + (totalDistance / 1000).toFixed(2) + ' Kms');
     docDefinition['content'].push('\nNumber of orders: ' + orders.length);
 
-    var fileName = 'reports/' + 'Pilot' + 'Report' + '.pdf';
+    var fileName = 'reports/' + /*pilot._id.toString() + fromDate + toDate*/+'Pilot' + 'Report' + '.pdf';
 
     var pdfDoc = printer.createPdfKitDocument(docDefinition);
     pdfDoc.pipe(fs.createWriteStream(fileName)).on('finish', function () {

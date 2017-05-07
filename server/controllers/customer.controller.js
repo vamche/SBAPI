@@ -4,6 +4,9 @@ import Order from '../models/order.model';
 import BPromise from 'bluebird';
 import moment from 'moment';
 
+import pdfMakePrinter from 'pdfmake/src/printer';
+var fs = require('fs');
+
 /**
  * Load customer and append to req.
  */
@@ -243,6 +246,104 @@ function getSalesByCustomer(req, res, next){
         .catch(e => next(e));
 }
 
+
+function getReport(req, res, next) {
+
+  const customer = req.customer;
+  const { franchise ,fromDate = moment().format('YYYYMMDD'),
+    toDate = moment().format('YYYYMMDD'), timeZone = 'Europe/London' } = req.body;
+  const diffInMinutes = moment().tz(timeZone).utcOffset();
+
+
+  var fonts = {
+    Roboto: {
+      normal: 'fonts/Roboto-Regular.ttf',
+      bold: 'fonts/Roboto-Medium.ttf',
+      italics: 'fonts/Roboto-Italic.ttf',
+      bolditalics: 'fonts/Roboto-MediumItalic.ttf'
+    }
+  };
+
+  var printer = new pdfMakePrinter(fonts);
+
+  const docDefinition = {
+    info: {
+      title: 'Customer Report'
+    },
+    content: [
+      { text: 'Season Boy', style: 'header'},
+      'Franchise:' + (customer.franchise ? customer.franchise.name : ''),
+      '\n',
+      customer.user.firstName + ' ' + customer.user.lastName,
+      'Mobile: ' + customer.user.mobileNumber,
+      '\n',
+      'From date: ' +  moment(fromDate, "YYYYMMDD").format('MMMM Do YYYY') ,
+      'To date: ' +  moment(toDate, "YYYYMMDD").format('MMMM Do YYYY'),
+      '\n \n'
+    ],
+    styles: {
+      header: { fontSize: 20, bold: true }
+    }
+  };
+
+
+  Order.find()
+    .where('createdBy', customer._id.toString())
+    .where('franchise', franchise)
+    .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes'))
+    .lte(moment(toDate, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes'))
+    .then(orders => {
+
+      const orderRows = [];
+      let totalDistance = 0;
+      let totalCost = 0;
+
+      for (let i=0; i < orders.length; i++) {
+        const order = orders[i];
+
+        totalDistance += order.distance_in_meters;
+        totalCost += order.final_cost;
+
+        orderRows.push([
+          order.id ? order.id : 'NA',
+          order.paymentType ? order.paymentType : 'NA' ,
+          (order.distance_in_meters/1000).toFixed(2) + ' Kms',
+          (order.final_cost).toFixed(2)
+        ]);
+      }
+
+      const ordersContent = {
+        style: 'tableExample',
+        table: {
+          widths: [100, 100 ,'*', '*'],
+          body: [
+            ['Order id', 'Payment Type', 'Distance (Kms)', 'Cost (INR)']
+          ]
+        }
+      };
+
+      ordersContent.table.body = ordersContent.table.body.concat(orderRows);
+      docDefinition['content'].push(ordersContent);
+
+      docDefinition['content'].push('\nTotal cost: Rs ' + totalCost.toFixed());
+      docDefinition['content'].push('\nTotal Kms: ' +  (totalDistance/1000).toFixed(2) + ' Kms');
+      docDefinition['content'].push('\nNumber of orders: ' + orders.length);
+
+
+
+      const fileName = 'reports/' + 'Customer' + 'Report' + '.pdf';
+
+      const pdfDoc = printer.createPdfKitDocument(docDefinition);
+      pdfDoc.pipe(fs.createWriteStream(fileName)).on('finish', function () {
+        res.download(fileName);
+      });
+
+      pdfDoc.end();
+
+    })
+    .catch(e => next(e));
+}
+
 export default {
   load, get, create, update, list, remove, listOfCustomersWithUserDetails,
-    updateLocation, updateTeams, createCustomer, getSales, getSalesByCustomer };
+    updateLocation, updateTeams, createCustomer, getSales, getSalesByCustomer, getReport };

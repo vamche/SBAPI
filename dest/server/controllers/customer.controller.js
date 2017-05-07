@@ -24,7 +24,13 @@ var _moment = require('moment');
 
 var _moment2 = _interopRequireDefault(_moment);
 
+var _printer = require('pdfmake/src/printer');
+
+var _printer2 = _interopRequireDefault(_printer);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var fs = require('fs');
 
 /**
  * Load customer and append to req.
@@ -286,8 +292,86 @@ function getSalesByCustomer(req, res, next) {
   });
 }
 
+function getReport(req, res, next) {
+
+  var customer = req.customer;
+  var _req$body3 = req.body,
+      franchise = _req$body3.franchise,
+      _req$body3$fromDate = _req$body3.fromDate,
+      fromDate = _req$body3$fromDate === undefined ? (0, _moment2.default)().format('YYYYMMDD') : _req$body3$fromDate,
+      _req$body3$toDate = _req$body3.toDate,
+      toDate = _req$body3$toDate === undefined ? (0, _moment2.default)().format('YYYYMMDD') : _req$body3$toDate,
+      _req$body3$timeZone = _req$body3.timeZone,
+      timeZone = _req$body3$timeZone === undefined ? 'Europe/London' : _req$body3$timeZone;
+
+  var diffInMinutes = (0, _moment2.default)().tz(timeZone).utcOffset();
+
+  var fonts = {
+    Roboto: {
+      normal: 'fonts/Roboto-Regular.ttf',
+      bold: 'fonts/Roboto-Medium.ttf',
+      italics: 'fonts/Roboto-Italic.ttf',
+      bolditalics: 'fonts/Roboto-MediumItalic.ttf'
+    }
+  };
+
+  var printer = new _printer2.default(fonts);
+
+  var docDefinition = {
+    info: {
+      title: 'Customer Report'
+    },
+    content: [{ text: 'Season Boy', style: 'header' }, 'Franchise:' + (customer.franchise ? customer.franchise.name : ''), '\n', customer.user.firstName + ' ' + customer.user.lastName, 'Mobile: ' + customer.user.mobileNumber, '\n', 'From date: ' + (0, _moment2.default)(fromDate, "YYYYMMDD").format('MMMM Do YYYY'), 'To date: ' + (0, _moment2.default)(toDate, "YYYYMMDD").format('MMMM Do YYYY'), '\n \n'],
+    styles: {
+      header: { fontSize: 20, bold: true }
+    }
+  };
+
+  _order2.default.find().where('createdBy', customer._id.toString()).where('franchise', franchise).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).then(function (orders) {
+
+    var orderRows = [];
+    var totalDistance = 0;
+    var totalCost = 0;
+
+    for (var i = 0; i < orders.length; i++) {
+      var order = orders[i];
+
+      totalDistance += order.distance_in_meters;
+      totalCost += order.final_cost;
+
+      orderRows.push([order.id ? order.id : 'NA', order.paymentType ? order.paymentType : 'NA', (order.distance_in_meters / 1000).toFixed(2) + ' Kms', order.final_cost.toFixed(2)]);
+    }
+
+    var ordersContent = {
+      style: 'tableExample',
+      table: {
+        widths: [100, 100, '*', '*'],
+        body: [['Order id', 'Payment Type', 'Distance (Kms)', 'Cost (INR)']]
+      }
+    };
+
+    ordersContent.table.body = ordersContent.table.body.concat(orderRows);
+    docDefinition['content'].push(ordersContent);
+
+    docDefinition['content'].push('\nTotal cost: Rs ' + totalCost.toFixed());
+    docDefinition['content'].push('\nTotal Kms: ' + (totalDistance / 1000).toFixed(2) + ' Kms');
+    docDefinition['content'].push('\nNumber of orders: ' + orders.length);
+
+    var fileName = 'reports/' + 'Customer' + 'Report' + '.pdf';
+
+    var pdfDoc = printer.createPdfKitDocument(docDefinition);
+    pdfDoc.pipe(fs.createWriteStream(fileName)).on('finish', function () {
+      res.download(fileName);
+    });
+
+    pdfDoc.end();
+  }).catch(function (e) {
+    return next(e);
+  });
+}
+
 exports.default = {
   load: load, get: get, create: create, update: update, list: list, remove: remove, listOfCustomersWithUserDetails: listOfCustomersWithUserDetails,
-  updateLocation: updateLocation, updateTeams: updateTeams, createCustomer: createCustomer, getSales: getSales, getSalesByCustomer: getSalesByCustomer };
+  updateLocation: updateLocation, updateTeams: updateTeams, createCustomer: createCustomer, getSales: getSales, getSalesByCustomer: getSalesByCustomer, getReport: getReport };
 module.exports = exports['default'];
 //# sourceMappingURL=customer.controller.js.map

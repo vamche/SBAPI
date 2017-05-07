@@ -84,6 +84,7 @@ CustomerSchema.statics = {
   get(id) {
     return this.findById(id)
       .populate('user')
+      .populate('franchise')
       .exec()
       .then((order) => {
         if (order) {
