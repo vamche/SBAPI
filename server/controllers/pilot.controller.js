@@ -654,7 +654,6 @@ function getReport(req, res, next) {
 
   Order.find()
     .where('pilot', pilot._id.toString())
-    .where('franchise', franchise)
     .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes'))
     .lte(moment(toDate, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes'))
     .then(orders => {

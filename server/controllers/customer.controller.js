@@ -289,7 +289,6 @@ function getReport(req, res, next) {
 
   Order.find()
     .where('createdBy', customer._id.toString())
-    .where('franchise', franchise)
     .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes'))
     .lte(moment(toDate, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes'))
     .then(orders => {
@@ -328,8 +327,6 @@ function getReport(req, res, next) {
       docDefinition['content'].push('\nTotal cost: Rs ' + totalCost.toFixed());
       docDefinition['content'].push('\nTotal Kms: ' +  (totalDistance/1000).toFixed(2) + ' Kms');
       docDefinition['content'].push('\nNumber of orders: ' + orders.length);
-
-
 
       const fileName = 'reports/' + 'Customer' + 'Report' + '.pdf';
 

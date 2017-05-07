@@ -707,7 +707,7 @@ function getReport(req, res, next) {
     }
   };
 
-  _order2.default.find().where('pilot', pilot._id.toString()).where('franchise', franchise).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).then(function (orders) {
+  _order2.default.find().where('pilot', pilot._id.toString()).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).then(function (orders) {
 
     var orderRows = [];
     var totalDistance = 0;
