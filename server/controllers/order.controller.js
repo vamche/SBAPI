@@ -145,6 +145,7 @@ function update(req, res, next) {
   const order = req.order;
   order.pilot = req.body.pilot ? (req.body.pilot) : null;
   order.team = req.body.team ? (req.body.team) : null;
+  order.status = req.body.pilot ? 'ASSIGNED' : 'PENDING';
   order.save()
     .then(savedOrder => {
       if(savedOrder.pilot) {

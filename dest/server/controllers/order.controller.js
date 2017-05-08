@@ -165,6 +165,7 @@ function update(req, res, next) {
   var order = req.order;
   order.pilot = req.body.pilot ? req.body.pilot : null;
   order.team = req.body.team ? req.body.team : null;
+  order.status = req.body.pilot ? 'ASSIGNED' : 'PENDING';
   order.save().then(function (savedOrder) {
     if (savedOrder.pilot) {
       _pilot2.default.get(savedOrder.pilot).then(function (newpilot) {
