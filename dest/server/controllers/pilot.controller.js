@@ -741,7 +741,9 @@ function getReport(req, res, next) {
 
     var pdfDoc = printer.createPdfKitDocument(docDefinition);
     pdfDoc.pipe(fs.createWriteStream(dirName + fileName)).on('finish', function () {
-      res.download(__dirname + '/../../../' + dirName + fileName, fileName);
+      res.set('Content-disposition', 'attachment; filename=' + fileName);
+      res.set('Content-type', 'application/pdf');
+      res.download(dirName + fileName);
     });
 
     pdfDoc.end();
