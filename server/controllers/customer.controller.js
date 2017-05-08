@@ -332,7 +332,7 @@ function getReport(req, res, next) {
       const fileName =  'Customer' + 'Report' + '.pdf';
 
       const pdfDoc = printer.createPdfKitDocument(docDefinition);
-      pdfDoc.pipe(fs.createWriteStream(fileName)).on('finish', function () {
+      pdfDoc.pipe(fs.createWriteStream(dirName + fileName)).on('finish', function () {
         res.download(dirName + fileName, fileName);
       });
 

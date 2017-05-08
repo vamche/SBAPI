@@ -740,7 +740,7 @@ function getReport(req, res, next) {
     var fileName = 'Pilot' + 'Report' + '.pdf';
 
     var pdfDoc = printer.createPdfKitDocument(docDefinition);
-    pdfDoc.pipe(fs.createWriteStream(fileName)).on('finish', function () {
+    pdfDoc.pipe(fs.createWriteStream(dirName + fileName)).on('finish', function () {
       res.download(dirName + fileName, fileName);
     });
 
