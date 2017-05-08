@@ -671,8 +671,8 @@ function getReport(req, res, next) {
         orderRows.push([
           order.id ? order.id : 'NA',
           order.status ? order.status : '' ,
-          (order.distance_in_meters/1000).toFixed(2) + ' Kms',
-          (order.time_in_seconds/3600).toFixed(2) + ' hrs'
+          (order.distance_in_meters/1000).toFixed(2),
+          (order.time_in_seconds/3600).toFixed(2)
         ]);
       }
 
@@ -681,7 +681,7 @@ function getReport(req, res, next) {
         table: {
           widths: [100, '*', 200, '*'],
           body: [
-            ['Order id', 'Status', 'Kms Travelled', 'Duration']
+            ['Order id', 'Status', 'Distance (Kms)', 'Duration (Hrs)']
           ]
         }
       };

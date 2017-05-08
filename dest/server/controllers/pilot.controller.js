@@ -719,14 +719,14 @@ function getReport(req, res, next) {
       totalDistance += order.distance_in_meters;
       totalTime += order.time_in_seconds;
 
-      orderRows.push([order.id ? order.id : 'NA', order.status ? order.status : '', (order.distance_in_meters / 1000).toFixed(2) + ' Kms', (order.time_in_seconds / 3600).toFixed(2) + ' hrs']);
+      orderRows.push([order.id ? order.id : 'NA', order.status ? order.status : '', (order.distance_in_meters / 1000).toFixed(2), (order.time_in_seconds / 3600).toFixed(2)]);
     }
 
     var ordersContent = {
       style: 'tableExample',
       table: {
         widths: [100, '*', 200, '*'],
-        body: [['Order id', 'Status', 'Kms Travelled', 'Duration']]
+        body: [['Order id', 'Status', 'Distance (Kms)', 'Duration (Hrs)']]
       }
     };
 
