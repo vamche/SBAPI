@@ -357,11 +357,12 @@ function getReport(req, res, next) {
     docDefinition['content'].push('\nTotal Kms: ' + (totalDistance / 1000).toFixed(2) + ' Kms');
     docDefinition['content'].push('\nNumber of orders: ' + orders.length);
 
-    var fileName = 'reports/' + 'Customer' + 'Report' + '.pdf';
+    var dirName = 'reports/';
+    var fileName = 'Customer' + 'Report' + '.pdf';
 
     var pdfDoc = printer.createPdfKitDocument(docDefinition);
     pdfDoc.pipe(fs.createWriteStream(fileName)).on('finish', function () {
-      res.download(fileName, fileName);
+      res.download(dirName + fileName, fileName);
     });
 
     pdfDoc.end();
