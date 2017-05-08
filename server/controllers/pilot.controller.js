@@ -693,7 +693,7 @@ function getReport(req, res, next) {
       docDefinition['content'].push('\nNumber of orders: ' + orders.length);
 
 
-      const fileName = 'reports/' + /*pilot._id.toString() + fromDate + toDate*/ + 'Pilot' + 'Report' + '.pdf';
+      const fileName = 'reports/' + 'Pilot' + 'Report' + '.pdf';
 
       const pdfDoc = printer.createPdfKitDocument(docDefinition);
       pdfDoc.pipe(fs.createWriteStream(fileName)).on('finish', function () {
