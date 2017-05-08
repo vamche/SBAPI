@@ -69,6 +69,10 @@ const OrderSchema = new mongoose.Schema({
     },
     coordinates: [Number]
   },
+  from_landmark: {
+    type: String,
+    required: false
+  },
   from_date_time: {
     type: Date,
     default: Date.now(),
@@ -99,6 +103,10 @@ const OrderSchema = new mongoose.Schema({
       default: 'Point'
     },
     coordinates: [Number]
+  },
+  to_landmark: {
+    type: String,
+    required: false
   },
   to_date_time: {
     type: Date,

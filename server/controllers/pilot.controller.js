@@ -699,7 +699,8 @@ function getReport(req, res, next) {
       pdfDoc.pipe(fs.createWriteStream(dirName + fileName)).on('finish', function () {
         res.set('Content-disposition', 'attachment; filename='+ fileName);
         res.set('Content-type', 'application/pdf');
-        res.download(dirName + fileName);
+        //res.sendFile(__dirname + '/../../../' +  dirName + fileName);
+        res.download(dirName + fileName, fileName);
       });
 
       pdfDoc.end();

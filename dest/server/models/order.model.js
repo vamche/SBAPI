@@ -92,6 +92,10 @@ var OrderSchema = new _mongoose2.default.Schema({
     },
     coordinates: [Number]
   },
+  from_landmark: {
+    type: String,
+    required: false
+  },
   from_date_time: {
     type: Date,
     default: Date.now(),
@@ -121,6 +125,10 @@ var OrderSchema = new _mongoose2.default.Schema({
       default: 'Point'
     },
     coordinates: [Number]
+  },
+  to_landmark: {
+    type: String,
+    required: false
   },
   to_date_time: {
     type: Date,
