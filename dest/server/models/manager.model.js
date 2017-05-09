@@ -93,7 +93,7 @@ ManagerSchema.statics = {
     });
   },
   getByUserId: function getByUserId(userId) {
-    return this.findOne().where('user', userId).populate('user').exec().then(function (order) {
+    return this.findOne().where('user', userId).populate('user').populate('franchise').exec().then(function (order) {
       if (order) {
         return order;
       }

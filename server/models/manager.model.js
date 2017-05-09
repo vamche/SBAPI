@@ -82,6 +82,7 @@ ManagerSchema.statics = {
     return this.findOne()
       .where('user', userId)
       .populate('user')
+      .populate('franchise')
       .exec()
       .then((order) => {
         if (order) {
