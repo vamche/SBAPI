@@ -693,14 +693,17 @@ function getReport(req, res, next) {
       docDefinition['content'].push('\nNumber of orders: ' + orders.length);
 
       const dirName = 'reports/';
-      const fileName = 'Pilot' + 'Report' + '.pdf';
+      const fileName = 'Pilot' + 'Report' + pilot._id.toString() + fromDate + toDate + '.pdf';
 
       const pdfDoc = printer.createPdfKitDocument(docDefinition);
       pdfDoc.pipe(fs.createWriteStream(dirName + fileName)).on('finish', function () {
-        res.set('Content-disposition', 'attachment; filename='+ fileName);
-        res.set('Content-type', 'application/pdf');
+        //res.set('Content-disposition', 'attachment; filename='+ fileName);
+        //res.set('Content-type', 'application/pdf');
         //res.sendFile(__dirname + '/../../../' +  dirName + fileName);
-        res.download(dirName + fileName, fileName);
+        //res.download(dirName + fileName, fileName);
+
+        res.send({file : fileName});
+
       });
 
       pdfDoc.end();

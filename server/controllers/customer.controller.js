@@ -274,7 +274,7 @@ function getReport(req, res, next) {
       { text: 'Season Boy', style: 'header'},
       'Franchise:' + (customer.franchise ? customer.franchise.name : ''),
       '\n',
-      customer.user.firstName + ' ' + customer.user.lastName,
+      customer.name,
       'Mobile: ' + customer.user.mobileNumber,
       '\n',
       'From date: ' +  moment(fromDate, "YYYYMMDD").format('MMMM Do YYYY') ,
@@ -329,13 +329,14 @@ function getReport(req, res, next) {
       docDefinition['content'].push('\nNumber of orders: ' + orders.length);
 
       const dirName = 'reports/';
-      const fileName =  'Customer' + 'Report' + '.pdf';
+      const fileName =  'Customer' + 'Report' + customer._id.toString() + fromDate + toDate + '.pdf';
 
       const pdfDoc = printer.createPdfKitDocument(docDefinition);
       pdfDoc.pipe(fs.createWriteStream(dirName + fileName)).on('finish', function () {
-        res.set('Content-disposition', 'attachment; filename='+ fileName);
-        res.set('Content-type', 'application/pdf');
-        res.download(dirName + fileName, fileName);
+        //res.set('Content-disposition', 'attachment; filename='+ fileName);
+        //res.set('Content-type', 'application/pdf');
+        //res.download(dirName + fileName, fileName);
+        res.send({file : fileName});
       });
 
       pdfDoc.end();

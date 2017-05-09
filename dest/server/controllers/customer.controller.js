@@ -321,7 +321,7 @@ function getReport(req, res, next) {
     info: {
       title: 'Customer Report'
     },
-    content: [{ text: 'Season Boy', style: 'header' }, 'Franchise:' + (customer.franchise ? customer.franchise.name : ''), '\n', customer.user.firstName + ' ' + customer.user.lastName, 'Mobile: ' + customer.user.mobileNumber, '\n', 'From date: ' + (0, _moment2.default)(fromDate, "YYYYMMDD").format('MMMM Do YYYY'), 'To date: ' + (0, _moment2.default)(toDate, "YYYYMMDD").format('MMMM Do YYYY'), '\n \n'],
+    content: [{ text: 'Season Boy', style: 'header' }, 'Franchise:' + (customer.franchise ? customer.franchise.name : ''), '\n', customer.name, 'Mobile: ' + customer.user.mobileNumber, '\n', 'From date: ' + (0, _moment2.default)(fromDate, "YYYYMMDD").format('MMMM Do YYYY'), 'To date: ' + (0, _moment2.default)(toDate, "YYYYMMDD").format('MMMM Do YYYY'), '\n \n'],
     styles: {
       header: { fontSize: 20, bold: true }
     }
@@ -358,13 +358,14 @@ function getReport(req, res, next) {
     docDefinition['content'].push('\nNumber of orders: ' + orders.length);
 
     var dirName = 'reports/';
-    var fileName = 'Customer' + 'Report' + '.pdf';
+    var fileName = 'Customer' + 'Report' + customer._id.toString() + fromDate + toDate + '.pdf';
 
     var pdfDoc = printer.createPdfKitDocument(docDefinition);
     pdfDoc.pipe(fs.createWriteStream(dirName + fileName)).on('finish', function () {
-      res.set('Content-disposition', 'attachment; filename=' + fileName);
-      res.set('Content-type', 'application/pdf');
-      res.download(dirName + fileName, fileName);
+      //res.set('Content-disposition', 'attachment; filename='+ fileName);
+      //res.set('Content-type', 'application/pdf');
+      //res.download(dirName + fileName, fileName);
+      res.send({ file: fileName });
     });
 
     pdfDoc.end();

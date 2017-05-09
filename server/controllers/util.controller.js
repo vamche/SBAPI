@@ -285,8 +285,9 @@ function alertPending() {
 
 }
 
+function clearReports() {
 
-
+}
 
 export default { assign, unAssign, uploadImgAsync, assignPending, alertPending,
   calculateDistanceBetweenLatLongs, calculateDuration, calculateFinalCost,

@@ -276,6 +276,8 @@ function alertPending() {
   });
 }
 
+function clearReports() {}
+
 exports.default = { assign: assign, unAssign: unAssign, uploadImgAsync: uploadImgAsync, assignPending: assignPending, alertPending: alertPending,
   calculateDistanceBetweenLatLongs: calculateDistanceBetweenLatLongs, calculateDuration: calculateDuration, calculateFinalCost: calculateFinalCost,
   calculateDistancePickedToDelivery: calculateDistancePickedToDelivery };

@@ -89,6 +89,8 @@ app.use((0, _helmet2.default)());
 // enable CORS - Cross Origin Resource Sharing
 app.use((0, _cors2.default)());
 
+app.use(_express2.default.static('reports'));
+
 // enable detailed API logging in dev env
 if (_env2.default.env === 'development') {
   _expressWinston2.default.requestWhitelist.push('body');
