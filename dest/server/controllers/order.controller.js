@@ -101,12 +101,14 @@ function createOrder(req, res, next) {
     from_address: req.body.from_address,
     from_location: req.body.from_location,
     from_date_time: req.body.from_date_time,
+    from_landmark: req.body.from_landmark,
     to_name: req.body.to_name,
     to_phone: req.body.to_phone,
     to_email: req.body.to_email,
     to_address: req.body.to_address,
     to_location: req.body.to_location,
     to_date_time: req.body.to_date_time,
+    to_landmark: req.body.to_landmark,
     paymentType: req.body.paymentType,
     status: req.body.pilot ? 'ASSIGNED' : 'PENDING',
     tags: req.body.tags,
@@ -131,6 +133,12 @@ function createOrder(req, res, next) {
     if (savedOrder.pilot) {
       _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
 
+      if (savedOrder.franchise) {
+        _send.message.filters.push({ 'operator': 'OR' });
+        _send.message.filters.push({ 'field': 'tag', 'key': 'manager', 'relation': '=',
+          'value': savedOrder.franchise.toString() });
+      }
+
       _pilot2.default.get(savedOrder.pilot).then(function (p) {
 
         p.isActive = true;
@@ -146,6 +154,12 @@ function createOrder(req, res, next) {
       });
     } else {
       _send.message.filters = [{ 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
+      if (savedOrder.franchise) {
+        _send.message.filters.push({ 'operator': 'OR' });
+        _send.message.filters.push({ 'field': 'tag', 'key': 'manager', 'relation': '=',
+          'value': savedOrder.franchise.toString() });
+      }
+
       _express.io && _express.io.emit('ORDER_ADDED', savedOrder);
       (0, _send.sendNotification)(_send.message);
       res.json(savedOrder);
@@ -179,6 +193,11 @@ function update(req, res, next) {
                 _send.message.headings.en = savedOrder.id + "";
                 _send.message.contents.en = 'New Order Placed. \nPick at ' + savedOrder.from_address;
                 _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
+                if (savedOrder.franchise) {
+                  _send.message.filters.push({ 'operator': 'OR' });
+                  _send.message.filters.push({ 'field': 'tag', 'key': 'manager', 'relation': '=',
+                    'value': savedOrder.franchise.toString() });
+                }
                 (0, _send.sendSMS)('91' + savedOrder.to_phone, 'Hurray! Your delivery is on its way. Our member ' + newpilot.user.firstName + ' (' + newpilot.user.mobileNumber + ') will deliver it in short time.', 4);
 
                 _express.io && _express.io.emit('ORDER_UPDATED', savedOrder);
@@ -271,6 +290,11 @@ function updateOrder(order) {
             _send.message.filters = [{ 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
             _send.message.contents.en = 'Order Update \n' + updatedOrder.title + '. \nStatus ' + updatedOrder.status;
             _send.message.headings.en = updatedOrder.id + "";
+            if (updatedOrder.franchise) {
+              _send.message.filters.push({ 'operator': 'OR' });
+              _send.message.filters.push({ 'field': 'tag', 'key': 'manager', 'relation': '=',
+                'value': updatedOrder.franchise.toString() });
+            }
             (0, _send.sendNotification)(_send.message);
           }
           if (updatedOrder.pilot) {
@@ -538,6 +562,12 @@ function reject(req, res, next) {
     _send.message.data = savedOrder;
     if (savedOrder.pilot) {
       _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
+
+      if (savedOrder.franchise) {
+        _send.message.filters.push({ 'operator': 'OR' });
+        _send.message.filters.push({ 'field': 'tag', 'key': 'manager', 'relation': '=',
+          'value': savedOrder.franchise.toString() });
+      }
 
       _pilot2.default.get(savedOrder.pilot).then(function (p) {
 
