@@ -224,7 +224,8 @@ var OrderSchema = new _mongoose2.default.Schema({
   },
   createdBy: {
     type: String, // merchant ID
-    required: false
+    required: false,
+    default: null
   },
   final_cost: {
     type: Number, // INR

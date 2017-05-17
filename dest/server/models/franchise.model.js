@@ -35,6 +35,16 @@ var FranchiseSchema = new _mongoose2.default.Schema({
     type: String,
     required: false
   },
+  timeZone: {
+    type: String,
+    required: false,
+    default: 'Asia/Kolkata'
+  },
+  currency: {
+    type: String,
+    required: false,
+    default: 'INR'
+  },
   location: {
     type: {
       type: String,

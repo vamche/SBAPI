@@ -327,7 +327,9 @@ function getReport(req, res, next) {
     }
   };
 
-  _order2.default.find().where('createdBy', customer._id.toString()).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).then(function (orders) {
+  _order2.default.find().where('createdBy', customer._id.toString()).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).populate({
+    path: 'pilot',
+    populate: { path: 'user' } }).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).then(function (orders) {
 
     var orderRows = [];
     var totalDistance = 0;
@@ -339,14 +341,14 @@ function getReport(req, res, next) {
       totalDistance += order.distance_in_meters;
       totalCost += order.final_cost;
 
-      orderRows.push([order.id ? order.id : 'NA', order.paymentType ? order.paymentType : 'NA', (order.distance_in_meters / 1000).toFixed(2) + ' Kms', order.final_cost.toFixed(2)]);
+      orderRows.push([order.id ? order.id : 'NA', order.paymentType ? order.paymentType : 'NA', order.pilot ? order.pilot.user.firstName + ' ' + order.pilot.user.lastName : 'NA', (order.distance_in_meters / 1000).toFixed(2) + ' Kms', order.final_cost.toFixed(2)]);
     }
 
     var ordersContent = {
       style: 'tableExample',
       table: {
-        widths: [100, 100, '*', '*'],
-        body: [['Order id', 'Payment Type', 'Distance (Kms)', 'Cost (INR)']]
+        widths: [100, 100, '*', '*', '*'],
+        body: [['Order id', 'Payment Type', 'Pilot', 'Distance (Kms)', 'Cost (INR)']]
       }
     };
 

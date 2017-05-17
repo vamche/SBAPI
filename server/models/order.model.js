@@ -202,7 +202,8 @@ const OrderSchema = new mongoose.Schema({
   },
   createdBy: {
     type: String, // merchant ID
-    required: false
+    required: false,
+    default: null
   },
   final_cost: {
     type: Number, // INR

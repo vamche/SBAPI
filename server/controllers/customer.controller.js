@@ -290,6 +290,9 @@ function getReport(req, res, next) {
   Order.find()
     .where('createdBy', customer._id.toString())
     .where('createdAt').gte(moment(fromDate, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes'))
+    .populate({
+      path: 'pilot',
+      populate: { path: 'user' }})
     .lte(moment(toDate, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes'))
     .then(orders => {
 
@@ -306,6 +309,7 @@ function getReport(req, res, next) {
         orderRows.push([
           order.id ? order.id : 'NA',
           order.paymentType ? order.paymentType : 'NA' ,
+          order.pilot ? order.pilot.user.firstName + ' ' + order.pilot.user.lastName : 'NA',
           (order.distance_in_meters/1000).toFixed(2) + ' Kms',
           (order.final_cost).toFixed(2)
         ]);
@@ -314,9 +318,9 @@ function getReport(req, res, next) {
       const ordersContent = {
         style: 'tableExample',
         table: {
-          widths: [100, 100 ,'*', '*'],
+          widths: [100, 100 , '*' ,'*', '*'],
           body: [
-            ['Order id', 'Payment Type', 'Distance (Kms)', 'Cost (INR)']
+            ['Order id', 'Payment Type', 'Pilot' ,'Distance (Kms)', 'Cost (INR)']
           ]
         }
       };
