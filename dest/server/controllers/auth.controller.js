@@ -50,7 +50,7 @@ function login(req, res, next) {
     if (user.password === req.body.password) {
       if (req.body.userRole === 'PILOT') {
         _pilot2.default.getByUserId(user._id.toString()).then(function (pilot) {
-          if (pilot.isAvailable && pilot.user.username !== 'rekha123') {
+          if (pilot.isAvailable && pilot.user.username !== 'rekhasb') {
             var err = new _APIError2.default('Please logout from other devices to log in.', _httpStatus2.default.UNAUTHORIZED, true);
             return next(err);
           } else {
