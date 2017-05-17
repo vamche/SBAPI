@@ -25,7 +25,7 @@ function login(req, res, next) {
                 if(req.body.userRole === 'PILOT'){
                   Pilot.getByUserId(user._id.toString())
                       .then(pilot => {
-                          if (pilot.isAvailable && pilot.user.username !== 'anilvizag') {
+                          if (pilot.isAvailable && pilot.user.username !== 'rekha123') {
                             const err = new APIError('Please logout from other devices to log in.', httpStatus.UNAUTHORIZED, true);
                             return next(err);
                           } else {
