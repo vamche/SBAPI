@@ -169,8 +169,8 @@ function update(req, res, next) {
             newpilot.save()
               .then(updatedNewPilot => {
                 const oldPilotId = req.order.pilot;
-                if(oldPilotId && oldPilotId !== savedOrder.pilot) {
-                  Pilot.get(oldPilotId)
+                if(oldPilotId && oldPilotId._id.toString() !== savedOrder.pilot) {
+                  Pilot.get(oldPilotId._id.toString())
                     .then(oldPilot => {
                       oldPilot.isActive = false;
                       oldPilot.save()

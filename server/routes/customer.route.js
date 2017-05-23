@@ -56,8 +56,12 @@ router.route('/sales/:customerId')
  * **/
     .post(customerCtrl.getSalesByCustomer)
 
+router.route('/report')
+  .post(customerCtrl.getReportAllCustomers)
+
 router.route('/report/:customerId')
   .post(customerCtrl.getReport)
+
 
 /** Load customer when API with customerId route parameter is hit */
 router.param('customerId', customerCtrl.load);

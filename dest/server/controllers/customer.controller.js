@@ -292,6 +292,114 @@ function getSalesByCustomer(req, res, next) {
   });
 }
 
+function getReportAllCustomers(res, req, next) {
+  var body = req.body;
+  var timeZone = body.timeZone ? body.timeZone : 'Europe/London';
+  var fromDate = body.fromDate ? body.fromDate : (0, _moment2.default)().format('YYYYMMDD');
+  var toDate = body.toDate ? body.toDate : (0, _moment2.default)().format('YYYYMMDD');
+  var diffInMinutes = (0, _moment2.default)().tz(timeZone).utcOffset();
+  var franchise = body.franchise;
+
+  var fonts = {
+    Roboto: {
+      normal: 'fonts/Roboto-Regular.ttf',
+      bold: 'fonts/Roboto-Medium.ttf',
+      italics: 'fonts/Roboto-Italic.ttf',
+      bolditalics: 'fonts/Roboto-MediumItalic.ttf'
+    }
+  };
+
+  var printer = new _printer2.default(fonts);
+
+  var docDefinition = {
+    info: {
+      title: 'Customers Sales Report'
+    },
+    content: [],
+    styles: {
+      header: { fontSize: 20, bold: true }
+    }
+  };
+
+  _customer2.default.find().where('franchise', franchise).populate('franchise').then(function (customers) {
+
+    var totalSales = 0;
+    var totalDistance = 0;
+    var totalOrders = 0;
+
+    var customersSalesContent = {
+      style: 'tableExample',
+      table: {
+        widths: ['*', '*', '*', '*'],
+        body: [['Customer', 'Number of orders', 'Distance (Kms)', 'Sales (INR)']]
+      }
+    };
+
+    var _loop = function _loop(j) {
+      var customerSales = 0;
+      var customerOrders = 0;
+      var customerDistance = 0;
+      var customerRows = [];
+      var customer = customers[j];
+
+      if (customer.franchise && docDefinition.content.length === 0) {
+        docDefinition.content = [{ text: 'Season Boy', style: 'header' }, 'Franchise:' + (customer.franchise ? customer.franchise.name : ''), '\n', '\n', 'From date: ' + (0, _moment2.default)(fromDate, "YYYYMMDD").format('MMMM Do YYYY'), 'To date: ' + (0, _moment2.default)(toDate, "YYYYMMDD").format('MMMM Do YYYY'), '\n \n'];
+      }
+
+      _order2.default.find().where('createdBy', customer.id).where('createdAt').gte((0, _moment2.default)(fromDate, "YYYYMMDD").startOf('day').subtract(diffInMinutes, 'minutes')).lte((0, _moment2.default)(toDate, "YYYYMMDD").endOf('day').subtract(diffInMinutes, 'minutes')).populate({
+        path: 'pilot',
+        populate: { path: 'user' } }).populate('franchise').then(function (orders) {
+        customerRows[j] = [customer.name, '0', '0.00 Km', '0.00'];
+        for (var i = 0; i < orders.length; i++) {
+          var order = orders[i];
+          customerSales += order.final_cost;
+          customerDistance += order.distance_in_meters;
+          customerOrders++;
+          if (i == orders.length - 1) {
+            totalSales += customerSales;
+            totalDistance += customerDistance;
+            totalOrders += orders.length;
+            customerRows[j] = [customer.name, customerOrders, (customerDistance / 1000).toFixed(2) + 'Kms', customerSales.toFixed(2)];
+          }
+        }
+      }).catch(function (e) {
+        return next(e);
+      });
+
+      if (j === customers.length - 1) {
+        (function () {
+
+          customersSalesContent.table.body = customersSalesContent.table.body.concat(customerRows);
+          docDefinition['content'].push(customersSalesContent);
+
+          docDefinition['content'].push('\nTotal cost: Rs ' + totalSales.toFixed());
+          docDefinition['content'].push('\nTotal Kms: ' + (totalDistance / 1000).toFixed(2) + ' Kms');
+          docDefinition['content'].push('\nNumber of orders: ' + totalOrders);
+
+          var dirName = 'reports/';
+          var fileName = 'CustomerSales' + 'Report' + fromDate + toDate + '.pdf';
+
+          var pdfDoc = printer.createPdfKitDocument(docDefinition);
+          pdfDoc.pipe(fs.createWriteStream(dirName + fileName)).on('finish', function () {
+            //res.set('Content-disposition', 'attachment; filename='+ fileName);
+            //res.set('Content-type', 'application/pdf');
+            //res.download(dirName + fileName, fileName);
+            res.send({ file: fileName });
+          });
+
+          pdfDoc.end();
+        })();
+      }
+    };
+
+    for (var j = 0; j < customers.length; j++) {
+      _loop(j);
+    }
+  }).catch(function (e) {
+    return next(e);
+  });
+}
+
 function getReport(req, res, next) {
 
   var customer = req.customer;
@@ -341,7 +449,7 @@ function getReport(req, res, next) {
       totalDistance += order.distance_in_meters;
       totalCost += order.final_cost;
 
-      orderRows.push([order.id ? order.id : 'NA', order.paymentType ? order.paymentType : 'NA', order.pilot ? order.pilot.user.firstName + ' ' + order.pilot.user.lastName : 'NA', (order.distance_in_meters / 1000).toFixed(2) + ' Kms', order.final_cost.toFixed(2)]);
+      orderRows.push([order.id ? order.id : 'NA', order.paymentType ? order.paymentType : 'NA', order.pilot ? order.pilot.user.firstName + '( ' + order.pilot.user.mobileNumber + ' )' : 'NA', (order.distance_in_meters / 1000).toFixed(2) + ' Kms', order.final_cost.toFixed(2)]);
     }
 
     var ordersContent = {
@@ -377,7 +485,7 @@ function getReport(req, res, next) {
 }
 
 exports.default = {
-  load: load, get: get, create: create, update: update, list: list, remove: remove, listOfCustomersWithUserDetails: listOfCustomersWithUserDetails,
+  load: load, get: get, create: create, update: update, list: list, remove: remove, listOfCustomersWithUserDetails: listOfCustomersWithUserDetails, getReportAllCustomers: getReportAllCustomers,
   updateLocation: updateLocation, updateTeams: updateTeams, createCustomer: createCustomer, getSales: getSales, getSalesByCustomer: getSalesByCustomer, getReport: getReport };
 module.exports = exports['default'];
 //# sourceMappingURL=customer.controller.js.map
