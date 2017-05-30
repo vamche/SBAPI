@@ -215,6 +215,10 @@ const OrderSchema = new mongoose.Schema({
     default: true,
     required: false
   },
+  cash_collected: {
+    type: Boolean,
+    default: false
+  },
   createdAt: {
     type: Date,
     default: Date.now

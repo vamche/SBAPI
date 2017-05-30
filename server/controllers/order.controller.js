@@ -229,6 +229,7 @@ function updateOrder(order){
           tobeUpdatedOrder.pilot_from_date_time = order.pilot_from_date_time;
           tobeUpdatedOrder.pilot_to_date_time = order.pilot_to_date_time;
           tobeUpdatedOrder.pilot_completed_date_time = order.pilot_completed_date_time;
+          tobeUpdatedOrder.cash_collected = order.pilot_completed_date_time;
 
           if(order.status === 'COMPLETED') {
             const distance = calculateDistanceBetweenLatLongs(order.pilot_movement.coordinates);
