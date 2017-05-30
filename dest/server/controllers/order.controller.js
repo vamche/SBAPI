@@ -177,6 +177,7 @@ function createOrder(req, res, next) {
  */
 function update(req, res, next) {
   var order = req.order;
+  var oldPilotId = req.order.pilot;
   order.pilot = req.body.pilot ? req.body.pilot : null;
   order.team = req.body.team ? req.body.team : null;
   order.status = req.body.pilot ? 'ASSIGNED' : 'PENDING';
@@ -185,7 +186,6 @@ function update(req, res, next) {
       _pilot2.default.get(savedOrder.pilot).then(function (newpilot) {
         newpilot.isActive = true;
         newpilot.save().then(function (updatedNewPilot) {
-          var oldPilotId = req.order.pilot;
           if (oldPilotId && oldPilotId._id && oldPilotId._id.toString() !== savedOrder.pilot) {
             _pilot2.default.get(oldPilotId._id.toString()).then(function (oldPilot) {
               oldPilot.isActive = false;
@@ -289,13 +289,21 @@ function updateOrder(order) {
           if (statusChanged) {
             _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
             _send.message.filters = [{ 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
-            _send.message.contents.en = 'Order Update \n' + updatedOrder.title + '. \nStatus ' + updatedOrder.status;
+            _send.message.contents.en = 'Order Update \n' + updatedOrder.title + '. \nStatus ' + updatedOrder.status + '.';
+            _send.message.contents.en += updatedOrder.paymentType === 'COD' ? updatedOrder.cash_collected ? 'Pilot collected cash for the COD order.' : 'Pilot did not collect cash for the COD order.' : '';
             _send.message.headings.en = updatedOrder.id + "";
             if (updatedOrder.franchise) {
               _send.message.filters.push({ 'operator': 'OR' });
               _send.message.filters.push({ 'field': 'tag', 'key': 'manager', 'relation': '=',
                 'value': updatedOrder.franchise.toString() });
             }
+
+            if (updatedOrder.status === 'COMPLETED' && updatedOrder.createdByUserRole === 'CUSTOMER') {
+              _send.message.filters.push({ 'operator': 'OR' });
+              _send.message.filters.push({ 'field': 'tag', 'key': 'customer', 'relation': '=',
+                'value': updatedOrder.createdBy });
+            }
+
             (0, _send.sendNotification)(_send.message);
           }
           if (updatedOrder.pilot) {

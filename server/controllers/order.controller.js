@@ -157,6 +157,7 @@ function createOrder(req, res, next, franchise = null) {
  */
 function update(req, res, next) {
   const order = req.order;
+  const oldPilotId = req.order.pilot;
   order.pilot = req.body.pilot ? (req.body.pilot) : null;
   order.team = req.body.team ? (req.body.team) : null;
   order.status = req.body.pilot ? 'ASSIGNED' : 'PENDING';
@@ -168,7 +169,6 @@ function update(req, res, next) {
             newpilot.isActive = true;
             newpilot.save()
               .then(updatedNewPilot => {
-                const oldPilotId = req.order.pilot;
                 if(oldPilotId && oldPilotId._id && oldPilotId._id.toString() !== savedOrder.pilot) {
                   Pilot.get(oldPilotId._id.toString())
                     .then(oldPilot => {
@@ -275,13 +275,22 @@ function updateOrder(order){
                     if (statusChanged) {
                       io && io.emit('ORDER_UPDATED', updatedOrder );
                       message.filters = [{'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'}];
-                      message.contents.en = `Order Update \n${updatedOrder.title}. \nStatus ${updatedOrder.status}`;
+                      message.contents.en = `Order Update \n${updatedOrder.title}. \nStatus ${updatedOrder.status}.`;
+                      message.contents.en += updatedOrder.paymentType === 'COD' ?
+                        (updatedOrder.cash_collected ? 'Pilot collected cash for the COD order.' : 'Pilot did not collect cash for the COD order.') : '';
                       message.headings.en = updatedOrder.id + "";
                       if (updatedOrder.franchise) {
                         message.filters.push({'operator' : 'OR'});
                         message.filters.push({'field': 'tag', 'key': 'manager', 'relation': '=',
                           'value': updatedOrder.franchise.toString()});
                       }
+
+                      if (updatedOrder.status === 'COMPLETED' && updatedOrder.createdByUserRole === 'CUSTOMER') {
+                        message.filters.push({'operator' : 'OR'});
+                        message.filters.push({'field': 'tag', 'key': 'customer', 'relation': '=',
+                          'value': updatedOrder.createdBy});
+                      }
+
                       sendNotification(message);
                     }
                     if(updatedOrder.pilot) {
