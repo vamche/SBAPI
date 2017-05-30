@@ -186,7 +186,7 @@ function update(req, res, next) {
         newpilot.isActive = true;
         newpilot.save().then(function (updatedNewPilot) {
           var oldPilotId = req.order.pilot;
-          if (oldPilotId && oldPilotId._id.toString() !== savedOrder.pilot) {
+          if (oldPilotId && oldPilotId._id && oldPilotId._id.toString() !== savedOrder.pilot) {
             _pilot2.default.get(oldPilotId._id.toString()).then(function (oldPilot) {
               oldPilot.isActive = false;
               oldPilot.save().then(function (updatedOldPilot) {

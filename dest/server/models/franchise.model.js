@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _ref;
+
 var _bluebird = require('bluebird');
 
 var _bluebird2 = _interopRequireDefault(_bluebird);
@@ -22,10 +24,12 @@ var _APIError2 = _interopRequireDefault(_APIError);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 /**
  * Franchise Schema
  */
-var FranchiseSchema = new _mongoose2.default.Schema({
+var FranchiseSchema = new _mongoose2.default.Schema((_ref = {
   name: {
     type: String,
     required: true,
@@ -71,12 +75,17 @@ var FranchiseSchema = new _mongoose2.default.Schema({
     type: Boolean,
     required: false,
     default: true
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
   }
-});
+}, _defineProperty(_ref, 'timeZone', {
+  type: String,
+  default: 'Asia/KolKata'
+}), _defineProperty(_ref, 'currency', {
+  type: String,
+  default: 'INR'
+}), _defineProperty(_ref, 'createdAt', {
+  type: Date,
+  default: Date.now
+}), _ref));
 
 FranchiseSchema.index({ location: '2dsphere' });
 FranchiseSchema.index({ geo_fence: '2dsphere' });
@@ -138,21 +147,21 @@ FranchiseSchema.statics = {
    * @returns {Promise<Franchise[]>}
    */
   list: function list() {
-    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref$skip = _ref.skip,
-        skip = _ref$skip === undefined ? 0 : _ref$skip,
-        _ref$limit = _ref.limit,
-        limit = _ref$limit === undefined ? 50 : _ref$limit;
-
-    return this.find().populate('user').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
-  },
-  listByTeam: function listByTeam() {
     var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        team = _ref2.team,
         _ref2$skip = _ref2.skip,
         skip = _ref2$skip === undefined ? 0 : _ref2$skip,
         _ref2$limit = _ref2.limit,
         limit = _ref2$limit === undefined ? 50 : _ref2$limit;
+
+    return this.find().populate('user').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+  },
+  listByTeam: function listByTeam() {
+    var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        team = _ref3.team,
+        _ref3$skip = _ref3.skip,
+        skip = _ref3$skip === undefined ? 0 : _ref3$skip,
+        _ref3$limit = _ref3.limit,
+        limit = _ref3$limit === undefined ? 50 : _ref3$limit;
 
     return this.find().where('teams').in([team]).populate('user').sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   }

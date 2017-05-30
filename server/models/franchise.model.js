@@ -55,6 +55,14 @@ const FranchiseSchema = new mongoose.Schema({
     required: false,
     default: true
   },
+  timeZone: {
+    type: String,
+    default: 'Asia/KolKata'
+  },
+  currency: {
+    type: String,
+    default: 'INR'
+  },
   createdAt: {
     type: Date,
     default: Date.now
