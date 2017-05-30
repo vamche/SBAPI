@@ -229,7 +229,6 @@ function updateOrder(order){
           tobeUpdatedOrder.pilot_from_date_time = order.pilot_from_date_time;
           tobeUpdatedOrder.pilot_to_date_time = order.pilot_to_date_time;
           tobeUpdatedOrder.pilot_completed_date_time = order.pilot_completed_date_time;
-          tobeUpdatedOrder.cash_collected = order.cash_collected ? order.cash_collected : false;
 
           if(order.status === 'COMPLETED') {
             const distance = calculateDistanceBetweenLatLongs(order.pilot_movement.coordinates);
@@ -239,6 +238,7 @@ function updateOrder(order){
             tobeUpdatedOrder.distance_picked_to_delivery_in_meters = +pickUpToDeliveryDistance.toFixed(2);
             tobeUpdatedOrder.time_in_seconds = duration;
             tobeUpdatedOrder.final_cost = +calculateFinalCost(pickUpToDeliveryDistance, duration).toFixed(2);
+            tobeUpdatedOrder.cash_collected = order.cash_collected ? order.cash_collected : false;
           }
 
           let attachmentsTobeUploaded = order.attachments.filter(a => !a.uploaded);
