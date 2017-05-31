@@ -179,6 +179,7 @@ function update(req, res, next) {
                           //message.template_id = pushNotificationTemplateId;
                           message.headings.en = savedOrder.id + "";
                           message.contents.en = `New Order Placed. \nPick at ${savedOrder.from_address}`;
+                          message.filters = [];
                           message.filters = [
                             {'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot},
                             {'operator' : 'OR'},
@@ -277,11 +278,9 @@ function updateOrder(order){
                     if (statusChanged) {
                       io && io.emit('ORDER_UPDATED', updatedOrder );
                       const msg = Object.assign({}, message);
-
+                      msg.filters = [];
                       msg.filters = [{'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'}];
                       msg.contents.en = `Order Update \n${updatedOrder.title}. \nStatus ${updatedOrder.status}.`;
-                      msg.contents.en += updatedOrder.paymentType === 'COD' ?
-                        (updatedOrder.cash_collected ? 'Pilot collected cash for the COD order.' : 'Pilot did not collect cash for the COD order.') : '';
                       msg.headings.en = updatedOrder.id + "";
                       if (updatedOrder.franchise) {
                         msg.filters.push({'operator' : 'OR'});
@@ -290,10 +289,13 @@ function updateOrder(order){
                       }
 
                       if (updatedOrder.status === 'COMPLETED' && updatedOrder.createdByUserRole === 'CUSTOMER') {
+                        msg.contents.en += updatedOrder.paymentType === 'COD' ?
+                          (updatedOrder.cash_collected ? 'Pilot collected cash for the COD order.' : 'Pilot did not collect cash for the COD order.') : '';
                         msg.filters.push({'operator' : 'OR'});
                         msg.filters.push({'field': 'tag', 'key': 'customer', 'relation': '=',
                           'value': updatedOrder.createdBy});
-                        delete msg.template_id;
+                        msg.template_id = '';
+                        //delete msg.template_id;
                       }
 
                       sendNotification(message);

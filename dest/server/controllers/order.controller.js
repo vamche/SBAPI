@@ -194,6 +194,7 @@ function update(req, res, next) {
                 //message.template_id = pushNotificationTemplateId;
                 _send.message.headings.en = savedOrder.id + "";
                 _send.message.contents.en = 'New Order Placed. \nPick at ' + savedOrder.from_address;
+                _send.message.filters = [];
                 _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
                 if (savedOrder.franchise) {
                   _send.message.filters.push({ 'operator': 'OR' });
@@ -291,10 +292,9 @@ function updateOrder(order) {
           if (statusChanged) {
             _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
             var msg = Object.assign({}, _send.message);
-
+            msg.filters = [];
             msg.filters = [{ 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
             msg.contents.en = 'Order Update \n' + updatedOrder.title + '. \nStatus ' + updatedOrder.status + '.';
-            msg.contents.en += updatedOrder.paymentType === 'COD' ? updatedOrder.cash_collected ? 'Pilot collected cash for the COD order.' : 'Pilot did not collect cash for the COD order.' : '';
             msg.headings.en = updatedOrder.id + "";
             if (updatedOrder.franchise) {
               msg.filters.push({ 'operator': 'OR' });
@@ -303,10 +303,12 @@ function updateOrder(order) {
             }
 
             if (updatedOrder.status === 'COMPLETED' && updatedOrder.createdByUserRole === 'CUSTOMER') {
+              msg.contents.en += updatedOrder.paymentType === 'COD' ? updatedOrder.cash_collected ? 'Pilot collected cash for the COD order.' : 'Pilot did not collect cash for the COD order.' : '';
               msg.filters.push({ 'operator': 'OR' });
               msg.filters.push({ 'field': 'tag', 'key': 'customer', 'relation': '=',
                 'value': updatedOrder.createdBy });
-              delete msg.template_id;
+              msg.template_id = '';
+              //delete msg.template_id;
             }
 
             (0, _send.sendNotification)(_send.message);
