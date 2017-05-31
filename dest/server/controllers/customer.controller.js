@@ -446,10 +446,10 @@ function getReport(req, res, next) {
     for (var i = 0; i < orders.length; i++) {
       var order = orders[i];
 
-      totalDistance += order.distance_in_meters;
+      totalDistance += order.distance_picked_to_delivery_in_meters;
       totalCost += order.final_cost;
 
-      orderRows.push([order.id ? order.id : 'NA', order.paymentType ? order.paymentType : 'NA', order.pilot ? order.pilot.user.firstName + '( ' + order.pilot.user.mobileNumber + ' )' : 'NA', (order.distance_in_meters / 1000).toFixed(2) + ' Kms', order.final_cost.toFixed(2)]);
+      orderRows.push([order.id ? order.id : 'NA', order.paymentType ? order.paymentType : 'NA', order.pilot ? order.pilot.user.firstName + '( ' + order.pilot.user.mobileNumber + ' )' : 'NA', (order.distance_picked_to_delivery_in_meters / 1000).toFixed(2) + ' Kms', order.final_cost.toFixed(2)]);
     }
 
     var ordersContent = {
