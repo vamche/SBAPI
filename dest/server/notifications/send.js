@@ -32,13 +32,15 @@ var sendSMS = function sendSMS(mobiles, message, route) {
   });
 };
 
+var pushNotificationTemplateId = '1ce3c15d-9821-4dee-840e-2e720044020d';
+
 var message = {
   app_id: "092a0af4-0df5-4e86-aebc-f42e4a8d383e",
   headings: { 'en': 'Title' },
   contents: { "en": "English Message From Node!" },
   included_segments: ["All"],
   filters: [{ 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }],
-  template_id: '1ce3c15d-9821-4dee-840e-2e720044020d'
+  template_id: pushNotificationTemplateId
 };
 
 exports.default = { sendNotification: sendNotification, sendSMS: sendSMS, message: message };

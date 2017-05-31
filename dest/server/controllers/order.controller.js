@@ -127,6 +127,7 @@ function createOrder(req, res, next) {
       return savedOrder;
     }
   }).then(function (savedOrder) {
+    _send.message.template_id = _send.pushNotificationTemplateId;
     _send.message.headings.en = savedOrder.id + "";
     _send.message.contents.en = 'New Order Placed. \nPick at ' + order.from_address;
     _send.message.data = savedOrder;
@@ -190,6 +191,7 @@ function update(req, res, next) {
             _pilot2.default.get(oldPilotId._id.toString()).then(function (oldPilot) {
               oldPilot.isActive = false;
               oldPilot.save().then(function (updatedOldPilot) {
+                _send.message.template_id = _send.pushNotificationTemplateId;
                 _send.message.headings.en = savedOrder.id + "";
                 _send.message.contents.en = 'New Order Placed. \nPick at ' + savedOrder.from_address;
                 _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
@@ -302,6 +304,7 @@ function updateOrder(order) {
               _send.message.filters.push({ 'operator': 'OR' });
               _send.message.filters.push({ 'field': 'tag', 'key': 'customer', 'relation': '=',
                 'value': updatedOrder.createdBy });
+              delete _send.message.template_id;
             }
 
             (0, _send.sendNotification)(_send.message);
@@ -566,6 +569,7 @@ function reject(req, res, next) {
   order.save().then(function (savedOrder) {
     return (0, _util.assign)(savedOrder, pilot);
   }).then(function (savedOrder) {
+    _send.message.template_id = _send.pushNotificationTemplateId;
     _send.message.headings.en = savedOrder.id + "";
     _send.message.contents.en = 'New Order Assigned. \nPick at ' + savedOrder.from_address;
     _send.message.data = savedOrder;

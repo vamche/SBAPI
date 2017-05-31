@@ -26,6 +26,7 @@ const sendSMS = function (mobiles, message, route) {
     });
 }
 
+const pushNotificationTemplateId = '1ce3c15d-9821-4dee-840e-2e720044020d';
 
 const message = {
   app_id: "092a0af4-0df5-4e86-aebc-f42e4a8d383e",
@@ -33,8 +34,9 @@ const message = {
   contents: {"en": "English Message From Node!"},
   included_segments: ["All"],
   filters :[{'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'}],
-  template_id : '1ce3c15d-9821-4dee-840e-2e720044020d'
+  template_id : pushNotificationTemplateId
 };
+
 
 export default { sendNotification, sendSMS, message };
 

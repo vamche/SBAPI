@@ -5,7 +5,7 @@ import pilotCtrl from '../controllers/pilot.controller';
 import cloudinary from 'cloudinary';
 import geolib from 'geolib';
 import moment from 'moment';
-import { sendNotification, message, sendSMS } from '../notifications/send';
+import { sendNotification, message, sendSMS, pushNotificationTemplateId } from '../notifications/send';
 import { io } from '../../config/express';
 
 const maxDistance = 3; // 3 KM
@@ -105,6 +105,7 @@ function assignPending(){
                 order.status = 'ASSIGNED';
                 order.save()
                   .then((updatedOrder) => {
+                    message.template_id = pushNotificationTemplateId;
                     message.headings.en = updatedOrder.id + "";
                     message.data = updatedOrder;
                     message.contents.en = `Order Assigned \n${updatedOrder.title}. 
@@ -141,6 +142,7 @@ function assignPending(){
                 order.status = 'ASSIGNED';
                 order.save()
                   .then((updatedOrder) => {
+                    message.template_id = pushNotificationTemplateId;
                     message.headings.en = updatedOrder.id + "";
                     message.data = updatedOrder;
                     message.contents.en = ` Order Assigned \n${updatedOrder.title}. 
@@ -268,6 +270,7 @@ function alertPending() {
           const orderCreatedDate = moment(order.createdAt).subtract(diffInMinutes).format('DD-MM-YYYY');
           const currentDate = moment().subtract(diffInMinutes).format('DD-MM-YYYY');
           if (orderCreatedDate !== currentDate) {
+            delete msg.template_id;
             msg.headings.en = order.id + "";
             msg.data = order;
             msg.contents.en = `Order number ${order.id} dated ${orderCreatedDate} is not completed yet. Please complete it.`;

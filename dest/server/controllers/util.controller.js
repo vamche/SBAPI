@@ -123,6 +123,7 @@ function assignPending() {
             pilot.isActive = true;
             order.status = 'ASSIGNED';
             order.save().then(function (updatedOrder) {
+              _send.message.template_id = _send.pushNotificationTemplateId;
               _send.message.headings.en = updatedOrder.id + "";
               _send.message.data = updatedOrder;
               _send.message.contents.en = 'Order Assigned \n' + updatedOrder.title + '. \n                                           \nPick at ' + updatedOrder.from_address;
@@ -148,6 +149,7 @@ function assignPending() {
             pilot.isActive = true;
             order.status = 'ASSIGNED';
             order.save().then(function (updatedOrder) {
+              _send.message.template_id = _send.pushNotificationTemplateId;
               _send.message.headings.en = updatedOrder.id + "";
               _send.message.data = updatedOrder;
               _send.message.contents.en = ' Order Assigned \n' + updatedOrder.title + '. \n                    \nPick at ' + updatedOrder.from_address;
@@ -261,6 +263,7 @@ function alertPending() {
         var orderCreatedDate = (0, _moment2.default)(order.createdAt).subtract(diffInMinutes).format('DD-MM-YYYY');
         var currentDate = (0, _moment2.default)().subtract(diffInMinutes).format('DD-MM-YYYY');
         if (orderCreatedDate !== currentDate) {
+          delete msg.template_id;
           msg.headings.en = order.id + "";
           msg.data = order;
           msg.contents.en = 'Order number ' + order.id + ' dated ' + orderCreatedDate + ' is not completed yet. Please complete it.';
