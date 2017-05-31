@@ -127,7 +127,7 @@ function createOrder(req, res, next) {
       return savedOrder;
     }
   }).then(function (savedOrder) {
-    _send.message.template_id = _send.pushNotificationTemplateId;
+    //message.template_id = pushNotificationTemplateId;
     _send.message.headings.en = savedOrder.id + "";
     _send.message.contents.en = 'New Order Placed. \nPick at ' + order.from_address;
     _send.message.data = savedOrder;
@@ -191,7 +191,7 @@ function update(req, res, next) {
             _pilot2.default.get(oldPilotId._id.toString()).then(function (oldPilot) {
               oldPilot.isActive = false;
               oldPilot.save().then(function (updatedOldPilot) {
-                _send.message.template_id = _send.pushNotificationTemplateId;
+                //message.template_id = pushNotificationTemplateId;
                 _send.message.headings.en = savedOrder.id + "";
                 _send.message.contents.en = 'New Order Placed. \nPick at ' + savedOrder.from_address;
                 _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': savedOrder.pilot }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
@@ -290,21 +290,23 @@ function updateOrder(order) {
         tobeUpdatedOrder.save().then(function (updatedOrder) {
           if (statusChanged) {
             _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
-            _send.message.filters = [{ 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
-            _send.message.contents.en = 'Order Update \n' + updatedOrder.title + '. \nStatus ' + updatedOrder.status + '.';
-            _send.message.contents.en += updatedOrder.paymentType === 'COD' ? updatedOrder.cash_collected ? 'Pilot collected cash for the COD order.' : 'Pilot did not collect cash for the COD order.' : '';
-            _send.message.headings.en = updatedOrder.id + "";
+            var msg = Object.assign({}, _send.message);
+
+            msg.filters = [{ 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
+            msg.contents.en = 'Order Update \n' + updatedOrder.title + '. \nStatus ' + updatedOrder.status + '.';
+            msg.contents.en += updatedOrder.paymentType === 'COD' ? updatedOrder.cash_collected ? 'Pilot collected cash for the COD order.' : 'Pilot did not collect cash for the COD order.' : '';
+            msg.headings.en = updatedOrder.id + "";
             if (updatedOrder.franchise) {
-              _send.message.filters.push({ 'operator': 'OR' });
-              _send.message.filters.push({ 'field': 'tag', 'key': 'manager', 'relation': '=',
+              msg.filters.push({ 'operator': 'OR' });
+              msg.filters.push({ 'field': 'tag', 'key': 'manager', 'relation': '=',
                 'value': updatedOrder.franchise.toString() });
             }
 
             if (updatedOrder.status === 'COMPLETED' && updatedOrder.createdByUserRole === 'CUSTOMER') {
-              _send.message.filters.push({ 'operator': 'OR' });
-              _send.message.filters.push({ 'field': 'tag', 'key': 'customer', 'relation': '=',
+              msg.filters.push({ 'operator': 'OR' });
+              msg.filters.push({ 'field': 'tag', 'key': 'customer', 'relation': '=',
                 'value': updatedOrder.createdBy });
-              delete _send.message.template_id;
+              delete msg.template_id;
             }
 
             (0, _send.sendNotification)(_send.message);
@@ -569,7 +571,7 @@ function reject(req, res, next) {
   order.save().then(function (savedOrder) {
     return (0, _util.assign)(savedOrder, pilot);
   }).then(function (savedOrder) {
-    _send.message.template_id = _send.pushNotificationTemplateId;
+    //message.template_id = pushNotificationTemplateId;
     _send.message.headings.en = savedOrder.id + "";
     _send.message.contents.en = 'New Order Assigned. \nPick at ' + savedOrder.from_address;
     _send.message.data = savedOrder;

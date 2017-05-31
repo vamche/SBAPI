@@ -40,7 +40,7 @@ var message = {
   contents: { "en": "English Message From Node!" },
   included_segments: ["All"],
   filters: [{ 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }],
-  template_id: pushNotificationTemplateId
+  template_id: '1ce3c15d-9821-4dee-840e-2e720044020d'
 };
 
 exports.default = { sendNotification: sendNotification, sendSMS: sendSMS, message: message };

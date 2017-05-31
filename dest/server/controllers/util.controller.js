@@ -123,7 +123,7 @@ function assignPending() {
             pilot.isActive = true;
             order.status = 'ASSIGNED';
             order.save().then(function (updatedOrder) {
-              _send.message.template_id = _send.pushNotificationTemplateId;
+              //message.template_id = pushNotificationTemplateId;
               _send.message.headings.en = updatedOrder.id + "";
               _send.message.data = updatedOrder;
               _send.message.contents.en = 'Order Assigned \n' + updatedOrder.title + '. \n                                           \nPick at ' + updatedOrder.from_address;
@@ -149,7 +149,7 @@ function assignPending() {
             pilot.isActive = true;
             order.status = 'ASSIGNED';
             order.save().then(function (updatedOrder) {
-              _send.message.template_id = _send.pushNotificationTemplateId;
+              //message.template_id = pushNotificationTemplateId;
               _send.message.headings.en = updatedOrder.id + "";
               _send.message.data = updatedOrder;
               _send.message.contents.en = ' Order Assigned \n' + updatedOrder.title + '. \n                    \nPick at ' + updatedOrder.from_address;
@@ -269,7 +269,6 @@ function alertPending() {
           msg.contents.en = 'Order number ' + order.id + ' dated ' + orderCreatedDate + ' is not completed yet. Please complete it.';
           msg.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': order.pilot.toString() }];
           delete msg.template_id;
-          console.log('Order Pending ', msg.contents.en);
           (0, _send.sendNotification)(msg);
         }
       }

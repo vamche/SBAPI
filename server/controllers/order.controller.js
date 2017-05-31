@@ -95,7 +95,7 @@ function createOrder(req, res, next, franchise = null) {
       }
     })
     .then((savedOrder) => {
-      message.template_id = pushNotificationTemplateId;
+      //message.template_id = pushNotificationTemplateId;
       message.headings.en = savedOrder.id + "";
       message.contents.en = `New Order Placed. \nPick at ${order.from_address}`;
       message.data = savedOrder;
@@ -176,7 +176,7 @@ function update(req, res, next) {
                       oldPilot.isActive = false;
                       oldPilot.save()
                         .then(updatedOldPilot => {
-                          message.template_id = pushNotificationTemplateId;
+                          //message.template_id = pushNotificationTemplateId;
                           message.headings.en = savedOrder.id + "";
                           message.contents.en = `New Order Placed. \nPick at ${savedOrder.from_address}`;
                           message.filters = [
@@ -276,22 +276,24 @@ function updateOrder(order){
                   .then(updatedOrder => {
                     if (statusChanged) {
                       io && io.emit('ORDER_UPDATED', updatedOrder );
-                      message.filters = [{'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'}];
-                      message.contents.en = `Order Update \n${updatedOrder.title}. \nStatus ${updatedOrder.status}.`;
-                      message.contents.en += updatedOrder.paymentType === 'COD' ?
+                      const msg = Object.assign({}, message);
+
+                      msg.filters = [{'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'}];
+                      msg.contents.en = `Order Update \n${updatedOrder.title}. \nStatus ${updatedOrder.status}.`;
+                      msg.contents.en += updatedOrder.paymentType === 'COD' ?
                         (updatedOrder.cash_collected ? 'Pilot collected cash for the COD order.' : 'Pilot did not collect cash for the COD order.') : '';
-                      message.headings.en = updatedOrder.id + "";
+                      msg.headings.en = updatedOrder.id + "";
                       if (updatedOrder.franchise) {
-                        message.filters.push({'operator' : 'OR'});
-                        message.filters.push({'field': 'tag', 'key': 'manager', 'relation': '=',
+                        msg.filters.push({'operator' : 'OR'});
+                        msg.filters.push({'field': 'tag', 'key': 'manager', 'relation': '=',
                           'value': updatedOrder.franchise.toString()});
                       }
 
                       if (updatedOrder.status === 'COMPLETED' && updatedOrder.createdByUserRole === 'CUSTOMER') {
-                        message.filters.push({'operator' : 'OR'});
-                        message.filters.push({'field': 'tag', 'key': 'customer', 'relation': '=',
+                        msg.filters.push({'operator' : 'OR'});
+                        msg.filters.push({'field': 'tag', 'key': 'customer', 'relation': '=',
                           'value': updatedOrder.createdBy});
-                        delete message.template_id;
+                        delete msg.template_id;
                       }
 
                       sendNotification(message);
@@ -517,7 +519,7 @@ function reject(req, res, next){
       return assign(savedOrder, pilot);
     })
     .then(savedOrder => {
-      message.template_id = pushNotificationTemplateId;
+      //message.template_id = pushNotificationTemplateId;
       message.headings.en = savedOrder.id + "";
       message.contents.en = `New Order Assigned. \nPick at ${savedOrder.from_address}`;
       message.data = savedOrder;
