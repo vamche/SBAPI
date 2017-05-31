@@ -437,7 +437,7 @@ function getReport(req, res, next) {
         orderRows.push([
           order.id ? order.id : 'NA',
           order.paymentType ? order.paymentType : 'NA' ,
-          order.pilot ? order.pilot.user.firstName + '( ' + order.pilot.user.mobileNumber + ' )' : 'NA',
+          order.pilot ? order.pilot.user.firstName + ' ( ' + order.pilot.user.mobileNumber + ' )' : 'NA',
           (order.distance_picked_to_delivery_in_meters/1000).toFixed(2) + ' Kms',
           (order.final_cost).toFixed(2)
         ]);
@@ -446,7 +446,7 @@ function getReport(req, res, next) {
       const ordersContent = {
         style: 'tableExample',
         table: {
-          widths: [100, 100 , '*' ,'*', '*'],
+          widths: [100, 75 , 100 ,'*', '*'],
           body: [
             ['Order id', 'Payment Type', 'Pilot' ,'Distance (Kms)', 'Cost (INR)']
           ]
