@@ -124,12 +124,13 @@ function assignPending() {
             order.status = 'ASSIGNED';
             order.save().then(function (updatedOrder) {
               //message.template_id = pushNotificationTemplateId;
-              _send.message.headings.en = updatedOrder.id + "";
-              _send.message.data = updatedOrder;
-              _send.message.contents.en = 'Order Assigned \n' + updatedOrder.title + '. \n                                           \nPick at ' + updatedOrder.from_address;
-              _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': updatedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
+              var msg = Object.assign({}, _send.message);
+              msg.headings.en = updatedOrder.id + "";
+              msg.data = updatedOrder;
+              msg.contents.en = 'Order Assigned \n' + updatedOrder.title + '. \n                                           \nPick at ' + updatedOrder.from_address;
+              msg.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': updatedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
               _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
-              (0, _send.sendNotification)(_send.message);
+              (0, _send.sendNotification)(msg);
               console.info("Order Assigned :: " + updatedOrder.title + " :: " + updatedOrder.pilot.toString());
               (0, _send.sendSMS)('91' + updatedOrder.to_phone, 'Hurray! Your delivery is on its way. Our member ' + pilot.user.firstName + ' (' + pilot.user.mobileNumber + ') will deliver it in short time.', 4);
               pilot.save();
@@ -150,12 +151,13 @@ function assignPending() {
             order.status = 'ASSIGNED';
             order.save().then(function (updatedOrder) {
               //message.template_id = pushNotificationTemplateId;
-              _send.message.headings.en = updatedOrder.id + "";
-              _send.message.data = updatedOrder;
-              _send.message.contents.en = ' Order Assigned \n' + updatedOrder.title + '. \n                    \nPick at ' + updatedOrder.from_address;
-              _send.message.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': updatedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
+              var msg = Object.assign({}, _send.message);
+              msg.headings.en = updatedOrder.id + "";
+              msg.data = updatedOrder;
+              msg.contents.en = ' Order Assigned \n' + updatedOrder.title + '. \n                    \nPick at ' + updatedOrder.from_address;
+              msg.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': updatedOrder.pilot.toString() }, { 'operator': 'OR' }, { 'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN' }];
               _express.io && _express.io.emit('ORDER_UPDATED', updatedOrder);
-              (0, _send.sendNotification)(_send.message);
+              (0, _send.sendNotification)(msg);
               console.info("Order Assigned :: " + updatedOrder.title + " :: " + updatedOrder.pilot.toString());
               (0, _send.sendSMS)('91' + updatedOrder.to_phone, 'Hurray! Your delivery is on its way. Our member ' + pilot.user.firstName + ' (' + pilot.user.mobileNumber + ') will deliver it in short time.', 4);
               pilot.save();

@@ -106,17 +106,18 @@ function assignPending(){
                 order.save()
                   .then((updatedOrder) => {
                     //message.template_id = pushNotificationTemplateId;
-                    message.headings.en = updatedOrder.id + "";
-                    message.data = updatedOrder;
-                    message.contents.en = `Order Assigned \n${updatedOrder.title}. 
+                    const msg = Object.assign({}, message);
+                    msg.headings.en = updatedOrder.id + "";
+                    msg.data = updatedOrder;
+                    msg.contents.en = `Order Assigned \n${updatedOrder.title}. 
                                            \nPick at ${updatedOrder.from_address}`;
-                    message.filters = [
+                    msg.filters = [
                       {'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': updatedOrder.pilot.toString()},
                       {'operator' : 'OR'},
                       {'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'}
                     ];
                     io && io.emit('ORDER_UPDATED', updatedOrder);
-                    sendNotification(message);
+                    sendNotification(msg);
                     console.info("Order Assigned :: " + updatedOrder.title + " :: " + updatedOrder.pilot.toString());
                     sendSMS(`91${updatedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${pilot.user.firstName} (${pilot.user.mobileNumber}) will deliver it in short time.`, 4);
                     pilot.save();
@@ -143,17 +144,18 @@ function assignPending(){
                 order.save()
                   .then((updatedOrder) => {
                     //message.template_id = pushNotificationTemplateId;
-                    message.headings.en = updatedOrder.id + "";
-                    message.data = updatedOrder;
-                    message.contents.en = ` Order Assigned \n${updatedOrder.title}. 
+                    const msg = Object.assign({}, message);
+                    msg.headings.en = updatedOrder.id + "";
+                    msg.data = updatedOrder;
+                    msg.contents.en = ` Order Assigned \n${updatedOrder.title}. 
                     \nPick at ${updatedOrder.from_address}`;
-                    message.filters = [
+                    msg.filters = [
                       {'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': updatedOrder.pilot.toString()},
                       {'operator' : 'OR'},
                       {'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'}
                     ];
                     io && io.emit('ORDER_UPDATED', updatedOrder);
-                    sendNotification(message);
+                    sendNotification(msg);
                     console.info("Order Assigned :: " + updatedOrder.title + " :: " + updatedOrder.pilot.toString());
                     sendSMS(`91${updatedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${pilot.user.firstName} (${pilot.user.mobileNumber}) will deliver it in short time.`, 4);
                     pilot.save();
