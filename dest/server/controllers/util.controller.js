@@ -256,29 +256,43 @@ function alertPending() {
   //   path: 'pilot',
   //   populate: { path: 'user' }})
   .sort({ createdAt: -1 }).then(function (orders) {
-    //orders.forEach(order => {
-    for (var i = 0; i < orders.length; i++) {
-      var order = orders[i];
-      if (order.pilot) {
-        var msg = Object.assign({}, _send.message);
-        var diffInMinutes = (0, _moment2.default)().tz('Asia/Kolkata').utcOffset();
-        var orderCreatedDate = (0, _moment2.default)(order.createdAt).subtract(diffInMinutes).format('DD-MM-YYYY');
-        var currentDate = (0, _moment2.default)().subtract(diffInMinutes).format('DD-MM-YYYY');
-        if (orderCreatedDate !== currentDate) {
-          delete msg.template_id;
-          msg.headings.en = order.id + "";
-          msg.data = order;
-          msg.contents.en = 'Order number ' + order.id + ' dated ' + orderCreatedDate + ' is not completed yet. Please complete it.';
-          msg.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': order.pilot.toString() }];
-          delete msg.template_id;
-          (0, _send.sendNotification)(msg);
-        }
-      }
+    if (orders.length > 0) {
+      sendPendingOrderAlert(orders, 0);
     }
-    //})
   }).catch(function (e) {
     return console.log(e);
   });
+}
+
+function sendPendingOrderAlert(orders, i) {
+
+  if (i >= orders.length) {
+    return;
+  }
+
+  var order = orders[i];
+
+  if (order.pilot) {
+    var msg = Object.assign({}, _send.message);
+    var diffInMinutes = (0, _moment2.default)().tz('Asia/Kolkata').utcOffset();
+    var orderCreatedDate = (0, _moment2.default)(order.createdAt).subtract(diffInMinutes).format('DD-MM-YYYY');
+    var currentDate = (0, _moment2.default)().subtract(diffInMinutes).format('DD-MM-YYYY');
+    if (orderCreatedDate !== currentDate) {
+      delete msg.template_id;
+      msg.headings.en = order.id + "";
+      msg.data = order;
+      msg.contents.en = 'Order number ' + order.id + ' dated ' + orderCreatedDate + ' is not completed yet. Please complete it.';
+      msg.filters = [{ 'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': order.pilot.toString() }];
+      delete msg.template_id;
+      (0, _send.sendNotification)(msg).then(function () {
+        sendPendingOrderAlert(orders, i + 1);
+      });
+    } else {
+      sendPendingOrderAlert(orders, i + 1);
+    }
+  } else {
+    sendPendingOrderAlert(orders, i + 1);
+  }
 }
 
 function clearReports() {}
