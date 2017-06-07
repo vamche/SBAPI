@@ -256,7 +256,9 @@ function alertPending() {
   //   path: 'pilot',
   //   populate: { path: 'user' }})
   .sort({ createdAt: -1 }).then(function (orders) {
-    orders.forEach(function (order) {
+    //orders.forEach(order => {
+    for (var i = 0; i < orders.length; i++) {
+      var order = orders[i];
       if (order.pilot) {
         var msg = Object.assign({}, _send.message);
         var diffInMinutes = (0, _moment2.default)().tz('Asia/Kolkata').utcOffset();
@@ -272,7 +274,8 @@ function alertPending() {
           (0, _send.sendNotification)(msg);
         }
       }
-    });
+    }
+    //})
   }).catch(function (e) {
     return console.log(e);
   });

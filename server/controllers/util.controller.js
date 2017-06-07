@@ -263,25 +263,28 @@ function alertPending() {
     //   populate: { path: 'user' }})
     .sort({ createdAt: -1 })
     .then(orders  => {
-      orders.forEach(order => {
-        if (order.pilot) {
-          const msg = Object.assign({}, message);
-          const diffInMinutes = moment().tz('Asia/Kolkata').utcOffset();
-          const orderCreatedDate = moment(order.createdAt).subtract(diffInMinutes).format('DD-MM-YYYY');
-          const currentDate = moment().subtract(diffInMinutes).format('DD-MM-YYYY');
-          if (orderCreatedDate !== currentDate) {
-            delete msg.template_id;
-            msg.headings.en = order.id + "";
-            msg.data = order;
-            msg.contents.en = `Order number ${order.id} dated ${orderCreatedDate} is not completed yet. Please complete it.`;
-            msg.filters = [
-              {'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': order.pilot.toString()}
-            ];
-            delete msg.template_id;
-            sendNotification(msg);
+      //orders.forEach(order => {
+        for (let i=0; i<orders.length; i++) {
+          const order = orders[i];
+          if (order.pilot) {
+            const msg = Object.assign({}, message);
+            const diffInMinutes = moment().tz('Asia/Kolkata').utcOffset();
+            const orderCreatedDate = moment(order.createdAt).subtract(diffInMinutes).format('DD-MM-YYYY');
+            const currentDate = moment().subtract(diffInMinutes).format('DD-MM-YYYY');
+            if (orderCreatedDate !== currentDate) {
+              delete msg.template_id;
+              msg.headings.en = order.id + "";
+              msg.data = order;
+              msg.contents.en = `Order number ${order.id} dated ${orderCreatedDate} is not completed yet. Please complete it.`;
+              msg.filters = [
+                {'field': 'tag', 'key': 'pilot', 'relation': '=', 'value': order.pilot.toString()}
+              ];
+              delete msg.template_id;
+              sendNotification(msg);
+            }
           }
         }
-      })
+      //})
     })
     .catch(e => console.log(e));
 
