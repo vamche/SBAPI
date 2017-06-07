@@ -313,7 +313,7 @@ function updateOrder(order) {
               msg.filters.push({ 'operator': 'OR' });
               msg.filters.push({ 'field': 'tag', 'key': 'customer', 'relation': '=',
                 'value': updatedOrder.createdBy });
-              msg.template_id = '';
+              delete msg.template_id;
               msg.contents.en += updatedOrder.paymentType === 'COD' ? updatedOrder.cash_collected ? 'Pilot collected cash for the COD order.' : 'Pilot did not collect cash for the COD order.' : '';
             }
 
