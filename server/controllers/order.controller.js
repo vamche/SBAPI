@@ -119,7 +119,7 @@ function createOrder(req, res, next, franchise = null) {
             p.isActive = true;
             p.save()
              .then(savedPilot => {
-               sendSMS(`91${savedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${savedPilot.user.firstName} (${savedPilot.user.mobileNumber}) will deliver it in short time.`, 4);
+               //sendSMS(`91${savedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${savedPilot.user.firstName} (${savedPilot.user.mobileNumber}) will deliver it in short time.`, 4);
 
                io && io.emit('ORDER_ADDED', savedOrder);
                sendNotification(msg);
@@ -189,7 +189,7 @@ function update(req, res, next) {
                           if (savedOrder.status === 'ASSIGNED') {
                             msg.filters.push({'operator' : 'OR'});
                             msg.filters.push({'field': 'tag', 'key': 'manager', 'relation': '=', 'value': 'ADMIN'});
-                            sendSMS(`91${savedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${newpilot.user.firstName} (${newpilot.user.mobileNumber}) will deliver it in short time.`, 4);
+                            //sendSMS(`91${savedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${newpilot.user.firstName} (${newpilot.user.mobileNumber}) will deliver it in short time.`, 4);
                           }
 
                           if (savedOrder.franchise) {
@@ -318,8 +318,8 @@ function updateOrder(order){
                           }else{
                             resolve(updatedOrder);
                           }
-                          if(statusChanged && updatedOrder.status === 'STARTED') {
-                            //sendSMS(`91${updatedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${pilot.user.firstName} (${pilot.user.mobileNumber}) will deliver it in short time.`, 4);
+                          if(statusChanged && updatedOrder.status === 'PICKED') {
+                            sendSMS(`91${updatedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${pilot.user.firstName} (${pilot.user.mobileNumber}) will deliver it in short time.`, 4);
                           }
                         })
                         .catch(e => reject(e));
@@ -550,7 +550,7 @@ function reject(req, res, next){
             p.isActive = true;
             p.save()
               .then(savedPilot => {
-                sendSMS(`91${savedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${savedPilot.user.firstName} (${savedPilot.user.mobileNumber}) will deliver it in short time.`, 4);
+                //sendSMS(`91${savedOrder.to_phone}`, `Hurray! Your delivery is on its way. Our member ${savedPilot.user.firstName} (${savedPilot.user.mobileNumber}) will deliver it in short time.`, 4);
 
                 io && io.emit('ORDER_UPDATED', savedOrder);
                 sendNotification(msg);
