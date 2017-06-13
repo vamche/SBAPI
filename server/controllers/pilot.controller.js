@@ -477,6 +477,7 @@ function updateAvailability(req, res, next){
   pilot.isAvailable = req.body.isAvailable;
   pilot.location = req.body.location ? req.body.location : pilot.location;
   pilot.battery = req.body.battery ? req.body.battery : pilot.battery;
+  pilot.last_updated_location_time = Date.now();
   pilot.save()
     .then(savedPilot => {
       const timesheet = new Timesheet({
