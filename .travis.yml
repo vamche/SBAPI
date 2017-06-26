@@ -22,7 +22,6 @@ deploy:
     env: Sample-env
     on:
       repo: vamche/SBAPI
-
   - provider: heroku
      api_key:
        secure: 37a3cb7f-3050-4ef5-b6a0-51bec40789b4
