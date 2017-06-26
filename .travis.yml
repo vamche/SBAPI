@@ -1,7 +1,7 @@
 language: node_js
 node_js:
 - '4.6'
-- '6.9'
+- '6.11'
 - '7.2'
 services:
 - mongodb
@@ -23,7 +23,11 @@ deploy:
     bucket_name: elasticbeanstalk-us-east-2-503277638185
     on:
       repo: vamche/SBAPI
+      node: '6.11'
   - provider: heroku
     api_key:
       secure: 37a3cb7f-3050-4ef5-b6a0-51bec40789b4
     app: sboy
+    on:
+      repo: vamche/SBAPI
+      node: '6.11'
