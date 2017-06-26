@@ -44,7 +44,6 @@ module.exports = {
         }
       ])
       .onPageAdded(function (tb) {
-
         tb.addHeader();
       });
 
