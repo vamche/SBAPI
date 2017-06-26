@@ -4,6 +4,7 @@ var PdfTable = require('voilab-pdf-table'),
 module.exports = {
   create: function () {
     var pdf = new PdfDocument({
+
         autoFirstPage: false
       }),
       table = new PdfTable(pdf, {
