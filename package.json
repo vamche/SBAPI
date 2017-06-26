@@ -11,7 +11,7 @@
     "yarn": ">=0.17.9"
   },
   "scripts": {
-    "start": "node dest/index.js",
+    "start": "gulp serve",
     "debug": "node debug dest/index.js",
     "build": "gulp",
     "lint": "esw *.js server config --color",
