@@ -20,6 +20,7 @@ deploy:
     region: us-east-1
     app: tutorials
     env: Sample-env
+    bucket_name: elasticbeanstalk-us-east-2-503277638185
     on:
       repo: vamche/SBAPI
   - provider: heroku
