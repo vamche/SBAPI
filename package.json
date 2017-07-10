@@ -1,6 +1,6 @@
 {
   "name": "season-boy-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Season Boy API",
   "author": "Vamsi Dharmavarapu",
   "main": "index.js",
