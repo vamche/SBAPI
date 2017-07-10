@@ -1,7 +1,7 @@
 language: node_js
 node_js:
 - '4.6'
-- '6.11'
+- '6.10'
 - '7.2'
 services:
 - mongodb
@@ -18,16 +18,16 @@ deploy:
     secret_access_key:
       secure: x7YPIsfilDKkJGc31XKhkxvlEr6dXwJxHcbq3dDonmJWoQpodj4ZDJsmyHaVmOHHH2hBYbGs/FWXZ5y/rWBgbT1/aWOrsFZSvpvhSAdF7aIN2h3PIhkWur/Lii/xwBqkhdx8/OOs/cM4fT9O5YdAxkhFFAmQWVHvUJkXwFMEgE+PSMsp2nZW4nTx48NungoMT01vu18EXzu323gKeA+0QsbtKOhbAH+t0ejgU+Iw7MNYBXPABXZNGXJy3Za+/sKTJhZoXFEGk6y+DFiyCic5sORSAhTUH/T4ZZvY5DmVIMTKxujOlSqJEyzkc/sK2HUNrgwB83lVFzALMETl7v+fsqFtHCB4H+tWnuzD9luQgpFOGtsrMMfjB46tSo+Og94XEl6Jq5wKJcKemy7K7rDf2McZv83SEF3LiOi4K2urQaQbNTA9PS3pBE5EWmO48vYQUgNy0vFZt9RDeJC5ujbOulHm9R/cKNwi7ybGckBiaKhpF5/tWjZQqgg2KFpkO8VHQQutnmyTQpmZv0RgZQmn/X0GE+F4NMvsrV5ZbTEaXVU5SeTTFWkScvz0rFUMKt6ze9AIHCZHyOWewWGqEeqzrFtrZGFYPL46sUrdjRuKL5JRRBN1XYKKA/qgJkuh7OpUhZ2ujylRl3ZAsd17RghTvH3Vach1sFwt5vQUMRePg7Y=
     region: us-east-2
-    app: tutorials
-    env: Sample-env
+    app: api
+    env: api-dev
     bucket_name: elasticbeanstalk-us-east-2-503277638185
     on:
       repo: vamche/SBAPI
-      node: '6.11'
+      node: '6.10'
   - provider: heroku
     api_key:
       secure: 37a3cb7f-3050-4ef5-b6a0-51bec40789b4
     app: sboy
     on:
       repo: vamche/SBAPI
-      node: '6.11'
+      node: '6.10'
