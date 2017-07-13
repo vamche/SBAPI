@@ -33,6 +33,7 @@ function get(req, res) {
 function assign(order, pilotId = '', franchise = null){
   if(order.team != null && order.team != '' && order.team != "*" && order.team != "ALL" && order.team != null){
     return pilotCtrl.getUnAssignedPilotsByTeam(order.team, false, franchise)
+      .where('last_updated_location_time').gte(moment().subtract(10, 'minutes'))
       .where('location').near({
         center: order.from_location,
         maxDistance: maxDistance * 1000
@@ -92,6 +93,7 @@ function assignPending(){
             .where('teams').in([order.team])
             .where('franchise', order.franchise)
             .where('isActive', false)
+            .where('last_updated_location_time').gte(moment().subtract(10, 'minutes'))
             .where('location').near({
             center: order.from_location,
             maxDistance: maxDistance * 1000
@@ -130,6 +132,7 @@ function assignPending(){
             .where('isAvailable', true)
             .where('isActive', false)
             .where('franchise', order.franchise)
+            .where('last_updated_location_time').gte(moment().subtract(10, 'minutes'))
             .where('location').near({
               center: order.from_location,
               maxDistance: maxDistance * 1000
