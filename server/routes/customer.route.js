@@ -1,7 +1,9 @@
 import express from 'express';
 import validate from 'express-validation';
+import expressJwt from 'express-jwt';
 import paramValidation from '../../config/param-validation';
 import customerCtrl from '../controllers/customer.controller';
+import config from '../../config/env';
 
 const router = express.Router(); // eslint-disable-line new-cap
 
@@ -13,20 +15,20 @@ router.route('/list')
 
 router.route('/')
 /** GET /api/customers - Get list of customers */
-    .get(customerCtrl.list)
+    .get(expressJwt({secret: config.jwtSecret}), customerCtrl.list)
 
     /** POST /api/customers - Create new customer */
-    .post(validate(paramValidation.createCustomer), customerCtrl.create);
+    .post(expressJwt({secret: config.jwtSecret}),  validate(paramValidation.createCustomer), customerCtrl.create);
 
 router.route('/:customerId')
 /** GET /api/customers/:customerId - Get customer */
-    .get(customerCtrl.get)
+    .get(expressJwt({secret: config.jwtSecret}), customerCtrl.get)
 
     /** PUT /api/customers/:customerId - Update customer */
-    .put(validate(paramValidation.updateCustomer), customerCtrl.update)
+    .put(expressJwt({secret: config.jwtSecret}),  validate(paramValidation.updateCustomer), customerCtrl.update)
 
     /** DELETE /api/customers/:customerId - Delete customer */
-    .delete(customerCtrl.remove);
+    .delete(expressJwt({secret: config.jwtSecret}), customerCtrl.remove);
 
 router.route('/create')
 

@@ -52,7 +52,7 @@ router.use('/managers', managerRoutes);
 // mount franchise routes at /franchises
 router.use('/franchises', franchiseRoutes);
 
-// mount attachment routes at /attacgments
+// mount attachment routes at /attachments
 router.use('/attachments', attachmentRoutes);
 
 // trigger!

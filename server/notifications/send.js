@@ -3,12 +3,12 @@ import axios from 'axios';
 const sendNotification = function (data) {
 
   axios.defaults.baseURL = 'https://onesignal.com/api/v1';
-  axios.defaults.headers.common['Authorization'] = 'Basic YmIwMGMzZTAtOGMxNi00MmZlLWJkYjUtYjBjODY2ZWNkZTNi';
+  axios.defaults.headers.common['Authorization'] = `Basic ${process.env.ONE_SIGNAL_API_KEY}`;
   axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencodeapplication/json; charset=utf-8';
 
   return axios.post('/notifications', data)
          .then((response) => {
-           console.log('Succecss Sending Notification!');
+           console.log('Success Sending Notification!');
          })
          .catch((error) => {
            console.log(error);
@@ -16,7 +16,7 @@ const sendNotification = function (data) {
 }
 
 const sendSMS = function (mobiles, message, route) {
-  const url = `https://control.msg91.com/api/sendhttp.php?authkey=113219ATt8BmevKtDK5742a5f9&mobiles=${mobiles}&message=${message}&sender=SSNBOY&route=${route}&country=0`;
+  const url = `https://control.msg91.com/api/sendhttp.php?authkey=${process.env.MSG91_API_KEY}&mobiles=${mobiles}&message=${message}&sender=SSNBOY&route=${route}&country=0`;
   return axios.get(url)
     .then((response) => {
       console.log('Succecss Sending SMS!');

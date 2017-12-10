@@ -5,5 +5,5 @@ export default {
   port: 4040,
   cloudinary_cloud_name: 'vamche',
   cloudinary_api_key: '317823213182943',
-  cloudinary_api_secret: '-NB8N77KnUvp4F7Fp1SGXLmhYFA'
+  cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET
 };
