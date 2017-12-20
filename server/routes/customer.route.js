@@ -15,20 +15,20 @@ router.route('/list')
 
 router.route('/')
 /** GET /api/customers - Get list of customers */
-    .get(expressJwt({secret: config.jwtSecret}), customerCtrl.list)
+    .get(customerCtrl.list)
 
     /** POST /api/customers - Create new customer */
-    .post(expressJwt({secret: config.jwtSecret}),  validate(paramValidation.createCustomer), customerCtrl.create);
+    .post(validate(paramValidation.createCustomer), customerCtrl.create);
 
 router.route('/:customerId')
 /** GET /api/customers/:customerId - Get customer */
-    .get(expressJwt({secret: config.jwtSecret}), customerCtrl.get)
+    .get(customerCtrl.get)
 
     /** PUT /api/customers/:customerId - Update customer */
-    .put(expressJwt({secret: config.jwtSecret}),  validate(paramValidation.updateCustomer), customerCtrl.update)
+    .put(validate(paramValidation.updateCustomer), customerCtrl.update)
 
     /** DELETE /api/customers/:customerId - Delete customer */
-    .delete(expressJwt({secret: config.jwtSecret}), customerCtrl.remove);
+    .delete(customerCtrl.remove);
 
 router.route('/create')
 
